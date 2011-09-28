@@ -1,0 +1,9 @@
+*.gem
+.bundle
+Gemfile.lock
+pkg/*
+.rvmrc
+doc/*
+.yardoc/*
+pkg/*
+.yardopts
