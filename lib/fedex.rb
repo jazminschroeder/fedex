@@ -46,4 +46,6 @@ require "fedex/rate"
 #        @total_freight_discounts=nil, 
 #        @total_net_freight="32.1", 
 #        @rate_zone="51">
-module Fedex; end
+module Fedex
+  class RateError < StandardError; end
+end

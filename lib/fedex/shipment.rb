@@ -1,6 +1,7 @@
 require 'httparty'
 require 'nokogiri'
 module Fedex
+  
   class Shipment
     include HTTParty
     format :xml
@@ -60,7 +61,7 @@ module Fedex
         rate = Fedex::Rate.new(rate_details)
     else
         error_message = (response[:rate_reply].nil? ? api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"] : response[:rate_reply][:notifications][:message]) rescue "Unexpected error has occurred"
-        raise StandardError, error_message 
+        raise Fedex::RateError, error_message 
       end
     end
     
@@ -85,7 +86,7 @@ module Fedex
     private
     # Helper method to validate required fields
     def requires!(hash, *params)
-       params.each { |param| raise ArgumentError, "Missing Required Parameter #{param}" if hash[param].nil? }
+       params.each { |param| raise Fedex::RateError, "Missing Required Parameter #{param}" if hash[param].nil? }
     end
     
     def camelize(str) #:nodoc:

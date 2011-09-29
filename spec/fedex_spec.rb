@@ -3,6 +3,12 @@ describe Fedex::Shipment do
   let(:test_keys) do
     {:key => "RSkI5uThcfmtpm3I", :password => "RHhaZOG1MpDJ6QvSzxG0N06Ue", :account_number => "510087143", :meter => "118546765", :mode => "test"} 
   end  
+  context "missing required parameters" do
+    it "should raise Fedex::Rate exception" do
+      lambda{ Fedex::Shipment.new}.should raise_error(Fedex::RateError)
+    end
+  end
+  
   context "required parameters present" do
     subject { Fedex::Shipment.new(test_keys) }
     it "should create a valid instance" do
