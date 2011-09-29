@@ -64,8 +64,8 @@ Create a Fedex::Shipment object using your FedEx credentials; mode should be eit
     rate = fedex.rate({:shipper=>shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND", :shipping_details => shipping_details})    
     
 Fedex provides multiple total values; total_net_charge is the final amount you are looking for. 
-    $ rate.total_net_charge => "34.03"     
     
+    $ rate.total_net_charge => "34.03"     
     # Complete response                              
     $ <Fedex::Rate:0x1019ba5f8 
           @total_net_charge="34.03", 
@@ -87,5 +87,6 @@ Fedex provides multiple total values; total_net_charge is the final amount you a
 
 # Copyright/License:
 Copyright 2011 Jazmin Schroeder
+
 This gem is made available under the MIT license
 
