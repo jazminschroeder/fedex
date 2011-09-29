@@ -39,6 +39,7 @@ Define the recipient:
                     :country_code => "US", 
                     :residential => "false" }
 Define the packages(multiple packages in a single shipment are allowed):
+Note that all the Dimensions must be integers
                     
     packages = []
     packages << { :weight => {:units => "LB", :value => 2}, 
@@ -51,7 +52,8 @@ By Default packaging type is "YOUR PACKAGING" and the drop off type is "REGULAR 
     shipping_details = { :packaging_type => "YOUR_PACKAGING", :drop_off_type => "REGULAR_PICKUP" }  
        
     
-Create a Fedex::Shipment object, use your FedEx credentials; mode should be either production or development depending on what Fedex environment you want to use.
+Create a Fedex::Shipment object using your FedEx credentials; mode should be either production or development depending on what Fedex environment you want to use.
+
     require 'fedex'
     fedex = Fedex::Shipment.new(:key => 'xxx', 
                                   :password => 'xxxx', 

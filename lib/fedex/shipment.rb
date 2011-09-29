@@ -5,6 +5,8 @@ module Fedex
   class Shipment
     include HTTParty
     format :xml
+    # If true the rate method will return the complete response from the Fedex Web Service
+    attr_accessor :raw_response
     # Fedex Text URL
     TEST_URL = "https://gatewaybeta.fedex.com:443/xml/"
     
@@ -56,12 +58,13 @@ module Fedex
     # Sends post request to Fedex web service and parse the response, a Rate object is created if the response is successful 
     def process_request
       api_response = Shipment.post(api_url, :body => build_xml)
+      return api_response if @raw_response == true
       response = parse_response(api_response)
       if success?(response) 
         rate_details = [response[:rate_reply][:rate_reply_details][:rated_shipment_details]].flatten.first[:shipment_rate_detail]
         rate = Fedex::Rate.new(rate_details)
     else
-        error_message = (response[:rate_reply].nil? ? api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"] : response[:rate_reply][:notifications][:message]) rescue "Unexpected error has occurred"
+        error_message = (response[:rate_reply].nil? ? api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"] : response[:rate_reply][:notifications][:message]) rescue "Unexpected error has occurred..."
         raise RateError, error_message 
       end
     end
@@ -265,7 +268,7 @@ module Fedex
     end
 
     def underscorize(key) #:nodoc:
-      key.to_s.gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').gsub(/([a-z\d])([A-Z])/,'\1_\2').downcase
+      key.to_s.sub(/^(v[0-9]+|ns):/, "").gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').gsub(/([a-z\d])([A-Z])/,'\1_\2').downcase
     end
     
     # Successful request
