@@ -8,9 +8,9 @@ Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.authors     = ["Jazmin Schroeder"]
   s.email       = ["jazminschroeder@gmail.com"]
-  s.homepage    = ""
-  s.summary     = %q{Fedex Shipping Rates}
-  s.description = %q{Ruby Library to Get Rates through Fedex Web Services(version 10)}
+  s.homepage    = "https://github.com/jazminschroeder/fedex"
+  s.summary     = %q{Fedex Rate Webservice}
+  s.description = %q{Ruby Library to use Fedex Web Services(version 10)}
 
   s.rubyforge_project = "fedex"
   s.add_development_dependency "rspec"
