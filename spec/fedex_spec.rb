@@ -25,13 +25,13 @@ describe Fedex::Shipment do
                    :dimensions => {:length => 10, :width => 5, :height => 4, :units => "IN" } }
     @packages << { :weight => {:units => "LB", :value => 6}, 
                    :dimensions => {:length => 5, :width => 5, :height => 4, :units => "IN" } }
-    @extra_options = { :packaging_type => "YOUR_PACKAGING", :drop_off_type => "REGULAR_PICKUP" }               
+    @shipping_options = { :packaging_type => "YOUR_PACKAGING", :drop_off_type => "REGULAR_PICKUP" }               
   end
   
   context "Domestic Shipment" do 
     describe "rate" do
       it "should return rate" do
-        rate = @fedex.rate({:shipper=>@shipper, :recipient => @recipient, :packages => @packages, :service_type => "FEDEX_GROUND", :extra_options => @extra_options})
+        rate = @fedex.rate({:shipper=>@shipper, :recipient => @recipient, :packages => @packages, :service_type => "FEDEX_GROUND"})
         rate.should be_an_instance_of(Fedex::Rate)
       end
     end
@@ -42,7 +42,7 @@ describe Fedex::Shipment do
       it "shoule return international fees" do
         recipient = {:name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address=>"Address Line 1", :city => "Richmond", :state => "BC",
           :postal_code => "V7C4V4", :country_code => "CA", :residential => false }
-        rate = @fedex.rate({:shipper => @shipper, :recipient => recipient, :packages => @packages, :service_type => "FEDEX_GROUND", :extra_options => @extra_options })
+        rate = @fedex.rate({:shipper => @shipper, :recipient => recipient, :packages => @packages, :service_type => "FEDEX_GROUND", :shipping_options => @shipping_options })
         rate.should be_an_instance_of(Fedex::Rate)
       end
     end

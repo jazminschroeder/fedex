@@ -1,7 +1,7 @@
 require 'httparty'
 require 'nokogiri'
 module Fedex
-  
+  #Fedex::Shipment
   class Shipment
     include HTTParty
     format :xml
@@ -18,10 +18,10 @@ module Fedex
     SERVICE_TYPES = %w(EUROPE_FIRST_INTERNATIONAL_PRIORITY FEDEX_1_DAY_FREIGHT FEDEX_2_DAY FEDEX_2_DAY_AM FEDEX_2_DAY_FREIGHT FEDEX_3_DAY_FREIGHT     FEDEX_EXPRESS_SAVER FEDEX_FIRST_FREIGHT FEDEX_FREIGHT_ECONOMY  FEDEX_FREIGHT_PRIORITY  FEDEX_GROUND FIRST_OVERNIGHT GROUND_HOME_DELIVERY  INTERNATIONAL_ECONOMY  INTERNATIONAL_ECONOMY_FREIGHT  INTERNATIONAL_FIRST INTERNATIONAL_PRIORITY  INTERNATIONAL_PRIORITY_FREIGHT  PRIORITY_OVERNIGHT SMART_POST STANDARD_OVERNIGHT)
     
     # List of available Packaging Type
-    PACKAGING_TYPE = %w(FEDEX_10KG_BOX FEDEX_25KG_BOX FEDEX_BOX FEDEX_ENVELOPE FEDEX_PAK FEDEX_TUBE YOUR_PACKAGING)
+    PACKAGING_TYPES = %w(FEDEX_10KG_BOX FEDEX_25KG_BOX FEDEX_BOX FEDEX_ENVELOPE FEDEX_PAK FEDEX_TUBE YOUR_PACKAGING)
     
     # List of available DropOffTypes
-    DROPOFFTYPE = %w(BUSINESS_SERVICE_CENTER DROP_BOX REGULAR_PICKUP REQUEST_COURIER STATION)
+    DROP_OFF_TYPES = %w(BUSINESS_SERVICE_CENTER DROP_BOX REGULAR_PICKUP REQUEST_COURIER STATION)
     
     # In order to use Fedex rates API you must first apply for a developer(and later production keys), 
     # Visit {http://www.fedex.com/us/developer/ Fedex Developer Center} for more information about how to obtain your keys.
@@ -48,7 +48,8 @@ module Fedex
     # @param [String] service_type, A valid fedex service type, to view a complete list of services Fedex::Shipment::SERVICE_TYPES
     def rate(options = {})
       requires!(options, :shipper, :recipient, :packages, :service_type)
-      @shipper, @recipient, @packages, @service_type, @extra_options = options[:shipper], options[:recipient], options[:packages], options[:service_type], options[:extra_options]
+      @shipper, @recipient, @packages, @service_type = options[:shipper], options[:recipient], options[:packages], options[:service_type]
+      @shipping_options =  options[:shipping_options] ||={}
       process_request
     end
     
@@ -124,9 +125,9 @@ module Fedex
     # Add information for shipments
     def add_requested_shipment(xml)
       xml.RequestedShipment{
-        xml.DropoffType @extra_options[:drop_off_type] ||= "REGULAR_PICKUP"
+        xml.DropoffType @shipping_options[:drop_off_type] ||= "REGULAR_PICKUP"
         xml.ServiceType @service_type
-        xml.PackagingType @extra_options[:packaging_type] ||= "YOUR_PACKAGING"
+        xml.PackagingType @shipping_options[:packaging_type] ||= "YOUR_PACKAGING"
         add_shipper(xml)
         add_recipient(xml)
         add_shipping_charges_payment(xml)

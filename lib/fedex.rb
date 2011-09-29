@@ -35,7 +35,9 @@ require "fedex/rate"
 #                 :dimensions => {:length => 10, :width => 5, :height => 4, :units => "IN" } }
 #    packages << { :weight => {:units => "LB", :value => 6}, 
 #                 :dimensions => {:length => 5, :width => 5, :height => 4, :units => "IN" } }
-#    rate = fedex.rate({:shipper=>shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
+#    # "YOUR PACKAGING" and "REGULAR PICKUP" are the default options for all shipments but you can easily change them by passing an extra hash for #    shipping_options
+#    shipping_options = { :packaging_type => "YOUR_PACKAGING", :drop_off_type => "REGULAR_PICKUP" } 
+#    rate = fedex.rate({:shipper=>shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND", :shipping_options => #shipping_options})
 #    
 #    $ <Fedex::Rate:0x1019ba5f8 @total_net_charge="34.03", 
 #        @total_surcharges="1.93", 
@@ -47,5 +49,6 @@ require "fedex/rate"
 #        @total_net_freight="32.1", 
 #        @rate_zone="51">
 module Fedex
+  #Exceptions: Fedex::RateError
   class RateError < StandardError; end
 end
