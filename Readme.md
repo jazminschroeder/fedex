@@ -33,9 +33,9 @@ Define the recipient:
                     :company => "Company", 
                     :phone_number => "555-555-5555", 
                     :address => "Main Street", 
-                    :city => "City", 
-                    :state => "ST", 
-                    :postal_code => "55555", 
+                    :city => "Franklin Park", 
+                    :state => "IL", 
+                    :postal_code => "60131", 
                     :country_code => "US", 
                     :residential => "false" }
 Define the packages(multiple packages in a single shipment are allowed):
