@@ -64,7 +64,7 @@ module Fedex
         rate_details = [response[:rate_reply][:rate_reply_details][:rated_shipment_details]].flatten.first[:shipment_rate_detail]
         rate = Fedex::Rate.new(rate_details)
     else
-        error_message = (response[:rate_reply].nil? ? api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"] : response[:rate_reply][:notifications][:message]) rescue "Unexpected error has occurred..."
+        error_message = (response[:rate_reply].nil? ? api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"] : [response[:rate_reply][:notifications]].flatten.first[:message]) rescue "Unexpected error has occurred"
         raise RateError, error_message 
       end
     end
@@ -129,7 +129,7 @@ module Fedex
     def add_requested_shipment(xml)
       xml.RequestedShipment{
         xml.DropoffType @shipping_options[:drop_off_type] ||= "REGULAR_PICKUP"
-        xml.ServiceType @service_type
+        xml.ServiceType service_type
         xml.PackagingType @shipping_options[:packaging_type] ||= "YOUR_PACKAGING"
         add_shipper(xml)
         add_recipient(xml)
@@ -276,5 +276,13 @@ module Fedex
       (!response[:rate_reply].nil? and %w{SUCCESS WARNING NOTE}.include? response[:rate_reply][:highest_severity])
     end
     
+    # Use GROUND_HOME_DELIVERY for shipments going to a residential address within the US.
+    def service_type
+      if @recipient[:residential].to_s =~ /true/i and @service_type =~ /GROUND/i and @recipient[:country_code] =~ /US/i
+        "GROUND_HOME_DELIVERY"
+      else
+        @service_type
+      end  
+    end
   end
 end
