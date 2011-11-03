@@ -13,9 +13,9 @@ Gem::Specification.new do |s|
   s.description = %q{Ruby Library to use Fedex Web Services(version 10)}
 
   s.rubyforge_project = "fedex"
-  s.add_development_dependency "rspec"
-  s.add_dependency 'httparty'
-  s.add_dependency 'nokogiri'
+  s.add_development_dependency "rspec",   '~> 2.6.0'
+  s.add_dependency 'httparty',            '~> 0.8.0'
+  s.add_dependency 'nokogiri',            '~> 1.5.0'
   # s.add_runtime_dependency "rest-client"
 
   s.files         = `git ls-files`.split("\n")

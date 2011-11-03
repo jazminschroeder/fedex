@@ -1,11 +1,11 @@
 require 'spec_helper'
 describe Fedex::Shipment do
   let(:test_keys) do
-    {:key => "11111", :password => "11111", :account_number => "11111", :meter => "11111", :mode => "test"} 
+    {:key => "xxxx", :password => "xxxx", :account_number => "xxxx", :meter => "xxxx", :mode => "test"} 
   end  
   
   let(:production_keys) do
-    {:key => "11111", :password => "11111", :account_number => "11111", :meter => "11111", :mode => "production"} 
+    {:key => "xxxx", :password => "xxxx", :account_number => "xxxx", :meter => "xxxx", :mode => "production"} 
   end  
   
   context "missing required parameters" do
