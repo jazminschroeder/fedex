@@ -6,7 +6,7 @@ module Fedex
     include HTTParty
     format :xml
     # If true the rate method will return the complete response from the Fedex Web Service
-    attr_accessor :raw_response
+    attr_accessor :debug
     # Fedex Text URL
     TEST_URL = "https://gatewaybeta.fedex.com:443/xml/"
     
@@ -25,6 +25,12 @@ module Fedex
     # List of available DropOffTypes
     DROP_OFF_TYPES = %w(BUSINESS_SERVICE_CENTER DROP_BOX REGULAR_PICKUP REQUEST_COURIER STATION)
     
+    # Clearance Brokerage Type
+    CLEARANCE_BROKERAGE_TYPE = %w(BROKER_INCLUSIVE BROKER_INCLUSIVE_NON_RESIDENT_IMPORTER BROKER_SELECT BROKER_SELECT_NON_RESIDENT_IMPORTER BROKER_UNASSIGNED)
+    
+    # Recipient Custom ID Type
+    RECIPIENT_CUSTOM_ID_TYPE = %w(COMPANY INDIVIDUAL PASSPORT)
+   
     # In order to use Fedex rates API you must first apply for a developer(and later production keys), 
     # Visit {http://www.fedex.com/us/developer/ Fedex Developer Center} for more information about how to obtain your keys.
     # @param [String] key - Fedex web service key
@@ -50,7 +56,7 @@ module Fedex
     # @param [String] service_type, A valid fedex service type, to view a complete list of services Fedex::Shipment::SERVICE_TYPES
     def rate(options = {})
       requires!(options, :shipper, :recipient, :packages, :service_type)
-      @shipper, @recipient, @packages, @service_type = options[:shipper], options[:recipient], options[:packages], options[:service_type]
+      @shipper, @recipient, @packages, @service_type, @customs_clearance, @debug = options[:shipper], options[:recipient], options[:packages], options[:service_type], options[:customs_clearance], options[:debug]
       @shipping_options =  options[:shipping_options] ||={}
       process_request
     end
@@ -58,13 +64,13 @@ module Fedex
     # Sends post request to Fedex web service and parse the response, a Rate object is created if the response is successful 
     def process_request
       api_response = Shipment.post(api_url, :body => build_xml)
-      return api_response if @raw_response == true
+      puts api_response if @debug == true
       response = parse_response(api_response)
       if success?(response) 
         rate_details = [response[:rate_reply][:rate_reply_details][:rated_shipment_details]].flatten.first[:shipment_rate_detail]
         rate = Fedex::Rate.new(rate_details)
-    else
-        error_message = (response[:rate_reply].nil? ? api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"] : [response[:rate_reply][:notifications]].flatten.first[:message]) rescue "Unexpected error has occurred"
+      else
+        error_message = (response[:rate_reply].nil? ? api_response["Fault"]["detail"]["fault"]["reason"] : [response[:rate_reply][:notifications]].flatten.first[:message]) rescue $1
         raise RateError, error_message 
       end
     end
@@ -134,7 +140,7 @@ module Fedex
         add_shipper(xml)
         add_recipient(xml)
         add_shipping_charges_payment(xml)
-        add_commodities(xml) if @commoditites
+        add_customs_clearance(xml) if @customs_clearance
         xml.RateRequestTypes "ACCOUNT"
         add_packages(xml)
       }
@@ -210,46 +216,30 @@ module Fedex
     end
     
     # Note: this method has not been implemented
-    def add_commodities(xml)
+    def add_customs_clearance(xml)
       xml.CustomsClearanceDetail{
-        xml.Broker{
-          xml.AccountNumber @account_number
-          xml.Tins {
-            xml.TinType "BUSINESS_NATIONAL" 
-            xml.Number "123456"
-            xml.Usage "Usage"
-          }
-        }
-        xml.DutiesPayment{
-          xml.PaymentType "SENDER"
-          xml.Payor{
-            xml.AccountNumber @account_number
-            xml.CountryCode @shipper[:country_code]
-          }
-        }  
-        xml.Commodities{
-           xml.Name 2
-           xml.NumberOfPieces 2
-           xml.Description "Cotton Coat"
-           xml.CountryOfManufacture "US"
-           xml.HarmonizedCode "6103320000"
-           xml.Weight {
-             xml.Units "LB"
-             xml.Value 2
-           }
-           xml.Quantity 3
-           xml.UnitPrice {
-             xml.Currency "US"
-             xml.Amount "50"
-           }
-           xml.CustomsValue {
-             xml.Currency "US"
-             xml.Amount "50"
-           }
-        }
+        customs_to_xml(xml, @customs_clearance)
       }
-      
     end
+    
+    def customs_to_xml(xml, hash)
+      hash.each do |key, value|
+        if value.is_a?(Hash)
+          xml.send "#{camelize(key.to_s)}" do |x|
+            customs_to_xml(x, value)
+          end 
+        elsif value.is_a?(Array)
+          node = key
+          value.each do |v|
+            xml.send "#{camelize(node.to_s)}" do |x|
+              customs_to_xml(x, v)
+            end  
+          end  
+        else  
+          xml.send "#{camelize(key.to_s)}", value unless key.is_a?(Hash)
+        end  
+      end
+    end  
     
     # Parse response, convert keys to underscore symbols
     def parse_response(response)
@@ -284,5 +274,11 @@ module Fedex
         @service_type
       end  
     end
+    
+    # String to CamelCase
+    def camelize(str)
+      str.gsub(/\/(.?)/) { "::#{$1.upcase}" }.gsub(/(?:^|_)(.)/) { $1.upcase }
+    end
+    
   end
 end

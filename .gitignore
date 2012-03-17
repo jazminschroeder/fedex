@@ -7,3 +7,4 @@ doc/*
 .yardoc/*
 pkg/*
 .yardopts
+fedex_credentials.yml
