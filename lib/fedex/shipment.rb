@@ -215,13 +215,14 @@ module Fedex
       end  
     end
     
-    # Note: this method has not been implemented
+    # Add customs clearance(for international shipments)
     def add_customs_clearance(xml)
       xml.CustomsClearanceDetail{
         customs_to_xml(xml, @customs_clearance)
       }
     end
     
+    # Build nodes dinamically from the provided customs clearance hash
     def customs_to_xml(xml, hash)
       hash.each do |key, value|
         if value.is_a?(Hash)

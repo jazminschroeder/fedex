@@ -59,7 +59,7 @@ Create a Fedex::Shipment object using your FedEx credentials; mode should be eit
                                   :password => 'xxxx', 
                                   :account_number => 'xxxx', 
                                   :meter => 'xxx', 
-                                  :mode=>['production'|'development'])      
+                                  :mode=>'production')      
 
     rate = fedex.rate({:shipper=>shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND", :shipping_details => shipping_details})    
     
