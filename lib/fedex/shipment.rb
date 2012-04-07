@@ -1,4 +1,5 @@
 require 'fedex/credentials'
+require 'fedex/request/label'
 require 'fedex/request/rate'
 
 module Fedex
@@ -15,6 +16,10 @@ module Fedex
     # return a Fedex::Shipment object
     def initialize(options={})
       @credentials = Credentials.new(options)
+    end
+
+    def label(options = {})
+      Request::Label.new(@credentials, options).process_request
     end
 
     # @param [Hash] shipper, A hash containing the shipper information

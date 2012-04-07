@@ -1,9 +1,16 @@
 require 'fedex/request/base'
+require 'fedex/label'
 
 module Fedex
   module Request
-    class Rate < Base
-      XMLNS = "http://fedex.com/ws/rate/v10"
+    class Label < Base
+      XMLNS = "http://fedex.com/ws/ship/v10"
+
+      def initialize(credentials, options={})
+        super(credentials, options)
+        requires!(options, :filename)
+        @filename = options[:filename]
+      end
 
       # Sends post request to Fedex web service and parse the response, a Rate object is created if the response is successful
       def process_request
@@ -11,11 +18,13 @@ module Fedex
         puts api_response if @debug == true
         response = parse_response(api_response)
         if success?(response)
-          rate_details = [response[:rate_reply][:rate_reply_details][:rated_shipment_details]].flatten.first[:shipment_rate_detail]
-          Fedex::Rate.new(rate_details)
+          label_details = response[:process_shipment_reply][:completed_shipment_detail][:completed_package_details][:label]
+
+          create_pdf(label_details)
+          Fedex::Label.new(label_details)
         else
-          error_message = if response[:rate_reply]
-            [response[:rate_reply][:notifications]].flatten.first[:message]
+          error_message = if response[:process_shipment_reply]
+            [response[:process_shipment_reply][:notifications]].flatten.first[:message]
           else
             api_response["Fault"]["detail"]["fault"]["reason"]
           end rescue $1
@@ -23,10 +32,30 @@ module Fedex
         end
       end
 
+      def create_pdf(label_details)
+        [label_details[:parts]].flatten.each do |part|
+          if image = (Base64.decode64(part[:image]) if part[:image])
+            File.open(@filename, 'w') do |file|
+              file.write image
+            end
+          end
+        end
+      end
+
+      # Add Version to xml request, using the latest version V10 Sept/2011
+      def add_version(xml)
+        xml.Version{
+          xml.ServiceId 'ship'
+          xml.Major Fedex::Request::Base::VERSION
+          xml.Intermediate 0
+          xml.Minor 0
+        }
+      end
+
       # Build xml Fedex Web Service request
       def build_xml
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml.RateRequest(:xmlns => XMLNS){
+          xml.ProcessShipmentRequest(:xmlns => XMLNS){
             add_web_authentication_detail(xml)
             add_client_detail(xml)
             add_version(xml)
@@ -41,6 +70,7 @@ module Fedex
       # Add information for shipments
       def add_requested_shipment(xml)
         xml.RequestedShipment{
+          xml.ShipTimestamp Time.now.utc.iso8601(2)
           xml.DropoffType @shipping_options[:drop_off_type] ||= "REGULAR_PICKUP"
           xml.ServiceType service_type
           xml.PackagingType @shipping_options[:packaging_type] ||= "YOUR_PACKAGING"
@@ -48,6 +78,10 @@ module Fedex
           add_recipient(xml)
           add_shipping_charges_payment(xml)
           add_customs_clearance(xml) if @customs_clearance
+          xml.LabelSpecification {
+            xml.LabelFormatType "COMMON2D"
+            xml.ImageType "PDF"
+          }
           xml.RateRequestTypes "ACCOUNT"
           add_packages(xml)
         }
@@ -55,7 +89,8 @@ module Fedex
 
       # Successful request
       def success?(response)
-        (!response[:rate_reply].nil? and %w{SUCCESS WARNING NOTE}.include? response[:rate_reply][:highest_severity])
+        response[:process_shipment_reply] &&
+          %w{SUCCESS WARNING NOTE}.include?(response[:process_shipment_reply][:highest_severity])
       end
 
     end

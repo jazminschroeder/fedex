@@ -29,8 +29,8 @@ module Fedex
       @total_net_freight = options[:total_net_freight][:amount]
       @total_surcharges = options[:total_surcharges][:amount]
       @total_base_charge = options[:total_base_charge][:amount]
-      @total_net_fedex_charge = (options[:total_net_fe_dex_charge]||={})[:amount]
-      @total_rebates = (options[:total_rebates]||={})[:amount]
+      @total_net_fedex_charge = (options[:total_net_fe_dex_charge]||{})[:amount]
+      @total_rebates = (options[:total_rebates]||{})[:amount]
     end
   end
 end
