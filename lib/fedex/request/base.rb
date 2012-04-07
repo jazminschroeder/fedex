@@ -50,15 +50,6 @@ module Fedex
       @shipping_options =  options[:shipping_options] ||={}
     end
 
-
-    # @param [Hash] shipper, A hash containing the shipper information
-    # @param [Hash] recipient, A hash containing the recipient information
-    # @param [Array] packages, An arrary including a hash for each package being shipped
-    # @param [String] service_type, A valid fedex service type, to view a complete list of services Fedex::Shipment::SERVICE_TYPES
-    def rate
-      process_request
-    end
-
     # Sends post request to Fedex web service and parse the response, a Rate object is created if the response is successful
     def process_request
       api_response = self.class.post(api_url, :body => build_xml)
