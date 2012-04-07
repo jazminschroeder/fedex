@@ -1,5 +1,5 @@
 require 'fedex/credentials'
-require 'fedex/request'
+require 'fedex/request/rate'
 
 module Fedex
   class Shipment
@@ -22,7 +22,7 @@ module Fedex
     # @param [Array] packages, An arrary including a hash for each package being shipped
     # @param [String] service_type, A valid fedex service type, to view a complete list of services Fedex::Shipment::SERVICE_TYPES
     def rate(options = {})
-      Request.new(@credentials, options).rate
+      Request::Rate.new(@credentials, options).process_request
     end
 
   end
