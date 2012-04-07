@@ -16,21 +16,32 @@ module Fedex
     end
 
     describe "rate service" do
-      before(:each) do
-        @fedex = Shipment.new(fedex_credentials)
-        @shipper = {:name => "Sender", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Harrison", :state => "AR", :postal_code => "72601", :country_code => "US"}
-        @recipient = {:name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Frankin Park", :state => "IL", :postal_code => "60131", :country_code => "US", :residential => true }
-        @packages = []
-        @packages << { :weight => {:units => "LB", :value => 2},
-                       :dimensions => {:length => 10, :width => 5, :height => 4, :units => "IN" } }
-        @packages << { :weight => {:units => "LB", :value => 6},
-                       :dimensions => {:length => 5, :width => 5, :height => 4, :units => "IN" } }
-        @shipping_options = { :packaging_type => "YOUR_PACKAGING", :drop_off_type => "REGULAR_PICKUP" }
+      let(:fedex) { Shipment.new(fedex_credentials) }
+      let(:shipper) do
+        {:name => "Sender", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Harrison", :state => "AR", :postal_code => "72601", :country_code => "US"}
+      end
+      let(:recipient) do
+        {:name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Frankin Park", :state => "IL", :postal_code => "60131", :country_code => "US", :residential => true }
+      end
+      let(:packages) do
+        [
+          {
+            :weight => {:units => "LB", :value => 2},
+            :dimensions => {:length => 10, :width => 5, :height => 4, :units => "IN" }
+          },
+          {
+            :weight => {:units => "LB", :value => 6},
+            :dimensions => {:length => 5, :width => 5, :height => 4, :units => "IN" }
+          }
+        ]
+      end
+      let(:shipping_options) do
+        { :packaging_type => "YOUR_PACKAGING", :drop_off_type => "REGULAR_PICKUP" }
       end
 
       context "domestic shipment", :vcr do
         it "should return a rate" do
-          rate = @fedex.rate({:shipper => @shipper, :recipient => @recipient, :packages => @packages, :service_type => "FEDEX_GROUND"})
+          rate = fedex.rate({:shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
           rate.should be_an_instance_of(Rate)
         end
       end
@@ -38,7 +49,7 @@ module Fedex
       context "canadian shipment", :vcr do
         it "should return a rate" do
           canadian_recipient = {:name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address=>"Address Line 1", :city => "Richmond", :state => "BC", :postal_code => "V7C4V4", :country_code => "CA", :residential => "true" }
-          rate = @fedex.rate({:shipper => @shipper, :recipient => canadian_recipient, :packages => @packages, :service_type => "FEDEX_GROUND"})
+          rate = fedex.rate({:shipper => shipper, :recipient => canadian_recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
           rate.should be_an_instance_of(Rate)
         end
       end
@@ -126,7 +137,7 @@ module Fedex
                             :customs_value => {:currency => "USD", :amount => "150" } }
 
           customs_clearance = { :broker => broker, :clearance_brokerage => clearance_brokerage, :importer_of_record => importer_of_record, :recipient_customs_id => recipient_customs_id, :duties_payment => duties_payment, :commodities => commodities }
-          rate = @fedex.rate({:shipper => @shipper, :recipient => canadian_recipient, :packages => @packages, :service_type => "FEDEX_GROUND", :customs_clearance => customs_clearance})
+          rate = fedex.rate({:shipper => shipper, :recipient => canadian_recipient, :packages => packages, :service_type => "FEDEX_GROUND", :customs_clearance => customs_clearance})
           rate.should be_an_instance_of(Rate)
         end
       end
