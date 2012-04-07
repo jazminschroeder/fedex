@@ -1,7 +1,5 @@
 require 'spec_helper'
 describe Fedex::Shipment do
-  fedex_credentials ||= YAML.load(File.read("#{File.dirname(__FILE__)}/config/fedex_credentials.yml"))["development"]
-
   context "missing required parameters" do
     it "should raise Fedex::Rate exception" do
       lambda{ Fedex::Shipment.new}.should raise_error(Fedex::RateError)
