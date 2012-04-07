@@ -115,26 +115,29 @@ module Fedex
 
           customs_value = { :currency => "USD",
                             :amount => "200" }
-          commodities = []
-          commodities << { :name => "Cotton Coat",
-                           :number_of_pieces => "2",
-                           :description => "Cotton Coat",
-                           :country_of_manufacture => "US",
-                           :harmonized_code => "6103320000",
-                           :weight => {:units => "LB", :value => "2"},
-                           :quantity => "3",
-                           :unit_price => {:currency => "USD", :amount => "50" },
-                           :customs_value => {:currency => "USD", :amount => "150" } }
-
-          commodities << { :name => "Poster",
-                            :number_of_pieces => "1",
-                            :description => "Paper Poster",
-                            :country_of_manufacture => "US",
-                            :harmonized_code => "4817100000",
-                            :weight => {:units => "LB", :value => "0.2"},
-                            :quantity => "3",
-                            :unit_price => {:currency => "USD", :amount => "50" },
-                            :customs_value => {:currency => "USD", :amount => "150" } }
+          commodities = [{
+              :name => "Cotton Coat",
+              :number_of_pieces => "2",
+              :description => "Cotton Coat",
+              :country_of_manufacture => "US",
+              :harmonized_code => "6103320000",
+              :weight => {:units => "LB", :value => "2"},
+              :quantity => "3",
+              :unit_price => {:currency => "USD", :amount => "50" },
+              :customs_value => {:currency => "USD", :amount => "150" }
+            },
+            {
+              :name => "Poster",
+              :number_of_pieces => "1",
+              :description => "Paper Poster",
+              :country_of_manufacture => "US",
+              :harmonized_code => "4817100000",
+              :weight => {:units => "LB", :value => "0.2"},
+              :quantity => "3",
+              :unit_price => {:currency => "USD", :amount => "50" },
+              :customs_value => {:currency => "USD", :amount => "150" }
+            }
+          ]
 
           customs_clearance = { :broker => broker, :clearance_brokerage => clearance_brokerage, :importer_of_record => importer_of_record, :recipient_customs_id => recipient_customs_id, :duties_payment => duties_payment, :commodities => commodities }
           rate = fedex.rate({:shipper => shipper, :recipient => canadian_recipient, :packages => packages, :service_type => "FEDEX_GROUND", :customs_clearance => customs_clearance})
