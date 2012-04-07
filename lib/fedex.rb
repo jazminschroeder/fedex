@@ -49,6 +49,7 @@ Dir.glob(File.expand_path('../fedex/*', __FILE__)) { |f| require f }
 #        @total_net_freight="32.1",
 #        @rate_zone="51">
 module Fedex
+  require 'fedex/version'
   #Exceptions: Fedex::RateError
   class RateError < StandardError; end
 end

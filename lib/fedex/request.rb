@@ -1,7 +1,6 @@
 require 'httparty'
 require 'nokogiri'
 module Fedex
-  #Fedex::Shipment
   class Request
     include Helpers
     include HTTParty
