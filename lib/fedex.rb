@@ -1,3 +1,4 @@
+require 'fedex/helpers'
 Dir.glob(File.expand_path('../fedex/*', __FILE__)) { |f| require f }
 # Get shipping rates trough Fedex Web Services
 #

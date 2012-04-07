@@ -3,6 +3,7 @@ require 'nokogiri'
 module Fedex
   #Fedex::Shipment
   class Request
+    include Helpers
     include HTTParty
     format :xml
     # If true the rate method will return the complete response from the Fedex Web Service
@@ -89,11 +90,6 @@ module Fedex
     end
 
     private
-    # Helper method to validate required fields
-    def requires!(hash, *params)
-       params.each { |param| raise RateError, "Missing Required Parameter #{param}" if hash[param].nil? }
-    end
-
     # Add web authentication detail information(key and password) to xml request
     def add_web_authentication_detail(xml)
       xml.WebAuthenticationDetail{
@@ -249,10 +245,6 @@ module Fedex
       end
     end
 
-    def underscorize(key) #:nodoc:
-      key.to_s.sub(/^(v[0-9]+|ns):/, "").gsub(/([A-Z]+)([A-Z][a-z])/,'\1_\2').gsub(/([a-z\d])([A-Z])/,'\1_\2').downcase
-    end
-
     # Successful request
     def success?(response)
       (!response[:rate_reply].nil? and %w{SUCCESS WARNING NOTE}.include? response[:rate_reply][:highest_severity])
@@ -265,11 +257,6 @@ module Fedex
       else
         @service_type
       end
-    end
-
-    # String to CamelCase
-    def camelize(str)
-      str.gsub(/\/(.?)/) { "::#{$1.upcase}" }.gsub(/(?:^|_)(.)/) { $1.upcase }
     end
 
   end

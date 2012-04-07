@@ -1,5 +1,6 @@
 module Fedex
   class Credentials
+    include Helpers
     attr_reader :key, :password, :account_number, :meter, :mode
 
     # In order to use Fedex rates API you must first apply for a developer(and later production keys),
@@ -18,12 +19,6 @@ module Fedex
       @account_number = options[:account_number]
       @meter = options[:meter]
       @mode = options[:mode]
-    end
-
-    private
-    # Helper method to validate required fields
-    def requires!(hash, *params)
-       params.each { |param| raise RateError, "Missing Required Parameter #{param}" if hash[param].nil? }
     end
   end
 end
