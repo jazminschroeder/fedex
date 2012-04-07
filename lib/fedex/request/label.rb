@@ -4,15 +4,15 @@ require 'fedex/label'
 module Fedex
   module Request
     class Label < Base
-      XMLNS = "http://fedex.com/ws/ship/v10"
-
       def initialize(credentials, options={})
         super(credentials, options)
         requires!(options, :filename)
         @filename = options[:filename]
       end
 
-      # Sends post request to Fedex web service and parse the response, a Rate object is created if the response is successful
+      # Sends post request to Fedex web service and parse the response.
+      # A Fedex::Label object is created if the response is successful and
+      # a PDF file is created with the label at the specified location.
       def process_request
         api_response = self.class.post(api_url, :body => build_xml)
         puts api_response if @debug == true
@@ -30,39 +30,6 @@ module Fedex
           end rescue $1
           raise RateError, error_message
         end
-      end
-
-      def create_pdf(label_details)
-        [label_details[:parts]].flatten.each do |part|
-          if image = (Base64.decode64(part[:image]) if part[:image])
-            File.open(@filename, 'w') do |file|
-              file.write image
-            end
-          end
-        end
-      end
-
-      # Add Version to xml request, using the latest version V10 Sept/2011
-      def add_version(xml)
-        xml.Version{
-          xml.ServiceId 'ship'
-          xml.Major Fedex::Request::Base::VERSION
-          xml.Intermediate 0
-          xml.Minor 0
-        }
-      end
-
-      # Build xml Fedex Web Service request
-      def build_xml
-        builder = Nokogiri::XML::Builder.new do |xml|
-          xml.ProcessShipmentRequest(:xmlns => XMLNS){
-            add_web_authentication_detail(xml)
-            add_client_detail(xml)
-            add_version(xml)
-            add_requested_shipment(xml)
-          }
-        end
-        builder.doc.root.to_xml
       end
 
       private
@@ -85,6 +52,33 @@ module Fedex
           xml.RateRequestTypes "ACCOUNT"
           add_packages(xml)
         }
+      end
+
+      # Build xml Fedex Web Service request
+      def build_xml
+        builder = Nokogiri::XML::Builder.new do |xml|
+          xml.ProcessShipmentRequest(:xmlns => "http://fedex.com/ws/ship/v10"){
+            add_web_authentication_detail(xml)
+            add_client_detail(xml)
+            add_version(xml)
+            add_requested_shipment(xml)
+          }
+        end
+        builder.doc.root.to_xml
+      end
+
+      def create_pdf(label_details)
+        [label_details[:parts]].flatten.each do |part|
+          if image = (Base64.decode64(part[:image]) if part[:image])
+            File.open(@filename, 'w') do |file|
+              file.write image
+            end
+          end
+        end
+      end
+
+      def service_id
+        'ship'
       end
 
       # Successful request

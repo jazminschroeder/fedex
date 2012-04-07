@@ -3,8 +3,6 @@ require 'fedex/request/base'
 module Fedex
   module Request
     class Rate < Base
-      XMLNS = "http://fedex.com/ws/rate/v10"
-
       # Sends post request to Fedex web service and parse the response, a Rate object is created if the response is successful
       def process_request
         api_response = self.class.post(api_url, :body => build_xml)
@@ -21,19 +19,6 @@ module Fedex
           end rescue $1
           raise RateError, error_message
         end
-      end
-
-      # Build xml Fedex Web Service request
-      def build_xml
-        builder = Nokogiri::XML::Builder.new do |xml|
-          xml.RateRequest(:xmlns => XMLNS){
-            add_web_authentication_detail(xml)
-            add_client_detail(xml)
-            add_version(xml)
-            add_requested_shipment(xml)
-          }
-        end
-        builder.doc.root.to_xml
       end
 
       private
@@ -53,9 +38,27 @@ module Fedex
         }
       end
 
+      # Build xml Fedex Web Service request
+      def build_xml
+        builder = Nokogiri::XML::Builder.new do |xml|
+          xml.RateRequest(:xmlns => "http://fedex.com/ws/rate/v10"){
+            add_web_authentication_detail(xml)
+            add_client_detail(xml)
+            add_version(xml)
+            add_requested_shipment(xml)
+          }
+        end
+        builder.doc.root.to_xml
+      end
+
+      def service_id
+        'crs'
+      end
+
       # Successful request
       def success?(response)
-        (!response[:rate_reply].nil? and %w{SUCCESS WARNING NOTE}.include? response[:rate_reply][:highest_severity])
+        response[:rate_reply] &&
+          %w{SUCCESS WARNING NOTE}.include?(response[:rate_reply][:highest_severity])
       end
 
     end

@@ -43,7 +43,7 @@ module Fedex
       # @param [String] meter - Fedex meter number
       # @param [String] mode - [development/production]
       #
-      # return a Fedex::Shipment object
+      # return a Fedex::Request::Base object
       def initialize(credentials, options={})
         requires!(options, :shipper, :recipient, :packages, :service_type)
         @credentials = credentials
@@ -51,40 +51,10 @@ module Fedex
         @shipping_options =  options[:shipping_options] ||={}
       end
 
-      # Sends post request to Fedex web service and parse the response, a Rate object is created if the response is successful
+      # Sends post request to Fedex web service and parse the response.
+      # Implemented by each subclass
       def process_request
-        api_response = self.class.post(api_url, :body => build_xml)
-        puts api_response if @debug == true
-        response = parse_response(api_response)
-        if success?(response)
-          rate_details = [response[:rate_reply][:rate_reply_details][:rated_shipment_details]].flatten.first[:shipment_rate_detail]
-          Fedex::Rate.new(rate_details)
-        else
-          error_message = if response[:rate_reply]
-            [response[:rate_reply][:notifications]].flatten.first[:message]
-          else
-            api_response["Fault"]["detail"]["fault"]["reason"]
-          end rescue $1
-          raise RateError, error_message
-        end
-      end
-
-      # Build xml Fedex Web Service request
-      def build_xml
-        builder = Nokogiri::XML::Builder.new do |xml|
-          xml.RateRequest(:xmlns => "http://fedex.com/ws/rate/v10"){
-            add_web_authentication_detail(xml)
-            add_client_detail(xml)
-            add_version(xml)
-            add_requested_shipment(xml)
-          }
-        end
-        builder.doc.root.to_xml
-      end
-
-      # Fedex Web Service Api
-      def api_url
-        @credentials.mode == "production" ? PRODUCTION_URL : TEST_URL
+        raise NotImplementedError, "Override process_request in subclass"
       end
 
       private
@@ -109,7 +79,7 @@ module Fedex
       # Add Version to xml request, using the latest version V10 Sept/2011
       def add_version(xml)
         xml.Version{
-          xml.ServiceId 'crs'
+          xml.ServiceId service_id
           xml.Major VERSION
           xml.Intermediate 0
           xml.Minor 0
@@ -207,6 +177,17 @@ module Fedex
         }
       end
 
+      # Fedex Web Service Api
+      def api_url
+        @credentials.mode == "production" ? PRODUCTION_URL : TEST_URL
+      end
+
+      # Build xml Fedex Web Service request
+      # Implemented by each subclass
+      def build_xml
+        raise NotImplementedError, "Override build_xml in subclass"
+      end
+
       # Build nodes dinamically from the provided customs clearance hash
       def customs_to_xml(xml, hash)
         hash.each do |key, value|
@@ -243,9 +224,8 @@ module Fedex
         end
       end
 
-      # Successful request
-      def success?(response)
-        (!response[:rate_reply].nil? and %w{SUCCESS WARNING NOTE}.include? response[:rate_reply][:highest_severity])
+      def service_id
+        'crs'
       end
 
       # Use GROUND_HOME_DELIVERY for shipments going to a residential address within the US.
@@ -255,6 +235,11 @@ module Fedex
         else
           @service_type
         end
+      end
+
+      # Successful request
+      def success?(response)
+        (!response[:rate_reply].nil? and %w{SUCCESS WARNING NOTE}.include? response[:rate_reply][:highest_severity])
       end
 
     end
