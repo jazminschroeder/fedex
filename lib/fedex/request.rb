@@ -1,5 +1,8 @@
 require 'httparty'
 require 'nokogiri'
+require 'fedex/helpers'
+require 'fedex/rate'
+
 module Fedex
   class Request
     include Helpers

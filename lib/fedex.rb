@@ -1,5 +1,5 @@
-require 'fedex/helpers'
-Dir.glob(File.expand_path('../fedex/*', __FILE__)) { |f| require f }
+require 'fedex/shipment'
+
 # Get shipping rates trough Fedex Web Services
 #
 # In order to use the API you will need to apply for developer/production credentials,

@@ -1,3 +1,5 @@
+require 'fedex/helpers'
+
 module Fedex
   class Credentials
     include Helpers

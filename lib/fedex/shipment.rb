@@ -1,3 +1,6 @@
+require 'fedex/credentials'
+require 'fedex/request'
+
 module Fedex
   class Shipment
 
