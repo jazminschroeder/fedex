@@ -37,23 +37,15 @@ module Fedex
     #
     # return a Fedex::Shipment object
     def initialize(options={})
-      requires!(options, :key, :password, :account_number, :meter, :mode)
-      @options = options
+      @credentials = Credentials.new(options)
     end
-
 
     # @param [Hash] shipper, A hash containing the shipper information
     # @param [Hash] recipient, A hash containing the recipient information
     # @param [Array] packages, An arrary including a hash for each package being shipped
     # @param [String] service_type, A valid fedex service type, to view a complete list of services Fedex::Shipment::SERVICE_TYPES
     def rate(options = {})
-      Request.new(@options.merge(options)).rate
-    end
-
-    private
-    # Helper method to validate required fields
-    def requires!(hash, *params)
-       params.each { |param| raise RateError, "Missing Required Parameter #{param}" if hash[param].nil? }
+      Request.new(@credentials, options).rate
     end
 
   end

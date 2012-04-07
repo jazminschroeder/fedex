@@ -40,13 +40,9 @@ module Fedex
     # @param [String] mode - [development/production]
     #
     # return a Fedex::Shipment object
-    def initialize(options={})
-      requires!(options, :key, :password, :account_number, :meter, :mode, :shipper, :recipient, :packages, :service_type)
-      @key = options[:key]
-      @password = options[:password]
-      @account_number = options[:account_number]
-      @meter = options[:meter]
-      @mode = options[:mode]
+    def initialize(credentials, options={})
+      requires!(options, :shipper, :recipient, :packages, :service_type)
+      @credentials = credentials
       @shipper, @recipient, @packages, @service_type, @customs_clearance, @debug = options[:shipper], options[:recipient], options[:packages], options[:service_type], options[:customs_clearance], options[:debug]
       @shipping_options =  options[:shipping_options] ||={}
     end
@@ -89,7 +85,7 @@ module Fedex
 
     # Fedex Web Service Api
     def api_url
-      @mode == "production" ? PRODUCTION_URL : TEST_URL
+      @credentials.mode == "production" ? PRODUCTION_URL : TEST_URL
     end
 
     private
@@ -102,8 +98,8 @@ module Fedex
     def add_web_authentication_detail(xml)
       xml.WebAuthenticationDetail{
         xml.UserCredential{
-          xml.Key @key
-          xml.Password @password
+          xml.Key @credentials.key
+          xml.Password @credentials.password
         }
       }
     end
@@ -111,8 +107,8 @@ module Fedex
     # Add Client Detail information(account_number and meter_number) to xml request
     def add_client_detail(xml)
       xml.ClientDetail{
-        xml.AccountNumber @account_number
-        xml.MeterNumber @meter
+        xml.AccountNumber @credentials.account_number
+        xml.MeterNumber @credentials.meter
       }
     end
 
@@ -183,7 +179,7 @@ module Fedex
       xml.ShippingChargesPayment{
         xml.PaymentType "SENDER"
         xml.Payor{
-          xml.AccountNumber @account_number
+          xml.AccountNumber @credentials.account_number
           xml.CountryCode @shipper[:country_code]
         }
       }
