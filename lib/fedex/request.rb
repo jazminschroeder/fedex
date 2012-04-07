@@ -68,7 +68,11 @@ module Fedex
         rate_details = [response[:rate_reply][:rate_reply_details][:rated_shipment_details]].flatten.first[:shipment_rate_detail]
         rate = Rate.new(rate_details)
       else
-        error_message = (response[:rate_reply].nil? ? api_response["Fault"]["detail"]["fault"]["reason"] : [response[:rate_reply][:notifications]].flatten.first[:message]) rescue $1
+        error_message = if response[:rate_reply]
+          [response[:rate_reply][:notifications]].flatten.first[:message]
+        else
+          api_response["Fault"]["detail"]["fault"]["reason"]
+        end rescue $1
         raise RateError, error_message
       end
     end
