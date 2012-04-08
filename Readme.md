@@ -61,9 +61,16 @@ Create a Fedex::Shipment object using your FedEx credentials; mode should be eit
                                   :meter => 'xxx',
                                   :mode=>'production')
 
-To find the rate
+### ** Getting Shipping Rates **
 
-    rate = fedex.rate({:shipper=>shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND", :shipping_details => shipping_details})
+
+To find shipping rate:
+
+    rate = fedex.rate({:shipper=>shipper, 
+                       :recipient => recipient, 
+                       :packages => packages, 
+                       :service_type => "FEDEX_GROUND", 
+                       :shipping_details => shipping_details})
 
 Fedex provides multiple total values; total_net_charge is the final amount you are looking for.
 
@@ -80,9 +87,16 @@ Fedex provides multiple total values; total_net_charge is the final amount you a
           @total_net_freight="32.1",
           @rate_zone="51">
 
-To create a label for a shipment
+### ** Generate a shipping label(PDF) **
 
-    label = fedex.label({:filename => "example.pdf", :shipper=>shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND", :shipping_details => shipping_details})
+To create a label for a shipment:
+
+    label = fedex.label({:filename => "my_dir/example.pdf", 
+                         :shipper=>shipper, 
+                         :recipient => recipient, 
+                         :packages => packages, 
+                         :service_type => "FEDEX_GROUND", 
+                         :shipping_details => shipping_details})
 
 The label will be saved to the file system as the filename you specify and is Adobe PDF format.
 
@@ -92,8 +106,13 @@ The label will be saved to the file system as the filename you specify and is Ad
     Fedex::Shipment::PACKAGING_TYPES
     Fedex::Shipment::DROP_OFF_TYPES
 
+# Contribuitors:
+[jazminschroeder](http://github.com/jazminschroeder)(Jazmin Schroeder)
+
+[parndt](https://github.com/parndt)(Philip Arndt)
+
 # Copyright/License:
-Copyright 2011 Jazmin Schroeder
+Copyright 2011 [Jazmin Schroeder](http://jazminschroeder.com)
 
 This gem is made available under the MIT license
 
