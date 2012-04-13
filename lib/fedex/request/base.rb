@@ -21,7 +21,7 @@ module Fedex
       VERSION = 10
 
       # List of available Service Types
-      SERVICE_TYPES = %w(EUROPE_FIRST_INTERNATIONAL_PRIORITY FEDEX_1_DAY_FREIGHT FEDEX_2_DAY FEDEX_2_DAY_AM FEDEX_2_DAY_FREIGHT FEDEX_3_DAY_FREIGHT     FEDEX_EXPRESS_SAVER FEDEX_FIRST_FREIGHT FEDEX_FREIGHT_ECONOMY  FEDEX_FREIGHT_PRIORITY  FEDEX_GROUND FIRST_OVERNIGHT GROUND_HOME_DELIVERY  INTERNATIONAL_ECONOMY  INTERNATIONAL_ECONOMY_FREIGHT  INTERNATIONAL_FIRST INTERNATIONAL_PRIORITY  INTERNATIONAL_PRIORITY_FREIGHT  PRIORITY_OVERNIGHT SMART_POST STANDARD_OVERNIGHT)
+      SERVICE_TYPES = %w(EUROPE_FIRST_INTERNATIONAL_PRIORITY FEDEX_1_DAY_FREIGHT FEDEX_2_DAY FEDEX_2_DAY_AM FEDEX_2_DAY_FREIGHT FEDEX_3_DAY_FREIGHT FEDEX_EXPRESS_SAVER FEDEX_FIRST_FREIGHT FEDEX_FREIGHT_ECONOMY FEDEX_FREIGHT_PRIORITY FEDEX_GROUND FIRST_OVERNIGHT GROUND_HOME_DELIVERY INTERNATIONAL_ECONOMY INTERNATIONAL_ECONOMY_FREIGHT INTERNATIONAL_FIRST INTERNATIONAL_PRIORITY INTERNATIONAL_PRIORITY_FREIGHT PRIORITY_OVERNIGHT SMART_POST STANDARD_OVERNIGHT)
 
       # List of available Packaging Type
       PACKAGING_TYPES = %w(FEDEX_10KG_BOX FEDEX_25KG_BOX FEDEX_BOX FEDEX_ENVELOPE FEDEX_PAK FEDEX_TUBE YOUR_PACKAGING)
@@ -110,7 +110,9 @@ module Fedex
             xml.PhoneNumber @shipper[:phone_number]
           }
           xml.Address {
-            xml.StreetLines @shipper[:address]
+            Array(@shipper[:address]).take(2).each do |address_line|
+              xml.StreetLines address_line
+            end
             xml.City @shipper[:city]
             xml.StateOrProvinceCode @shipper[:state]
             xml.PostalCode @shipper[:postal_code]
@@ -128,7 +130,9 @@ module Fedex
             xml.PhoneNumber @recipient[:phone_number]
           }
           xml.Address {
-            xml.StreetLines @recipient[:address]
+            Array(@recipient[:address]).take(2).each do |address_line|
+              xml.StreetLines address_line
+            end
             xml.City @recipient[:city]
             xml.StateOrProvinceCode @recipient[:state]
             xml.PostalCode @recipient[:postal_code]
