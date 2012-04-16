@@ -1,5 +1,6 @@
 require 'fedex/request/base'
 require 'fedex/label'
+require 'fileutils'
 
 module Fedex
   module Request
@@ -70,6 +71,7 @@ module Fedex
       def create_pdf(label_details)
         [label_details[:parts]].flatten.each do |part|
           if image = (Base64.decode64(part[:image]) if part[:image])
+            FileUtils.mkdir_p File.dirname(@filename)
             File.open(@filename, 'w') do |file|
               file.write image
             end
