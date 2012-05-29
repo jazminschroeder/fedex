@@ -164,12 +164,14 @@ module Fedex
               xml.Units package[:weight][:units]
               xml.Value package[:weight][:value]
             }
-            xml.Dimensions{
-              xml.Length package[:dimensions][:length]
-              xml.Width package[:dimensions][:width]
-              xml.Height package[:dimensions][:height]
-              xml.Units package[:dimensions][:units]
-            }
+            if package[:dimensions]
+              xml.Dimensions{
+                xml.Length package[:dimensions][:length]
+                xml.Width package[:dimensions][:width]
+                xml.Height package[:dimensions][:height]
+                xml.Units package[:dimensions][:units]
+              }
+            end
             (package[:customer_refrences] || []).each do |reference|
               xml.CustomerReferences reference
             end
