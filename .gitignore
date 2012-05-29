@@ -9,3 +9,4 @@ pkg/*
 .yardopts
 fedex_credentials.yml
 spec/vcr
+hacks

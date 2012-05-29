@@ -19,9 +19,14 @@ module Fedex
         puts api_response if @debug == true
         response = parse_response(api_response)
         if success?(response)
-          label_details = response[:process_shipment_reply][:completed_shipment_detail][:completed_package_details][:label]
+          package_details = response[:process_shipment_reply][:completed_shipment_detail][:completed_package_details]
+
+          label_details                   = package_details[:label]
+          label_details[:format]          = @format
+          label_details[:tracking_number] = package_details[:tracking_ids][:tracking_number]
 
           create_pdf(label_details) if @format == 'pdf' && @filename
+
           Fedex::Label.new(label_details)
         else
           error_message = if response[:process_shipment_reply]
