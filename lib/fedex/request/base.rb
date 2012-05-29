@@ -170,6 +170,9 @@ module Fedex
               xml.Height package[:dimensions][:height]
               xml.Units package[:dimensions][:units]
             }
+            (package[:customer_refrences] || []).each do |reference|
+              xml.CustomerReferences reference
+            end
           }
         end
       end

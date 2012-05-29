@@ -7,8 +7,8 @@ module Fedex
     class Label < Base
       def initialize(credentials, options={})
         super(credentials, options)
-        requires!(options, :filename)
         @filename = options[:filename]
+        @format   = options[:format] || 'pdf'
       end
 
       # Sends post request to Fedex web service and parse the response.
@@ -21,7 +21,7 @@ module Fedex
         if success?(response)
           label_details = response[:process_shipment_reply][:completed_shipment_detail][:completed_package_details][:label]
 
-          create_pdf(label_details)
+          create_pdf(label_details) if @format == 'pdf' && @filename
           Fedex::Label.new(label_details)
         else
           error_message = if response[:process_shipment_reply]
@@ -48,7 +48,7 @@ module Fedex
           add_customs_clearance(xml) if @customs_clearance
           xml.LabelSpecification {
             xml.LabelFormatType "COMMON2D"
-            xml.ImageType "PDF"
+            xml.ImageType       @format.upcase
           }
           xml.RateRequestTypes "ACCOUNT"
           add_packages(xml)
