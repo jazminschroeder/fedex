@@ -9,6 +9,7 @@ module Fedex
         super(credentials, options)
         requires!(options, :filename)
         @filename = options[:filename]
+        @label_specification = options[:label_specification] || {}
       end
 
       # Sends post request to Fedex web service and parse the response.
@@ -21,7 +22,7 @@ module Fedex
         if success?(response)
           label_details = response[:process_shipment_reply][:completed_shipment_detail][:completed_package_details][:label]
 
-          create_pdf(label_details)
+          create_label_file(label_details)
           Fedex::Label.new(label_details)
         else
           error_message = if response[:process_shipment_reply]
@@ -46,12 +47,18 @@ module Fedex
           add_recipient(xml)
           add_shipping_charges_payment(xml)
           add_customs_clearance(xml) if @customs_clearance
-          xml.LabelSpecification {
-            xml.LabelFormatType "COMMON2D"
-            xml.ImageType "PDF"
-          }
+          add_label_specification(xml)
           xml.RateRequestTypes "ACCOUNT"
           add_packages(xml)
+        }
+      end
+
+      # Add the label specification
+      def add_label_specification(xml)
+        xml.LabelSpecification {
+          xml.LabelFormatType @label_specification[:label_format_type] || "COMMON2D"
+          xml.ImageType @label_specification[:image_type] || "PDF"
+          xml.LabelStockType @label_specification[:label_stock_type] if @label_specification[:label_stock_type]
         }
       end
 
@@ -68,7 +75,7 @@ module Fedex
         builder.doc.root.to_xml
       end
 
-      def create_pdf(label_details)
+      def create_label_file(label_details)
         [label_details[:parts]].flatten.each do |part|
           if image = (Base64.decode64(part[:image]) if part[:image])
             FileUtils.mkdir_p File.dirname(@filename)
