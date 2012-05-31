@@ -12,8 +12,16 @@ module Fedex
       @image = Base64.decode64(options[:parts][:image]) if has_image?
     end
 
-    def label_name
-      [options[:tracking_number], options[:format]].join('.')
+    def name
+      [tracking_number, format].join('.')
+    end
+
+    def format
+      options[:format]
+    end
+
+    def tracking_number
+      options[:tracking_number]
     end
 
     def has_image?
