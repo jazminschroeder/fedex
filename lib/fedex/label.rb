@@ -1,4 +1,5 @@
 require 'base64'
+require 'pathname'
 
 module Fedex
   class Label
@@ -10,6 +11,10 @@ module Fedex
       @options = options
 
       @image = Base64.decode64(options[:parts][:image]) if has_image?
+
+      if file_name = @options[:file_name]
+        save(file_name, false)
+      end
     end
 
     def name
@@ -28,10 +33,11 @@ module Fedex
       options[:parts] && options[:parts][:image]
     end
 
-    def save(path)
+    def save(path, append_name = true)
       return unless has_image?
 
-      full_path = File.join(path, label_name)
+      full_path = Pathname.new(path)
+      full_path = full_path.join(name) if append_name
 
       File.open(full_path, 'wb') do|f|
         f.write(@image)

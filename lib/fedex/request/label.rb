@@ -24,8 +24,7 @@ module Fedex
           label_details                   = package_details[:label]
           label_details[:format]          = @format
           label_details[:tracking_number] = package_details[:tracking_ids][:tracking_number]
-
-          create_pdf(label_details) if @format == 'pdf' && @filename
+          label_details[:file_name]       = @filename
 
           Fedex::Label.new(label_details)
         else
@@ -71,17 +70,6 @@ module Fedex
           }
         end
         builder.doc.root.to_xml
-      end
-
-      def create_pdf(label_details)
-        [label_details[:parts]].flatten.each do |part|
-          if image = (Base64.decode64(part[:image]) if part[:image])
-            FileUtils.mkdir_p File.dirname(@filename)
-            File.open(@filename, 'w') do |file|
-              file.write image
-            end
-          end
-        end
       end
 
       def service_id

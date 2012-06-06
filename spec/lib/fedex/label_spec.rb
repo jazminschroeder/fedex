@@ -28,7 +28,10 @@ module Fedex
           File.join(Dir.tmpdir, "label#{rand(15000)}.pdf")
         }
         let(:options) do
-          {:shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND", :filename => filename}
+          { :shipper => shipper, :recipient => recipient,
+            :packages => packages, :service_type => "FEDEX_GROUND",
+            :filename => filename
+          }
         end
 
         before do
