@@ -1,5 +1,4 @@
 require 'fedex/request/base'
-require 'fedex/label'
 require 'fileutils'
 
 module Fedex

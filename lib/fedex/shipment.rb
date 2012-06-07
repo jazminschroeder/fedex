@@ -23,8 +23,11 @@ module Fedex
     # @param [Array] packages, An arrary including a hash for each package being shipped
     # @param [String] service_type, A valid fedex service type, to view a complete list of services Fedex::Shipment::SERVICE_TYPES
     # @param [String] filename, A location where the label will be saved
+    # @param [Hash] label_specification, A hash containing the label printer settings
     def label(options = {})
-      Request::Label.new(@credentials, options).process_request
+      request_label = Request::Label.new(@credentials, options)
+      request_label.process_request
+      request_label
     end
 
     # @param [Hash] shipper, A hash containing the shipper information
