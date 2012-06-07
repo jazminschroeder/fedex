@@ -5,6 +5,8 @@ require 'fileutils'
 module Fedex
   module Request
     class Label < Base
+      attr_reader :response_details
+
       def initialize(credentials, options={})
         super(credentials, options)
         requires!(options, :filename)
@@ -20,10 +22,8 @@ module Fedex
         puts api_response if @debug == true
         response = parse_response(api_response)
         if success?(response)
-          label_details = response[:process_shipment_reply][:completed_shipment_detail][:completed_package_details][:label]
-
-          create_label_file(label_details)
-          Fedex::Label.new(label_details)
+          @response_details = response[:process_shipment_reply]
+          create_label_file
         else
           error_message = if response[:process_shipment_reply]
             [response[:process_shipment_reply][:notifications]].flatten.first[:message]
@@ -75,8 +75,10 @@ module Fedex
         builder.doc.root.to_xml
       end
 
-      def create_label_file(label_details)
-        [label_details[:parts]].flatten.each do |part|
+      def create_label_file
+        [
+          @response_details[:completed_shipment_detail][:completed_package_details][:label][:parts]
+        ].flatten.each do |part|
           if image = (Base64.decode64(part[:image]) if part[:image])
             FileUtils.mkdir_p File.dirname(@filename)
             File.open(@filename, 'w') do |file|
