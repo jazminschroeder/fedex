@@ -2,9 +2,10 @@ module Fedex
   module Helpers
 
     private
-    # String to CamelCase
-    def camelize(str)
-      str.gsub(/\/(.?)/) { "::#{$1.upcase}" }.gsub(/(?:^|_)(.)/) { $1.upcase }
+    # String or :symbol to CamelCase
+    def camelize(s)
+      # s.to_s.split('_').map { |e| e.capitalize }.join('')
+      s.to_s.gsub(/\/(.?)/) { "::#{$1.upcase}" }.gsub(/(?:^|_)(.)/) { $1.upcase }
     end
 
     # Helper method to validate required fields

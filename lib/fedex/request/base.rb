@@ -177,7 +177,7 @@ module Fedex
       # Add customs clearance(for international shipments)
       def add_customs_clearance(xml)
         xml.CustomsClearanceDetail{
-          customs_to_xml(xml, @customs_clearance)
+          hash_to_xml(xml, @customs_clearance)
         }
       end
 
@@ -192,22 +192,22 @@ module Fedex
         raise NotImplementedError, "Override build_xml in subclass"
       end
 
-      # Build nodes dinamically from the provided customs clearance hash
-      def customs_to_xml(xml, hash)
+      # Build xml nodes dynamically from the hash keys and values
+      def hash_to_xml(xml, hash)
         hash.each do |key, value|
+          element = camelize(key)
           if value.is_a?(Hash)
-            xml.send "#{camelize(key.to_s)}" do |x|
-              customs_to_xml(x, value)
+            xml.send element do |x|
+              hash_to_xml(x, value)
             end
           elsif value.is_a?(Array)
-            node = key
-            value.each do |v|
-              xml.send "#{camelize(node.to_s)}" do |x|
-                customs_to_xml(x, v)
+            xml.send element do |x|
+              value.each do |v|
+                hash_to_xml(x, v)
               end
             end
           else
-            xml.send "#{camelize(key.to_s)}", value unless key.is_a?(Hash)
+            xml.send element, value
           end
         end
       end
