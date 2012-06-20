@@ -132,6 +132,23 @@ label = fedex.label(:filename => "my_dir/example.pdf",
 The label will be saved to the file system as the filename you specify and is Adobe PDF format.
 Note that you can currently print a label for a single package at a time.
 
+### ** Tracking a shipment **
+
+To track a shipment:
+
+```ruby
+tracking_info = fedex.track(:tracking_number => "1234567890123")
+
+tracking_info.tracking_number
+# => "1234567890123"
+
+tracking_info.status
+# => "Delivered"
+
+tracking_info.events.first.description
+# => "On FedEx vehicle for delivery"
+```
+
 # Services/Options Available
 
 ```ruby
