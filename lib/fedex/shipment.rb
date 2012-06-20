@@ -1,6 +1,7 @@
 require 'fedex/credentials'
 require 'fedex/request/label'
 require 'fedex/request/rate'
+require 'fedex/request/tracking_information'
 
 module Fedex
   class Shipment
@@ -33,6 +34,12 @@ module Fedex
     # @param [String] service_type, A valid fedex service type, to view a complete list of services Fedex::Shipment::SERVICE_TYPES
     def rate(options = {})
       Request::Rate.new(@credentials, options).process_request
+    end
+
+    # @param [Hash] package_id, A string with the requested tracking number
+    # @param [Hash] package_type, A string identifitying the type of tracking number used. Full list Fedex::Track::PACKAGE_IDENTIFIER_TYPES
+    def track(options = {})
+      Request::TrackingInformation.new(@credentials, options).process_request
     end
 
   end
