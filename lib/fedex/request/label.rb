@@ -19,8 +19,9 @@ module Fedex
       end
 
       # Sends post request to Fedex web service and parse the response.
-      # A Fedex::Label object is created if the response is successful and
-      # a PDF file is created with the label at the specified location.
+      # A label file is created with the label at the specified location.
+      # The parse Fedex response is available in #response_details
+      # e.g. response_details[:completed_shipment_detail][:completed_package_details][:tracking_ids][:tracking_number]
       def process_request
         api_response = self.class.post(api_url, :body => build_xml)
         puts api_response if @debug == true
