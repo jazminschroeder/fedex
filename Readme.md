@@ -129,8 +129,24 @@ label = fedex.label(:filename => "my_dir/example.pdf",
                     :shipping_details => shipping_details)
 ```
 
-The label will be saved to the file system as the filename you specify and is Adobe PDF format.
-Note that you can currently print a label for a single package at a time.
+### ** Generate a shipping label in any available format **
+
+Change the filename extension and pass a label_specification hash. For example:
+
+```ruby
+example_spec = {
+  :image_type => "EPL2",
+  :label_stock_type => "STOCK_4X6"
+}
+
+label = fedex.label(:filename => "my_dir/example_epl2.pcx",
+                    :shipper=>shipper,
+                    :recipient => recipient,
+                    :packages => packages,
+                    :service_type => "FEDEX_GROUND",
+                    :shipping_details => shipping_details,
+                    :label_specification => example_spec)
+```
 
 # Services/Options Available
 

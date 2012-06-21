@@ -1,28 +1,34 @@
 require 'fedex/request/base'
-require 'fedex/label'
 require 'fileutils'
 
 module Fedex
   module Request
     class Label < Base
+      attr_reader :response_details
+
       def initialize(credentials, options={})
         super(credentials, options)
         requires!(options, :filename)
         @filename = options[:filename]
+        @label_specification = {
+          label_format_type: 'COMMON2D',
+          image_type: 'PDF',
+          label_stock_type: 'PAPER_LETTER'
+        }
+        @label_specification.merge!(options[:label_specification]) if options[:label_specification]
       end
 
       # Sends post request to Fedex web service and parse the response.
-      # A Fedex::Label object is created if the response is successful and
-      # a PDF file is created with the label at the specified location.
+      # A label file is created with the label at the specified location.
+      # The parse Fedex response is available in #response_details
+      # e.g. response_details[:completed_shipment_detail][:completed_package_details][:tracking_ids][:tracking_number]
       def process_request
         api_response = self.class.post(api_url, :body => build_xml)
         puts api_response if @debug == true
         response = parse_response(api_response)
         if success?(response)
-          label_details = response[:process_shipment_reply][:completed_shipment_detail][:completed_package_details][:label]
-
-          create_pdf(label_details)
-          Fedex::Label.new(label_details)
+          @response_details = response[:process_shipment_reply]
+          create_label_file
         else
           error_message = if response[:process_shipment_reply]
             [response[:process_shipment_reply][:notifications]].flatten.first[:message]
@@ -46,12 +52,16 @@ module Fedex
           add_recipient(xml)
           add_shipping_charges_payment(xml)
           add_customs_clearance(xml) if @customs_clearance
-          xml.LabelSpecification {
-            xml.LabelFormatType "COMMON2D"
-            xml.ImageType "PDF"
-          }
+          add_label_specification(xml)
           xml.RateRequestTypes "ACCOUNT"
           add_packages(xml)
+        }
+      end
+
+      # Add the label specification
+      def add_label_specification(xml)
+        xml.LabelSpecification {
+          hash_to_xml(xml, @label_specification)
         }
       end
 
@@ -68,8 +78,10 @@ module Fedex
         builder.doc.root.to_xml
       end
 
-      def create_pdf(label_details)
-        [label_details[:parts]].flatten.each do |part|
+      def create_label_file
+        [
+          @response_details[:completed_shipment_detail][:completed_package_details][:label][:parts]
+        ].flatten.each do |part|
           if image = (Base64.decode64(part[:image]) if part[:image])
             FileUtils.mkdir_p File.dirname(@filename)
             File.open(@filename, 'w') do |file|
