@@ -11,16 +11,16 @@ module Fedex
         requires!(options, :filename)
         @filename = options[:filename]
         @label_specification = {
-          label_format_type: 'COMMON2D',
-          image_type: 'PDF',
-          label_stock_type: 'PAPER_LETTER'
+          :label_format_type => 'COMMON2D',
+          :image_type => 'PDF',
+          :label_stock_type => 'PAPER_LETTER'
         }
         @label_specification.merge!(options[:label_specification]) if options[:label_specification]
       end
 
       # Sends post request to Fedex web service and parse the response.
       # A label file is created with the label at the specified location.
-      # The parse Fedex response is available in #response_details
+      # The parsed Fedex response is available in #response_details
       # e.g. response_details[:completed_shipment_detail][:completed_package_details][:tracking_ids][:tracking_number]
       def process_request
         api_response = self.class.post(api_url, :body => build_xml)
