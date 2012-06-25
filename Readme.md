@@ -159,6 +159,7 @@ Fedex::Shipment::DROP_OFF_TYPES
 # Contributors:
 - [jazminschroeder](http://github.com/jazminschroeder) (Jazmin Schroeder)
 - [parndt](https://github.com/parndt) (Philip Arndt)
+- [mmell](https://github.com/mmell)
 
 # Copyright/License:
 Copyright 2011 [Jazmin Schroeder](http://jazminschroeder.com)
