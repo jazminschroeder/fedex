@@ -201,11 +201,11 @@ module Fedex
               hash_to_xml(x, value)
             end
           elsif value.is_a?(Array)
-            xml.send element do |x|
-              value.each do |v|
+            value.each do |v|
+              xml.send element do |x|
                 hash_to_xml(x, v)
-              end
-            end
+              end  
+            end  
           else
             xml.send element, value
           end
