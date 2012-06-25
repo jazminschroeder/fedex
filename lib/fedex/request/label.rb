@@ -11,9 +11,9 @@ module Fedex
         requires!(options, :filename)
         @filename = options[:filename]
         @label_specification = {
-          label_format_type: 'COMMON2D',
-          image_type: 'PDF',
-          label_stock_type: 'PAPER_LETTER'
+          :label_format_type => 'COMMON2D',
+          :image_type => 'PDF',
+          :label_stock_type => 'PAPER_LETTER'
         }
         @label_specification.merge!(options[:label_specification]) if options[:label_specification]
       end
