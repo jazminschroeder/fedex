@@ -116,7 +116,7 @@ Fedex provides multiple total values; `total_net_charge` is the final amount you
           @rate_zone="51">
 ```
 
-### ** Generate a shipping label(PDF) **
+### ** Generate a shipping label (PDF) **
 
 To create a label for a shipment:
 
