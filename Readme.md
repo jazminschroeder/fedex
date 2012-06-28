@@ -116,7 +116,7 @@ Fedex provides multiple total values; `total_net_charge` is the final amount you
           @rate_zone="51">
 ```
 
-### ** Generate a shipping label(PDF) **
+### ** Generate a shipping label (PDF) **
 
 To create a label for a shipment:
 
@@ -159,7 +159,7 @@ Fedex::Shipment::DROP_OFF_TYPES
 # Contributors:
 - [jazminschroeder](http://github.com/jazminschroeder) (Jazmin Schroeder)
 - [parndt](https://github.com/parndt) (Philip Arndt)
-- [mmell](https://github.com/mmell)
+- [mmell](https://github.com/mmell) (Michael Mell)
 
 # Copyright/License:
 Copyright 2011 [Jazmin Schroeder](http://jazminschroeder.com)
