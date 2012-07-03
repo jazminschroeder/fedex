@@ -91,8 +91,8 @@ module Fedex
         end
       end
 
-      def service_id
-        'ship'
+      def service
+        { :id => 'ship', :version => 10 }
       end
 
       # Successful request
