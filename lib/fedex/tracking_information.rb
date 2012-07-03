@@ -28,7 +28,6 @@ module Fedex
       STANDARD_MPS
     }
 
-    attr_reader :details # TODO Remove me
     attr_reader :tracking_number, :signature_name, :service_type, :status,
                 :delivery_at, :events
 
