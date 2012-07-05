@@ -25,9 +25,7 @@ module Fedex
     # @param [String] filename, A location where the label will be saved
     # @param [Hash] label_specification, A hash containing the label printer settings
     def label(options = {})
-      request_label = Request::Label.new(@credentials, options)
-      request_label.process_request
-      request_label
+      request_label = Request::Label.new(@credentials, options).process_request
     end
 
     # @param [Hash] shipper, A hash containing the shipper information
