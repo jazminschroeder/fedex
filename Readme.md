@@ -148,6 +148,23 @@ label = fedex.label(:filename => "my_dir/example_epl2.pcx",
                     :label_specification => example_spec)
 ```
 
+### ** Tracking a shipment **
+
+To track a shipment:
+
+```ruby
+tracking_info = fedex.track(:tracking_number => "1234567890123")
+
+tracking_info.tracking_number
+# => "1234567890123"
+
+tracking_info.status
+# => "Delivered"
+
+tracking_info.events.first.description
+# => "On FedEx vehicle for delivery"
+```
+
 # Services/Options Available
 
 ```ruby

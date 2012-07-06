@@ -91,8 +91,8 @@ module Fedex
         builder.doc.root.to_xml
       end
 
-      def service_id
-        'ship'
+      def service
+        { :id => 'ship', :version => 10 }
       end
 
       # Successful request

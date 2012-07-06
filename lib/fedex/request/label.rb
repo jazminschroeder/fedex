@@ -15,9 +15,9 @@ module Fedex
 
       def success_response(api_response, response)
         super
-        format = @label_specification[:image_type]
+
         label_details = response.merge!({
-          :format => format,
+          :format => @label_specification[:image_type],
           :file_name => @filename
         })
 
