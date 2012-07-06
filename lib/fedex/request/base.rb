@@ -48,6 +48,7 @@ module Fedex
         requires!(options, :shipper, :recipient, :packages, :service_type)
         @credentials = credentials
         @shipper, @recipient, @packages, @service_type, @customs_clearance, @debug = options[:shipper], options[:recipient], options[:packages], options[:service_type], options[:customs_clearance], options[:debug]
+        @debug = ENV['DEBUG'] == 'true'
         @shipping_options =  options[:shipping_options] ||={}
       end
 
