@@ -116,7 +116,7 @@ Fedex provides multiple total values; `total_net_charge` is the final amount you
           @rate_zone="51">
 ```
 
-### ** Generate a shipping label(PDF) **
+### ** Generate a shipping label (PDF) **
 
 To create a label for a shipment:
 
@@ -129,8 +129,41 @@ label = fedex.label(:filename => "my_dir/example.pdf",
                     :shipping_details => shipping_details)
 ```
 
-The label will be saved to the file system as the filename you specify and is Adobe PDF format.
-Note that you can currently print a label for a single package at a time.
+### ** Generate a shipping label in any available format **
+
+Change the filename extension and pass a label_specification hash. For example:
+
+```ruby
+example_spec = {
+  :image_type => "EPL2",
+  :label_stock_type => "STOCK_4X6"
+}
+
+label = fedex.label(:filename => "my_dir/example_epl2.pcx",
+                    :shipper=>shipper,
+                    :recipient => recipient,
+                    :packages => packages,
+                    :service_type => "FEDEX_GROUND",
+                    :shipping_details => shipping_details,
+                    :label_specification => example_spec)
+```
+
+### ** Tracking a shipment **
+
+To track a shipment:
+
+```ruby
+tracking_info = fedex.track(:tracking_number => "1234567890123")
+
+tracking_info.tracking_number
+# => "1234567890123"
+
+tracking_info.status
+# => "Delivered"
+
+tracking_info.events.first.description
+# => "On FedEx vehicle for delivery"
+```
 
 ### ** Tracking a shipment **
 
@@ -186,6 +219,8 @@ Fedex::Shipment::DROP_OFF_TYPES
 # Contributors:
 - [jazminschroeder](http://github.com/jazminschroeder) (Jazmin Schroeder)
 - [parndt](https://github.com/parndt) (Philip Arndt)
+- [mmell](https://github.com/mmell) (Michael Mell)
+- [jordanbyron](https://github.com/jordanbyron) (Jordan Byron)
 
 # Copyright/License:
 Copyright 2011 [Jazmin Schroeder](http://jazminschroeder.com)

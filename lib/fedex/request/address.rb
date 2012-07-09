@@ -77,20 +77,8 @@ module Fedex
         }
       end
 
-      # # Add web authentication detail information(key and password) to xml request
-      # def add_web_authentication_detail(xml)
-      #   xml.WebAuthenticationDetail{
-      #     xml.UserCredential {
-      #       xml.WebAuthenticationCredential{
-      #         xml.Key @credentials.key
-      #         xml.Password @credentials.password
-      #       }
-      #     }
-      #   }
-      # end
-
-      def service_id
-        'aval'
+      def service
+        { :id => 'aval', :version => 2 }
       end
 
       # Successful request

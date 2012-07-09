@@ -1,5 +1,5 @@
 require 'spec_helper'
-
+require 'tmpdir'
 module Fedex
   describe Label do
     describe "ship service for label" do
@@ -21,34 +21,49 @@ module Fedex
       let(:shipping_options) do
         { :packaging_type => "YOUR_PACKAGING", :drop_off_type => "REGULAR_PICKUP" }
       end
-
-      context "domestic shipment", :vcr do
-        let(:filename) {
-          require 'tmpdir'
-          File.join(Dir.tmpdir, "label#{rand(15000)}.pdf")
+      
+      let(:label_specification) do
+        { :label_format_type => 'COMMON2D',
+          :image_type => 'PNG',
         }
-        let(:options) do
-          {:shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND", :filename => filename}
-        end
-
+      end  
+      
+      let(:filename) {
+        require 'tmpdir'
+        File.join(Dir.tmpdir, "label#{rand(15000)}.pdf")
+      }
+      
+      let(:options) do
+        { :shipper => shipper, 
+          :recipient => recipient,
+          :packages => packages, 
+          :service_type => "FEDEX_GROUND",
+          :label_specification => label_specification,
+          :filename =>  filename
+        }
+      end
+      
+      describe "label", :vcr do
         before do
           @label = fedex.label(options)
         end
-
-        it "returns a label" do
-          @label.should be_an_instance_of(Label)
-        end
-
-        it "creates a label file" do
+        
+        it "should create a label" do
           File.should exist(filename)
         end
-
+      
+        it "should return tracking number" do
+          @label.should respond_to('tracking_number') 
+        end
+          
+        it "should expose complete response" do
+          @label.should respond_to('response_details')
+        end  
         after do
           require 'fileutils'
           FileUtils.rm_r(filename) if File.exist?(filename)
         end
       end
-
     end
   end
 end

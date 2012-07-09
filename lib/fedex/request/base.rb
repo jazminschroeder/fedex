@@ -17,9 +17,6 @@ module Fedex
       # Fedex Production URL
       PRODUCTION_URL = "https://gateway.fedex.com:443/xml/"
 
-      # Fedex Version number for the Fedex service used
-      VERSION = 10
-
       # List of available Service Types
       SERVICE_TYPES = %w(EUROPE_FIRST_INTERNATIONAL_PRIORITY FEDEX_1_DAY_FREIGHT FEDEX_2_DAY FEDEX_2_DAY_AM FEDEX_2_DAY_FREIGHT FEDEX_3_DAY_FREIGHT FEDEX_EXPRESS_SAVER FEDEX_FIRST_FREIGHT FEDEX_FREIGHT_ECONOMY FEDEX_FREIGHT_PRIORITY FEDEX_GROUND FIRST_OVERNIGHT GROUND_HOME_DELIVERY INTERNATIONAL_ECONOMY INTERNATIONAL_ECONOMY_FREIGHT INTERNATIONAL_FIRST INTERNATIONAL_PRIORITY INTERNATIONAL_PRIORITY_FREIGHT PRIORITY_OVERNIGHT SMART_POST STANDARD_OVERNIGHT)
 
@@ -48,6 +45,7 @@ module Fedex
         requires!(options, :shipper, :recipient, :packages, :service_type)
         @credentials = credentials
         @shipper, @recipient, @packages, @service_type, @customs_clearance, @debug = options[:shipper], options[:recipient], options[:packages], options[:service_type], options[:customs_clearance], options[:debug]
+        @debug = ENV['DEBUG'] == 'true'
         @shipping_options =  options[:shipping_options] ||={}
       end
 
@@ -73,14 +71,18 @@ module Fedex
         xml.ClientDetail{
           xml.AccountNumber @credentials.account_number
           xml.MeterNumber @credentials.meter
+          xml.Localization{
+            xml.LanguageCode 'en' # English
+            xml.LocaleCode   'us' # United States
+          }
         }
       end
 
       # Add Version to xml request, using the latest version V10 Sept/2011
       def add_version(xml)
         xml.Version{
-          xml.ServiceId service_id
-          xml.Major VERSION
+          xml.ServiceId service[:id]
+          xml.Major     service[:version]
           xml.Intermediate 0
           xml.Minor 0
         }
@@ -172,8 +174,13 @@ module Fedex
                 xml.Units package[:dimensions][:units]
               }
             end
-            (package[:customer_refrences] || []).each do |reference|
-              xml.CustomerReferences reference
+            if package[:customer_refrences]
+              xml.CustomerReferences{
+              package[:customer_refrences].each do |value|
+                 xml.CustomerReferenceType 'CUSTOMER_REFERENCE'
+                 xml.Value                 value
+              end
+              }
             end
           }
         end
@@ -182,7 +189,7 @@ module Fedex
       # Add customs clearance(for international shipments)
       def add_customs_clearance(xml)
         xml.CustomsClearanceDetail{
-          customs_to_xml(xml, @customs_clearance)
+          hash_to_xml(xml, @customs_clearance)
         }
       end
 
@@ -197,22 +204,22 @@ module Fedex
         raise NotImplementedError, "Override build_xml in subclass"
       end
 
-      # Build nodes dinamically from the provided customs clearance hash
-      def customs_to_xml(xml, hash)
+      # Build xml nodes dynamically from the hash keys and values
+      def hash_to_xml(xml, hash)
         hash.each do |key, value|
+          element = camelize(key)
           if value.is_a?(Hash)
-            xml.send "#{camelize(key.to_s)}" do |x|
-              customs_to_xml(x, value)
+            xml.send element do |x|
+              hash_to_xml(x, value)
             end
           elsif value.is_a?(Array)
-            node = key
             value.each do |v|
-              xml.send "#{camelize(node.to_s)}" do |x|
-                customs_to_xml(x, v)
-              end
-            end
+              xml.send element do |x|
+                hash_to_xml(x, v)
+              end  
+            end  
           else
-            xml.send "#{camelize(key.to_s)}", value unless key.is_a?(Hash)
+            xml.send element, value
           end
         end
       end
@@ -222,7 +229,7 @@ module Fedex
         response = sanitize_response_keys(response)
       end
 
-      # Recursively sanitizes the response object by clenaing up any hash keys.
+      # Recursively sanitizes the response object by cleaning up any hash keys.
       def sanitize_response_keys(response)
         if response.is_a?(Hash)
           response.inject({}) { |result, (key, value)| result[underscorize(key).to_sym] = sanitize_response_keys(value); result }
@@ -233,8 +240,9 @@ module Fedex
         end
       end
 
-      def service_id
-        'crs'
+      def service
+        raise NotImplementedError,
+          "Override service in subclass: {:id => 'service', :version => 1}"
       end
 
       # Use GROUND_HOME_DELIVERY for shipments going to a residential address within the US.
