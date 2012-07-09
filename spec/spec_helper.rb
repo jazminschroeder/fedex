@@ -1,7 +1,9 @@
 require 'rspec'
 require 'fedex'
 require 'support/vcr'
+require 'support/credentials'
 
-def fedex_credentials
-  @fedex_credentials ||= YAML.load(File.read("#{File.dirname(__FILE__)}/config/fedex_credentials.yml"))["development"]
+RSpec.configure do |c|
+  c.filter_run_excluding :production unless fedex_production_credentials
 end
+

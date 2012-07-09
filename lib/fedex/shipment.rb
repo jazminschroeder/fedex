@@ -2,6 +2,7 @@ require 'fedex/credentials'
 require 'fedex/request/label'
 require 'fedex/request/rate'
 require 'fedex/request/tracking_information'
+require 'fedex/request/address'
 
 module Fedex
   class Shipment
@@ -26,7 +27,7 @@ module Fedex
     # @param [String] filename, A location where the label will be saved
     # @param [Hash] label_specification, A hash containing the label printer settings
     def label(options = {})
-      request_label = Request::Label.new(@credentials, options).process_request
+      Request::Label.new(@credentials, options).process_request
     end
 
     # @param [Hash] shipper, A hash containing the shipper information
@@ -35,6 +36,11 @@ module Fedex
     # @param [String] service_type, A valid fedex service type, to view a complete list of services Fedex::Shipment::SERVICE_TYPES
     def rate(options = {})
       Request::Rate.new(@credentials, options).process_request
+    end
+
+    # @param [Hash] address, A hash containing the address information
+    def validate_address(options = {})
+      Request::Address.new(@credentials, options).process_request
     end
 
     # @param [Hash] shipper, A hash containing the shipper information

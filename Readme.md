@@ -165,6 +165,49 @@ tracking_info.events.first.description
 # => "On FedEx vehicle for delivery"
 ```
 
+### ** Tracking a shipment **
+
+To track a shipment:
+
+```ruby
+tracking_info = fedex.track(:tracking_number => "1234567890123")
+
+tracking_info.tracking_number
+# => "1234567890123"
+
+tracking_info.status
+# => "Delivered"
+
+tracking_info.events.first.description
+# => "On FedEx vehicle for delivery"
+```
+
+### ** Verifying an address **
+
+To verify an address is valid and deliverable:
+
+```ruby
+
+address = {
+  :street      => "5 Elm Street",
+  :city        => "Norwalk",
+  :state       => "CT",
+  :postal_code => "06850",
+  :country     => "USA"
+}
+
+address_result = fedex.validate_address(:address => address)
+
+address_result.residential
+# => true
+
+address_result.score
+# => 100
+
+address_result.postal_code
+# => "06850-3901"
+```
+
 # Services/Options Available
 
 ```ruby
