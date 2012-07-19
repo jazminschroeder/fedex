@@ -9,8 +9,8 @@ Gem::Specification.new do |s|
   s.authors     = ["Jazmin Schroeder"]
   s.email       = ["jazminschroeder@gmail.com"]
   s.homepage    = "https://github.com/jazminschroeder/fedex"
-  s.summary     = %q{Fedex Rate Webservice}
-  s.description = %q{Ruby Library to use Fedex Web Services(version 10)}
+  s.summary     = %q{Fedex Web Services}
+  s.description = %q{Provides an interface to Fedex Web Services(version 10) - shipping rates, generate labels and address validation}
 
   s.rubyforge_project = "fedex"
 
