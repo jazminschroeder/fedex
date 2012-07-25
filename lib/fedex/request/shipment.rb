@@ -9,11 +9,11 @@ module Fedex
         super
         requires! options
         # Label specification is required even if we're not using it.
-        @label_specification = {
-          :label_format_type => 'COMMON2D',
-          :image_type => 'PDF',
-          :label_stock_type => 'PAPER_LETTER'
-        }
+        @label_specification = ActiveSupport::OrderedHash.new
+				@label_specification[:label_format_type] = 'COMMON2D'
+				@label_specification[:image_type] = 'PDF'
+				@label_specification[:label_stock_type] = 'PAPER_LETTER'
+
         @label_specification.merge! options[:label_specification] if options[:label_specification]
       end
 
