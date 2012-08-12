@@ -147,7 +147,7 @@ label = fedex.label(:filename => "my_dir/example_epl2.pcx",
                     :shipping_details => shipping_details,
                     :label_specification => example_spec)
 ```
-### **Storing a label on Amazon S3 with Paperclip**
+### ** Storing a label on Amazon S3 with Paperclip **
 
 This is useful when you need to store the labels for later use, and are hosting your application on [Heroku](http://www.heroku.com/) as they do not allow writing to the filesystem, save the `tmp` directory. With [Paperclip](https://github.com/thoughtbot/paperclip/) setup up on a shipment model:
 
