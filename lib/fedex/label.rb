@@ -14,7 +14,7 @@ module Fedex
       @options[:format] = label_details[:format]
       @options[:tracking_number] = package_details[:tracking_ids][:tracking_number]
       @options[:file_name] = label_details[:file_name]
-      
+
       @image = Base64.decode64(options[:parts][:image]) if has_image?
 
       if file_name = @options[:file_name]
@@ -28,6 +28,10 @@ module Fedex
 
     def format
       options[:format]
+    end
+
+    def file_name
+      options[:file_name]
     end
 
     def tracking_number
