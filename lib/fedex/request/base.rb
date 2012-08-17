@@ -182,6 +182,51 @@ module Fedex
               end
               }
             end
+            if package[:special_services_requested][:special_service_types]
+              xml.SpecialServicesRequested{
+                if package[:special_services_requested][:special_service_types].is_a? Array
+                  package[:special_services_requested][:special_service_types].each do |type|
+                    xml.SpecialServiceTypes type
+                  end
+                else
+                  xml.SpecialServiceTypes package[:special_services_requested][:special_service_types]
+                end
+                # Handle COD Options
+                if package[:special_services_requested][:cod_detail]
+                  xml.CodDetail{
+                    xml.CodCollectionAmount{
+                      xml.Currency package[:special_services_requested][:cod_detail][:cod_collection_amount][:currency]
+                      xml.Amount package[:special_services_requested][:cod_detail][:cod_collection_amount][:amount]
+                    }
+                    if package[:special_services_requested][:cod_detail][:add_transportation_charges]
+                      xml.AddTransportationCharges package[:special_services_requested][:cod_detail][:add_transportation_charges]
+                    end
+                    xml.CollectionType package[:special_services_requested][:cod_detail][:collection_type]
+                    xml.CodRecipient {
+                      add_shipper(xml)
+                    }
+                    if package[:special_services_requested][:cod_detail][:reference_indicator]
+                      xml.ReferenceIndicator package[:special_services_requested][:cod_detail][:reference_indicator]
+                    end
+                  }
+                end
+                # DangerousGoodsDetail goes here
+                if package[:special_services_requested][:dry_ice_weight]
+                  xml.DryIceWeight{
+                    xml.Units package[:special_services_requested][:dry_ice_weight][:units]
+                    xml.Value package[:special_services_requested][:dry_ice_weight][:value]
+                  }
+                end
+                if package[:special_services_requested][:signature_option_detail]
+                  xml.SignatureOptionDetail{
+                    xml.OptionType package[:special_services_requested][:signature_option_detail][:signature_option_type]
+                  }
+                end
+                if package[:special_services_requested][:priority_alert_detail]
+                  xml.PriorityAlertDetail package[:special_services_requested][:priority_alert_detail]
+                end
+              }
+            end
           }
         end
       end
