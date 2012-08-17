@@ -182,7 +182,7 @@ module Fedex
               end
               }
             end
-            if package[:special_services_requested][:special_service_types]
+            if package[:special_services_requested] && package[:special_services_requested][:special_service_types]
               xml.SpecialServicesRequested{
                 if package[:special_services_requested][:special_service_types].is_a? Array
                   package[:special_services_requested][:special_service_types].each do |type|
