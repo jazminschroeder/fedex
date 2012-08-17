@@ -59,7 +59,9 @@ module Fedex
       # Add the label specification
       def add_label_specification(xml)
         xml.LabelSpecification {
-          hash_to_xml(xml, @label_specification)
+          xml.LabelFormatType @label_specification[:label_format_type]
+          xml.ImageType @label_specification[:image_type]
+          xml.LabelStockType @label_specification[:label_stock_type]
         }
       end
 
