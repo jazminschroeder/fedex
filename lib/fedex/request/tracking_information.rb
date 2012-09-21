@@ -37,7 +37,7 @@ module Fedex
           error_message = if response[:track_reply]
             response[:track_reply][:notifications][:message]
           else
-            api_response["Fault"]["detail"]["fault"]["reason"]
+            "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"]}"
           end rescue $1
           raise RateError, error_message
         end
