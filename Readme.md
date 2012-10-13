@@ -1,11 +1,14 @@
 # Fedex Rate Web Service
 
+
 For more information visit [Fedex Web Services for Shipping](https://www.fedex.com/wpor/web/jsp/drclinks.jsp?links=wss/index.html).
 
 This version uses the Non-SOAP Web Services so there is no need to download the
 Fedex WSDL files, note however that you will need to apply for development/production credentials.
 
-Note: This is work in progress make sure to test your results.
+Note: Please make sure to test your results.
+
+**Would you endorse me?** [![endorse](http://api.coderwall.com/jazminschroeder/endorsecount.png)](http://coderwall.com/jazminschroeder)
 
 # Installation:
 
