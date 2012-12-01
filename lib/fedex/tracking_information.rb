@@ -38,7 +38,9 @@ module Fedex
       @signature_name  = details[:delivery_signature_name]
       @service_type    = details[:service_type]
       @status          = details[:status_description]
-      @delivery_at     = Time.parse(details[:actual_delivery_timestamp])
+      if details.has_key?(:actual_delivery_timestamp)
+        @delivery_at = Time.parse(details[:actual_delivery_timestamp]) 
+      end
 
       @events = details[:events].map do |event_details|
         Event.new(event_details)
