@@ -15,7 +15,7 @@ module Fedex
         @credentials  = credentials
 
         # Optional
-        @include_detailed_scans = options[:include_detailed_scans]
+        @include_detailed_scans = options[:include_detailed_scans] || true
         @uuid                   = options[:uuid]
         @paging_token           = options[:paging_token]
 
@@ -25,6 +25,7 @@ module Fedex
       end
 
       def process_request
+        puts build_xml
         api_response = self.class.post(api_url, :body => build_xml)
         puts api_response if @debug == true
         response = parse_response(api_response)
