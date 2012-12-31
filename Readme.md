@@ -242,6 +242,7 @@ Fedex::Shipment::DROP_OFF_TYPES
 - [geermc4](https://github.com/geermc4) (German Garcia)
 - [janders223] (https://github.com/janders223) (Jim Anders)
 - [jlambert121] (https://github.com/jlambert121) (Justin Lambert)
+- [sborsje] (https://github.com/sborsje) (Stefan Borsje)
 
 # Copyright/License:
 Copyright 2011 [Jazmin Schroeder](http://jazminschroeder.com)
