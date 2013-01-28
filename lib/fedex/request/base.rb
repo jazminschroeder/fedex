@@ -261,8 +261,8 @@ module Fedex
             value.each do |v|
               xml.send element do |x|
                 hash_to_xml(x, v)
-              end  
-            end  
+              end
+            end
           else
             xml.send element, value
           end
