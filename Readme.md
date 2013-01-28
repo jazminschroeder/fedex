@@ -188,7 +188,12 @@ Documentation for setting up Paperclip with Amazon S3 can be found in the Paperc
 To track a shipment:
 
 ```ruby
-tracking_info = fedex.track(:tracking_number => "1234567890123")
+results = fedex.track(:tracking_number => "1234567890123")
+# => [#<Fedex::TrackingInformation>]
+
+# Pull the first result from the returned array
+#
+tracking_info = results.first
 
 tracking_info.tracking_number
 # => "1234567890123"
