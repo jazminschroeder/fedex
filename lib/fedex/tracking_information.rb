@@ -29,20 +29,22 @@ module Fedex
     }
 
     attr_reader :tracking_number, :signature_name, :service_type, :status,
-                :delivery_at, :events
+                :delivery_at, :events, :unique_tracking_number
 
     def initialize(details = {})
       @details = details
 
-      @tracking_number = details[:tracking_number]
-      @signature_name  = details[:delivery_signature_name]
-      @service_type    = details[:service_type]
-      @status          = details[:status_description]
+      @tracking_number        = details[:tracking_number]
+      @unique_tracking_number = details[:tracking_number_unique_identifier]
+      @signature_name         = details[:delivery_signature_name]
+      @service_type           = details[:service_type]
+      @status                 = details[:status_description]
+
       if details.has_key?(:actual_delivery_timestamp)
-        @delivery_at = Time.parse(details[:actual_delivery_timestamp]) 
+        @delivery_at = Time.parse(details[:actual_delivery_timestamp])
       end
 
-      @events = details[:events].map do |event_details|
+      @events = [details[:events]].flatten.compact.map do |event_details|
         Event.new(event_details)
       end
     end

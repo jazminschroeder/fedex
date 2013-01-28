@@ -32,7 +32,9 @@ module Fedex
         if success?(response)
           options = response[:track_reply][:track_details]
 
-          Fedex::TrackingInformation.new(options)
+          [options].flatten.map do |details|
+            Fedex::TrackingInformation.new(details)
+          end
         else
           error_message = if response[:track_reply]
             response[:track_reply][:notifications][:message]
@@ -53,18 +55,16 @@ module Fedex
             add_client_detail(xml)
             add_version(xml)
             add_package_identifier(xml)
-            xml.IncludeDetailedScans @include_detailed_scans
-
-            # Optional
-            xml.TrackingNumberUniqueIdentifier @uuid if @uuid
-            xml.PagingToken @paging_token            if @paging_token
+            xml.TrackingNumberUniqueIdentifier @uuid         if @uuid
+            xml.IncludeDetailedScans           @include_detailed_scans
+            xml.PagingToken                    @paging_token if @paging_token
           }
         end
         builder.doc.root.to_xml
       end
 
       def service
-        { :id => 'trck', :version => 5 }
+        { :id => 'trck', :version => 6 }
       end
 
       def add_package_identifier(xml)
