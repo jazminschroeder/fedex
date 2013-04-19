@@ -233,23 +233,23 @@ module Fedex
       def add_customer_references(xml, package)
         # customer_refrences is a legacy misspelling
         if refs = package[:customer_references] || package[:customer_refrences]
-          xml.CustomerReferences{
           refs.each do |ref|
-            if ref.is_a?(Hash)
-              # :type can specify custom type:
-              #
-              # BILL_OF_LADING, CUSTOMER_REFERENCE, DEPARTMENT_NUMBER,
-              # ELECTRONIC_PRODUCT_CODE, INTRACOUNTRY_REGULATORY_REFERENCE,
-              # INVOICE_NUMBER, P_O_NUMBER, RMA_ASSOCIATION,
-              # SHIPMENT_INTEGRITY, STORE_NUMBER
-              xml.CustomerReferenceType ref[:type]
-              xml.Value                 ref[:value]
-            else
-              xml.CustomerReferenceType 'CUSTOMER_REFERENCE'
-              xml.Value                 ref
-            end
+            xml.CustomerReferences{
+              if ref.is_a?(Hash)
+                # :type can specify custom type:
+                #
+                # BILL_OF_LADING, CUSTOMER_REFERENCE, DEPARTMENT_NUMBER,
+                # ELECTRONIC_PRODUCT_CODE, INTRACOUNTRY_REGULATORY_REFERENCE,
+                # INVOICE_NUMBER, P_O_NUMBER, RMA_ASSOCIATION,
+                # SHIPMENT_INTEGRITY, STORE_NUMBER
+                xml.CustomerReferenceType ref[:type]
+                xml.Value                 ref[:value]
+              else
+                xml.CustomerReferenceType 'CUSTOMER_REFERENCE'
+                xml.Value                 ref
+              end
+            }
           end
-          }
         end
       end
 
