@@ -149,8 +149,14 @@ module Fedex
         xml.ShippingChargesPayment{
           xml.PaymentType "SENDER"
           xml.Payor{
-            xml.AccountNumber @credentials.account_number
-            xml.CountryCode @shipper[:country_code]
+            xml.ResponsibleParty {
+              xml.AccountNumber @credentials.account_number
+              xml.Contact {
+                xml.PersonName @shipper[:name]
+                xml.CompanyName @shipper[:company]
+                xml.PhoneNumber @shipper[:phone_number]
+              }
+            }
           }
         }
       end
