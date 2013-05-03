@@ -78,7 +78,7 @@ module Fedex
         }
       end
 
-      # Add Version to xml request, using the latest version V10 Sept/2011
+      # Add Version to xml request, using the version identified in the subclass
       def add_version(xml)
         xml.Version{
           xml.ServiceId service[:id]
@@ -149,14 +149,19 @@ module Fedex
         xml.ShippingChargesPayment{
           xml.PaymentType "SENDER"
           xml.Payor{
-            xml.ResponsibleParty {
-              xml.AccountNumber @credentials.account_number
-              xml.Contact {
-                xml.PersonName @shipper[:name]
-                xml.CompanyName @shipper[:company]
-                xml.PhoneNumber @shipper[:phone_number]
+            if service[:version] >= 12
+              xml.ResponsibleParty {
+                xml.AccountNumber @credentials.account_number
+                xml.Contact {
+                  xml.PersonName @shipper[:name]
+                  xml.CompanyName @shipper[:company]
+                  xml.PhoneNumber @shipper[:phone_number]
+                }
               }
-            }
+            else
+              xml.AccountNumber @credentials.account_number
+              xml.CountryCode @shipper[:country_code]
+            end
           }
         }
       end

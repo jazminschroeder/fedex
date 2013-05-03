@@ -40,8 +40,9 @@ module Fedex
 
       # Build xml Fedex Web Service request
       def build_xml
+        ns = "http://fedex.com/ws/rate/v#{service[:version]}"
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml.RateRequest(:xmlns => "http://fedex.com/ws/rate/v10"){
+          xml.RateRequest(:xmlns => ns){
             add_web_authentication_detail(xml)
             add_client_detail(xml)
             add_version(xml)
