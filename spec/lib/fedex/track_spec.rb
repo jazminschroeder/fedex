@@ -12,7 +12,7 @@ module Fedex
         }
       end
 
-      let(:uuid) { "12012~123456789012~FDEG" }
+      let(:uuid) { fedex.track(options).first.unique_tracking_number }
 
       it "returns an array of tracking information results" do
         results = fedex.track(options)
@@ -20,9 +20,7 @@ module Fedex
       end
 
       it "returns events with tracking information" do
-        options[:uuid] = uuid
-
-        tracking_info = fedex.track(options).first
+        tracking_info = fedex.track(options.merge(:uuid => uuid)).first
 
         tracking_info.events.should_not be_empty
       end
@@ -44,9 +42,7 @@ module Fedex
       end
 
       it "reports the status of the package" do
-        options[:uuid] = uuid
-
-        tracking_info = fedex.track(options).first
+        tracking_info = fedex.track(options.merge(:uuid => uuid)).first
 
         tracking_info.status.should == "In transit"
       end
