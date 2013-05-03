@@ -78,7 +78,7 @@ module Fedex
         }
       end
 
-      # Add Version to xml request, using the latest version V10 Sept/2011
+      # Add Version to xml request, using the version identified in the subclass
       def add_version(xml)
         xml.Version{
           xml.ServiceId service[:id]
@@ -149,8 +149,19 @@ module Fedex
         xml.ShippingChargesPayment{
           xml.PaymentType "SENDER"
           xml.Payor{
-            xml.AccountNumber @credentials.account_number
-            xml.CountryCode @shipper[:country_code]
+            if service[:version] >= 12
+              xml.ResponsibleParty {
+                xml.AccountNumber @credentials.account_number
+                xml.Contact {
+                  xml.PersonName @shipper[:name]
+                  xml.CompanyName @shipper[:company]
+                  xml.PhoneNumber @shipper[:phone_number]
+                }
+              }
+            else
+              xml.AccountNumber @credentials.account_number
+              xml.CountryCode @shipper[:country_code]
+            end
           }
         }
       end
@@ -227,23 +238,23 @@ module Fedex
       def add_customer_references(xml, package)
         # customer_refrences is a legacy misspelling
         if refs = package[:customer_references] || package[:customer_refrences]
-          xml.CustomerReferences{
           refs.each do |ref|
-            if ref.is_a?(Hash)
-              # :type can specify custom type:
-              #
-              # BILL_OF_LADING, CUSTOMER_REFERENCE, DEPARTMENT_NUMBER,
-              # ELECTRONIC_PRODUCT_CODE, INTRACOUNTRY_REGULATORY_REFERENCE,
-              # INVOICE_NUMBER, P_O_NUMBER, RMA_ASSOCIATION,
-              # SHIPMENT_INTEGRITY, STORE_NUMBER
-              xml.CustomerReferenceType ref[:type]
-              xml.Value                 ref[:value]
-            else
-              xml.CustomerReferenceType 'CUSTOMER_REFERENCE'
-              xml.Value                 ref
-            end
+            xml.CustomerReferences{
+              if ref.is_a?(Hash)
+                # :type can specify custom type:
+                #
+                # BILL_OF_LADING, CUSTOMER_REFERENCE, DEPARTMENT_NUMBER,
+                # ELECTRONIC_PRODUCT_CODE, INTRACOUNTRY_REGULATORY_REFERENCE,
+                # INVOICE_NUMBER, P_O_NUMBER, RMA_ASSOCIATION,
+                # SHIPMENT_INTEGRITY, STORE_NUMBER
+                xml.CustomerReferenceType ref[:type]
+                xml.Value                 ref[:value]
+              else
+                xml.CustomerReferenceType 'CUSTOMER_REFERENCE'
+                xml.Value                 ref
+              end
+            }
           end
-          }
         end
       end
 
