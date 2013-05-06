@@ -44,7 +44,7 @@ module Fedex
       it "reports the status of the package" do
         tracking_info = fedex.track(options.merge(:uuid => uuid)).first
 
-        tracking_info.status.should == "In transit"
+        tracking_info.status.should == "Shipment cancelled by sender"
       end
 
     end
