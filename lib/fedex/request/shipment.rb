@@ -44,6 +44,7 @@ module Fedex
           add_shipper(xml)
           add_recipient(xml)
           add_shipping_charges_payment(xml)
+          add_special_services(xml) if @shipping_options[:return_reason]
           add_customs_clearance(xml) if @customs_clearance
           add_custom_components(xml)
           xml.RateRequestTypes "ACCOUNT"
@@ -62,6 +63,18 @@ module Fedex
           xml.LabelFormatType @label_specification[:label_format_type]
           xml.ImageType @label_specification[:image_type]
           xml.LabelStockType @label_specification[:label_stock_type]
+        }
+      end
+
+      def add_special_services(xml)
+        xml.SpecialServicesRequested {
+          xml.SpecialServiceTypes "RETURN_SHIPMENT"
+          xml.ReturnShipmentDetail {
+            xml.ReturnType "PRINT_RETURN_LABEL"
+            xml.Rma {
+              xml.Reason "#{@shipping_options[:return_reason]}"
+            }
+          }
         }
       end
 
