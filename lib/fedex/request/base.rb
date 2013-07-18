@@ -47,6 +47,10 @@ module Fedex
         @shipper, @recipient, @packages, @service_type, @customs_clearance, @debug = options[:shipper], options[:recipient], options[:packages], options[:service_type], options[:customs_clearance], options[:debug]
         @debug = ENV['DEBUG'] == 'true'
         @shipping_options =  options[:shipping_options] ||={}
+        # Expects hash with addr and port
+        if options[:http_proxy]
+          self.class.http_proxy options[:http_proxy][:host], options[:http_proxy][:port]
+        end
       end
 
       # Sends post request to Fedex web service and parse the response.
