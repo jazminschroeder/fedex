@@ -51,6 +51,7 @@ module Fedex
       Request::Shipment.new(@credentials, options).process_request
     end
 
+
     # @param [Hash] shipper, A hash containing the shipper information
     # @param [Hash] recipient, A hash containing the recipient information
     # @param [Array] packages, An arrary including a hash for each package being shipped

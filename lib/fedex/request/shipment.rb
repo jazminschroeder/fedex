@@ -10,9 +10,9 @@ module Fedex
         requires! options
         # Label specification is required even if we're not using it.
         @label_specification = {
-            :label_format_type => 'COMMON2D',
-            :image_type => 'PDF',
-            :label_stock_type => 'PAPER_LETTER'
+          :label_format_type => 'COMMON2D',
+          :image_type => 'PDF',
+          :label_stock_type => 'PAPER_LETTER'
         }
         @label_specification.merge! options[:label_specification] if options[:label_specification]
       end
@@ -23,8 +23,7 @@ module Fedex
       # e.g. response_details[:completed_shipment_detail][:completed_package_details][:tracking_ids][:tracking_number]
       def process_request
         api_response = self.class.post api_url, :body => build_xml
-
-        #  puts api_response if @debug
+        puts api_response if @debug
         response = parse_response(api_response)
         if success?(response)
           success_response(api_response, response)
@@ -85,12 +84,11 @@ module Fedex
 
       # Callback used after a failed shipment response.
       def failure_response(api_response, response)
-
         error_message = if response[:process_shipment_reply]
-                          [response[:process_shipment_reply][:notifications]].flatten.first[:message]
-                        else
-                          "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"]}"
-                        end rescue $1
+          [response[:process_shipment_reply][:notifications]].flatten.first[:message]
+        else
+          "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
+        end rescue $1
         raise RateError, error_message
       end
 
@@ -132,7 +130,7 @@ module Fedex
       # Successful request
       def success?(response)
         response[:process_shipment_reply] &&
-            %w{SUCCESS WARNING NOTE}.include?(response[:process_shipment_reply][:highest_severity])
+          %w{SUCCESS WARNING NOTE}.include?(response[:process_shipment_reply][:highest_severity])
       end
 
     end
