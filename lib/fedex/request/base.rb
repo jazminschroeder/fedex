@@ -78,7 +78,7 @@ module Fedex
         }
       end
 
-      # Add Version to xml request, using the version identified in the subclass
+      # Add Version to xml request, using the latest version V10 Sept/2011
       def add_version(xml)
         xml.Version{
           xml.ServiceId service[:id]
@@ -99,6 +99,7 @@ module Fedex
           add_shipping_charges_payment(xml)
           add_customs_clearance(xml) if @customs_clearance
           xml.RateRequestTypes "ACCOUNT"
+          add_special_services_for_return(xml)
           add_packages(xml)
         }
       end
@@ -144,27 +145,64 @@ module Fedex
         }
       end
 
+=begin
       # Add shipping charges to xml request
       def add_shipping_charges_payment(xml)
         xml.ShippingChargesPayment{
           xml.PaymentType "SENDER"
           xml.Payor{
-            if service[:version] >= 12
-              xml.ResponsibleParty {
-                xml.AccountNumber @credentials.account_number
-                xml.Contact {
-                  xml.PersonName @shipper[:name]
-                  xml.CompanyName @shipper[:company]
-                  xml.PhoneNumber @shipper[:phone_number]
-                }
-              }
-            else
+
               xml.AccountNumber @credentials.account_number
               xml.CountryCode @shipper[:country_code]
-            end
+
+
           }
         }
       end
+=end
+
+      # Add shipping charges to xml request
+      def add_shipping_charges_payment(xml)
+        xml.ShippingChargesPayment{
+          xml.PaymentType "SENDER"
+          xml.Payor{
+            xml.ResponsibleParty{
+              xml.AccountNumber @credentials.account_number
+              xml.Contact{
+                xml.PersonName 'Honest' #todo
+                xml.CompanyName 'Honest'
+                xml.PhoneNumber '3103103345'
+              }
+            }
+
+          }
+        }
+      end
+
+      def add_special_services_for_return(xml)
+        xml.SpecialServicesRequested{
+          xml.SpecialServiceTypes 'RETURN_SHIPMENT'
+          xml.SpecialServiceTypes 'PENDING_SHIPMENT'
+          xml.ReturnShipmentDetail{
+            xml.ReturnType 'PENDING'
+            xml.ReturnEMailDetail{
+              xml.MerchantPhoneNumber '3106661234'
+            }
+          }
+
+          xml.PendingShipmentDetail{
+            xml.Type "EMAIL"
+            xml.ExpirationDate '2013-08-31'
+            xml.EmailLabelDetail{
+              xml.NotificationEMailAddress 'sangeeta@thehonestcompany.com'
+              xml.NotificationMessage 'I f*ing did it'
+            }
+          }
+
+        }
+
+      end
+
 
       # Add packages to xml request
       def add_packages(xml)
@@ -185,7 +223,15 @@ module Fedex
                 xml.Units package[:dimensions][:units]
               }
             end
-            add_customer_references(xml, package)
+            xml.ItemDescription 'Test'            #todo
+            if package[:customer_refrences]
+              xml.CustomerReferences{
+                package[:customer_refrences].each do |value|
+                  xml.CustomerReferenceType 'CUSTOMER_REFERENCE'
+                  xml.Value                 value
+                end
+              }
+            end
             if package[:special_services_requested] && package[:special_services_requested][:special_service_types]
               xml.SpecialServicesRequested{
                 if package[:special_services_requested][:special_service_types].is_a? Array
@@ -229,32 +275,10 @@ module Fedex
                 if package[:special_services_requested][:priority_alert_detail]
                   xml.PriorityAlertDetail package[:special_services_requested][:priority_alert_detail]
                 end
+
               }
             end
           }
-        end
-      end
-
-      def add_customer_references(xml, package)
-        # customer_refrences is a legacy misspelling
-        if refs = package[:customer_references] || package[:customer_refrences]
-          refs.each do |ref|
-            xml.CustomerReferences{
-              if ref.is_a?(Hash)
-                # :type can specify custom type:
-                #
-                # BILL_OF_LADING, CUSTOMER_REFERENCE, DEPARTMENT_NUMBER,
-                # ELECTRONIC_PRODUCT_CODE, INTRACOUNTRY_REGULATORY_REFERENCE,
-                # INVOICE_NUMBER, P_O_NUMBER, RMA_ASSOCIATION,
-                # SHIPMENT_INTEGRITY, STORE_NUMBER
-                xml.CustomerReferenceType ref[:type]
-                xml.Value                 ref[:value]
-              else
-                xml.CustomerReferenceType 'CUSTOMER_REFERENCE'
-                xml.Value                 ref
-              end
-            }
-          end
         end
       end
 
@@ -298,11 +322,13 @@ module Fedex
 
       # Parse response, convert keys to underscore symbols
       def parse_response(response)
+        puts response
         response = sanitize_response_keys(response)
       end
 
       # Recursively sanitizes the response object by cleaning up any hash keys.
       def sanitize_response_keys(response)
+        puts response
         if response.is_a?(Hash)
           response.inject({}) { |result, (key, value)| result[underscorize(key).to_sym] = sanitize_response_keys(value); result }
         elsif response.is_a?(Array)
@@ -314,7 +340,7 @@ module Fedex
 
       def service
         raise NotImplementedError,
-          "Override service in subclass: {:id => 'service', :version => 1}"
+              "Override service in subclass: {:id => 'service', :version => 1}"
       end
 
       # Use GROUND_HOME_DELIVERY for shipments going to a residential address within the US.

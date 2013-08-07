@@ -51,6 +51,14 @@ module Fedex
       Request::Shipment.new(@credentials, options).process_request
     end
 
+    # @param [Hash] shipper, A hash containing the shipper information
+    # @param [Hash] recipient, A hash containing the recipient information
+    # @param [Array] packages, An arrary including a hash for each package being shipped
+    # @param [String] service_type, A valid fedex service type, to view a complete list of services Fedex::Shipment::SERVICE_TYPES
+    def pending_shipment(options = {})
+      Request::Shipment.new(@credentials, options).process_pending_request
+    end
+
     # @param [Hash] package_id, A string with the requested tracking number
     # @param [Hash] package_type, A string identifitying the type of tracking number used. Full list Fedex::Track::PACKAGE_IDENTIFIER_TYPES
     def track(options = {})
