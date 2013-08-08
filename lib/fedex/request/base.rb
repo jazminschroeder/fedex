@@ -99,7 +99,6 @@ module Fedex
           add_shipping_charges_payment(xml)
           add_customs_clearance(xml) if @customs_clearance
           xml.RateRequestTypes "ACCOUNT"
-          add_special_services_for_return(xml)
           add_packages(xml)
         }
       end
@@ -168,23 +167,22 @@ module Fedex
       end
 
 
-      def add_special_services_for_return(xml)
+      def add_special_services_for_return(xml,package)
         xml.SpecialServicesRequested{
           xml.SpecialServiceTypes 'RETURN_SHIPMENT'
           xml.SpecialServiceTypes 'PENDING_SHIPMENT'
           xml.ReturnShipmentDetail{
             xml.ReturnType 'PENDING'
-            xml.ReturnEMailDetail{
-              xml.MerchantPhoneNumber '3106661234'
+            xml.ReturnEmailDetail{
+              xml.MerchantPhoneNumber package[:special_services_requested][:return_shipment_detail][:return_email_detail][:merchant_phone_number]
             }
           }
-
           xml.PendingShipmentDetail{
             xml.Type "EMAIL"
-            xml.ExpirationDate '2013-08-31'
+            xml.ExpirationDate package[:special_services_requested][:pending_shipment_detail][:expiration_date]
             xml.EmailLabelDetail{
-              xml.NotificationEMailAddress 'sangeeta@thehonestcompany.com'
-              xml.NotificationMessage 'I f*ing did it'
+              xml.NotificationEmailAddress package[:special_services_requested][:pending_shipment_detail][:email_label_detail][:notification_email_address]
+              xml.NotificationMessage package[:special_services_requested][:pending_shipment_detail][:email_label_detail][:notification_message]
             }
           }
 
@@ -212,8 +210,9 @@ module Fedex
                 xml.Units package[:dimensions][:units]
               }
             end
-            xml.ItemDescription 'Test' #todo
+            xml.ItemDescription package[:item_description]
             add_customer_references(xml, package)
+            add_special_services_for_return(xml,package)
             if package[:special_services_requested] && package[:special_services_requested][:special_service_types]
               xml.SpecialServicesRequested{
                 if package[:special_services_requested][:special_service_types].is_a? Array
