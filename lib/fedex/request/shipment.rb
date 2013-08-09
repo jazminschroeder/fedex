@@ -39,12 +39,12 @@ module Fedex
       def process_pending_request
         api_response = self.class.post api_url, :body => build_xml_for_create_pending_shipment
 
-        #  puts api_response if @debug
+        puts api_response if @debug
         response = parse_response(api_response)
-        if success?(response)
-          success_response(api_response, response)
+        if pending_shipment_success?(response)
+          pending_shipment_success_response(api_response, response)
         else
-          failure_response(api_response, response)
+          pending_shipment_failure_response(api_response, response)
         end
       end
 
@@ -60,6 +60,7 @@ module Fedex
           add_shipper(xml)
           add_recipient(xml)
           add_shipping_charges_payment(xml)
+          add_special_services_for_return(xml)
           add_customs_clearance(xml) if @customs_clearance
           add_custom_components(xml)
           xml.RateRequestTypes "ACCOUNT"
@@ -91,9 +92,24 @@ module Fedex
         raise RateError, error_message
       end
 
+      # Callback used after a failed shipment response.
+      def pending_shipment_failure_response(api_response, response)
+        error_message = if response[:create_pending_shipment_reply]
+                          [response[:create_pending_shipment_reply][:notifications]].flatten.first[:message]
+                        else
+                          "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
+                        end rescue $1
+        raise RateError, error_message
+      end
+
       # Callback used after a successful shipment response.
       def success_response(api_response, response)
         @response_details = response[:process_shipment_reply]
+      end
+
+      # Callback used after a successful shipment response.
+      def pending_shipment_success_response(api_response, response)
+        @response_details = response[:create_pending_shipment_reply]
       end
 
       # Build xml Fedex Web Service request
@@ -130,6 +146,11 @@ module Fedex
       def success?(response)
         response[:process_shipment_reply] &&
           %w{SUCCESS WARNING NOTE}.include?(response[:process_shipment_reply][:highest_severity])
+      end
+
+      def pending_shipment_success?(response)
+        response[:create_pending_shipment_reply] &&
+            %w{SUCCESS WARNING NOTE}.include?(response[:create_pending_shipment_reply][:highest_severity])
       end
 
     end

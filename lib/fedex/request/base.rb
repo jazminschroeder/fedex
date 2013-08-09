@@ -42,9 +42,9 @@ module Fedex
       #
       # return a Fedex::Request::Base object
       def initialize(credentials, options={})
-        requires!(options, :shipper, :recipient, :packages, :service_type)
+        requires!(options, :shipper, :recipient, :packages, :service_type,:special_service_details)
         @credentials = credentials
-        @shipper, @recipient, @packages, @service_type, @customs_clearance, @debug = options[:shipper], options[:recipient], options[:packages], options[:service_type], options[:customs_clearance], options[:debug]
+        @shipper, @recipient, @packages, @service_type,@special_service_details, @customs_clearance, @debug = options[:shipper], options[:recipient], options[:packages], options[:service_type],options[:special_service_details], options[:customs_clearance], options[:debug]
         @debug = ENV['DEBUG'] == 'true'
         @shipping_options =  options[:shipping_options] ||={}
       end
@@ -97,6 +97,7 @@ module Fedex
           add_shipper(xml)
           add_recipient(xml)
           add_shipping_charges_payment(xml)
+          add_special_services_for_return(xml)
           add_customs_clearance(xml) if @customs_clearance
           xml.RateRequestTypes "ACCOUNT"
           add_packages(xml)
@@ -167,22 +168,22 @@ module Fedex
       end
 
 
-      def add_special_services_for_return(xml,package)
+      def add_special_services_for_return(xml)
         xml.SpecialServicesRequested{
           xml.SpecialServiceTypes 'RETURN_SHIPMENT'
           xml.SpecialServiceTypes 'PENDING_SHIPMENT'
           xml.ReturnShipmentDetail{
             xml.ReturnType 'PENDING'
-            xml.ReturnEmailDetail{
-              xml.MerchantPhoneNumber package[:special_services_requested][:return_shipment_detail][:return_email_detail][:merchant_phone_number]
+            xml.ReturnEMailDetail{
+              xml.MerchantPhoneNumber @special_service_details[:special_services_requested][:return_shipment_detail][:return_email_detail][:merchant_phone_number]
             }
           }
           xml.PendingShipmentDetail{
             xml.Type "EMAIL"
-            xml.ExpirationDate package[:special_services_requested][:pending_shipment_detail][:expiration_date]
+            xml.ExpirationDate @special_service_details[:special_services_requested][:pending_shipment_detail][:expiration_date]
             xml.EmailLabelDetail{
-              xml.NotificationEmailAddress package[:special_services_requested][:pending_shipment_detail][:email_label_detail][:notification_email_address]
-              xml.NotificationMessage package[:special_services_requested][:pending_shipment_detail][:email_label_detail][:notification_message]
+              xml.NotificationEMailAddress @special_service_details[:special_services_requested][:pending_shipment_detail][:email_label_detail][:notification_email_address]
+              xml.NotificationMessage @special_service_details[:special_services_requested][:pending_shipment_detail][:email_label_detail][:notification_message]
             }
           }
 
@@ -212,7 +213,6 @@ module Fedex
             end
             xml.ItemDescription package[:item_description]
             add_customer_references(xml, package)
-            add_special_services_for_return(xml,package)
             if package[:special_services_requested] && package[:special_services_requested][:special_service_types]
               xml.SpecialServicesRequested{
                 if package[:special_services_requested][:special_service_types].is_a? Array
