@@ -22,12 +22,12 @@ module Fedex
       end
 
       # keeps the filenames which actually saved
-      @filenames[:label] = save(@filenames[:label], label)
+      save(@filenames[:label], label)
 
       # save shipment documents
       shipment_documents.each do |doc|
         doc_type = doc[:type].downcase.to_sym
-        @filenames[doc_type] = save(@filenames[doc_type], doc)
+        save(@filenames[doc_type], doc)
       end
     end
 
