@@ -147,6 +147,30 @@ module Fedex
 
       end
 
+      context 'filename missed' do
+        context 'for label' do
+          before do
+            filenames.delete(:label)
+            @document = fedex.document(options)
+          end
+
+          it "saves invoice to file" do
+            File.should exist(filenames[:commercial_invoice])
+          end
+        end
+
+        context 'for invoice' do
+          before do
+            filenames.delete(:commercial_invoice)
+            @document = fedex.document(options)
+          end
+
+          it "saves label to file" do
+            File.should exist(filenames[:label])
+          end
+        end
+      end
+
     end
 
   end

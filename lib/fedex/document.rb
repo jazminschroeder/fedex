@@ -32,7 +32,7 @@ module Fedex
     end
 
     def save(path, content)
-      return unless has_image?(content)
+      return unless path && has_image?(content)
 
       image = Base64.decode64(content[:parts][:image])
       full_path = Pathname.new(path)
