@@ -10,7 +10,7 @@ module Fedex
         response = parse_response(api_response)
         if success?(response)
           rate_details = [response[:rate_reply][:rate_reply_details][:rated_shipment_details]].flatten.first[:shipment_rate_detail]
-          Fedex::Rate.new(rate_details)
+          Fedex::Rate.new(rate_details.merge(response_details: response[:rate_reply]))
         else
           error_message = if response[:rate_reply]
             [response[:rate_reply][:notifications]].flatten.first[:message]
@@ -46,6 +46,7 @@ module Fedex
             add_web_authentication_detail(xml)
             add_client_detail(xml)
             add_version(xml)
+            xml.ReturnTransitAndCommit true
             add_requested_shipment(xml)
           }
         end
@@ -53,7 +54,7 @@ module Fedex
       end
 
       def service
-        { :id => 'crs', :version => 10 }
+        { :id => 'crs', :version => 13 }
       end
 
       # Successful request

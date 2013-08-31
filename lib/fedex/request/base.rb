@@ -170,6 +170,10 @@ module Fedex
         }
       end
 
+
+
+
+
       # Add packages to xml request
       def add_packages(xml)
         package_count = @packages.size
@@ -188,6 +192,9 @@ module Fedex
                 xml.Height package[:dimensions][:height]
                 xml.Units package[:dimensions][:units]
               }
+            end
+            if(package[:item_description])
+              xml.ItemDescription package[:item_description]
             end
             add_customer_references(xml, package)
             if package[:special_services_requested] && package[:special_services_requested][:special_service_types]
@@ -233,6 +240,7 @@ module Fedex
                 if package[:special_services_requested][:priority_alert_detail]
                   xml.PriorityAlertDetail package[:special_services_requested][:priority_alert_detail]
                 end
+
               }
             end
           }
@@ -318,7 +326,7 @@ module Fedex
 
       def service
         raise NotImplementedError,
-          "Override service in subclass: {:id => 'service', :version => 1}"
+              "Override service in subclass: {:id => 'service', :version => 1}"
       end
 
       # Use GROUND_HOME_DELIVERY for shipments going to a residential address within the US.

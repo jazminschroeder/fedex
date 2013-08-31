@@ -10,9 +10,9 @@ module Fedex
         requires! options
         # Label specification is required even if we're not using it.
         @label_specification = {
-          :label_format_type => 'COMMON2D',
-          :image_type => 'PDF',
-          :label_stock_type => 'PAPER_LETTER'
+            :label_format_type => 'COMMON2D',
+            :image_type => 'PDF',
+            :label_stock_type => 'PAPER_LETTER'
         }
         @label_specification.merge! options[:label_specification] if options[:label_specification]
       end
@@ -31,6 +31,8 @@ module Fedex
           failure_response(api_response, response)
         end
       end
+
+
 
       private
 
@@ -81,22 +83,26 @@ module Fedex
       # Callback used after a failed shipment response.
       def failure_response(api_response, response)
         error_message = if response[:process_shipment_reply]
-          [response[:process_shipment_reply][:notifications]].flatten.first[:message]
-        else
-          "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
-        end rescue $1
+                          [response[:process_shipment_reply][:notifications]].flatten.first[:message]
+                        else
+                          "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
+                        end rescue $1
         raise RateError, error_message
       end
+
+
 
       # Callback used after a successful shipment response.
       def success_response(api_response, response)
         @response_details = response[:process_shipment_reply]
       end
 
+
+
       # Build xml Fedex Web Service request
       def build_xml
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml.ProcessShipmentRequest(:xmlns => "http://fedex.com/ws/ship/v12"){
+          xml.ProcessShipmentRequest(:xmlns => "http://fedex.com/ws/ship/v10"){
             add_web_authentication_detail(xml)
             add_client_detail(xml)
             add_version(xml)
@@ -106,15 +112,19 @@ module Fedex
         builder.doc.root.to_xml
       end
 
+
+
       def service
-        { :id => 'ship', :version => 12 }
+        { :id => 'ship', :version => 10 }
       end
 
       # Successful request
       def success?(response)
         response[:process_shipment_reply] &&
-          %w{SUCCESS WARNING NOTE}.include?(response[:process_shipment_reply][:highest_severity])
+            %w{SUCCESS WARNING NOTE}.include?(response[:process_shipment_reply][:highest_severity])
       end
+
+
 
     end
   end
