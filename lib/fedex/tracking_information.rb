@@ -29,7 +29,7 @@ module Fedex
     }
 
     attr_reader :tracking_number, :signature_name, :service_type, :status,
-                :delivery_at, :events, :unique_tracking_number
+                :delivery_at, :events, :unique_tracking_number, :details
 
     def initialize(details = {})
       @details = details
