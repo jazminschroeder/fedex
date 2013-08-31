@@ -3,6 +3,7 @@ require 'fedex/request/label'
 require 'fedex/request/rate'
 require 'fedex/request/tracking_information'
 require 'fedex/request/address'
+require 'fedex/request/document'
 
 module Fedex
   class Shipment
@@ -55,6 +56,17 @@ module Fedex
     # @param [Hash] package_type, A string identifitying the type of tracking number used. Full list Fedex::Track::PACKAGE_IDENTIFIER_TYPES
     def track(options = {})
       Request::TrackingInformation.new(@credentials, options).process_request
+    end
+
+    # @param [Hash] shipper, A hash containing the shipper information
+    # @param [Hash] recipient, A hash containing the recipient information
+    # @param [Array] packages, An arrary including a hash for each package being shipped
+    # @param [String] service_type, A valid fedex service type, to view a complete list of services Fedex::Shipment::SERVICE_TYPES
+    # @param [Hash] customs_clearance, A hash containing customs clearance specification
+    # @param [Hash] shipping_document, A hash containing shipping document specification
+    # @param [Array] filenames, A locations where the label and shipment documents will be saved
+    def document(options = {})
+      Request::Document.new(@credentials, options).process_request
     end
 
   end
