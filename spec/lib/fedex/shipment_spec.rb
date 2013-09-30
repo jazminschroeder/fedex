@@ -40,5 +40,22 @@ describe Fedex::Request::Shipment do
       end
     end
 
+    context 'without service_type specified', :vcr do
+      let(:filename) {
+        require 'tmpdir'
+        File.join(Dir.tmpdir, "label#{rand(15000)}.pdf")
+      }
+      let(:options) do
+        {:shipper => shipper, :recipient => recipient, :packages => packages, :filename => filename}
+      end
+
+      it 'raises error' do
+        expect {
+          @shipment = fedex.ship(options)
+        }.to raise_error('Missing Required Parameter service_type')
+      end
+
+    end
+
   end
 end

@@ -7,7 +7,7 @@ module Fedex
 
       def initialize(credentials, options={})
         super
-        requires! options
+        requires!(options, :service_type)
         # Label specification is required even if we're not using it.
         @label_specification = {
           :label_format_type => 'COMMON2D',
