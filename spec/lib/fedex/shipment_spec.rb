@@ -22,11 +22,12 @@ describe Fedex::Request::Shipment do
       { :packaging_type => "YOUR_PACKAGING", :drop_off_type => "REGULAR_PICKUP" }
     end
 
+    let(:filename) {
+      require 'tmpdir'
+      File.join(Dir.tmpdir, "label#{rand(15000)}.pdf")
+    }
+
     context "domestic shipment", :vcr do
-      let(:filename) {
-        require 'tmpdir'
-        File.join(Dir.tmpdir, "label#{rand(15000)}.pdf")
-      }
       let(:options) do
         {:shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND", :filename => filename}
       end
@@ -41,10 +42,6 @@ describe Fedex::Request::Shipment do
     end
 
     context 'without service_type specified', :vcr do
-      let(:filename) {
-        require 'tmpdir'
-        File.join(Dir.tmpdir, "label#{rand(15000)}.pdf")
-      }
       let(:options) do
         {:shipper => shipper, :recipient => recipient, :packages => packages, :filename => filename}
       end
