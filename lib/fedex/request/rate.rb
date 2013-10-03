@@ -9,8 +9,8 @@ module Fedex
         puts api_response if @debug
         response = parse_response(api_response)
         if success?(response)
-          rate_reply_details = response[:rate_reply][:rate_reply_details]
-          rate_reply_details = [rate_reply_details] unless rate_reply_details.is_a?(Array)
+          rate_reply_details = response[:rate_reply][:rate_reply_details] || []
+          rate_reply_details = [rate_reply_details] if rate_reply_details.is_a?(Hash)
 
           rate_reply_details.map do |rate_reply|
             rate_details = [rate_reply[:rated_shipment_details]].flatten.first[:shipment_rate_detail]

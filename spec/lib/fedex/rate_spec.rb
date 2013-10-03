@@ -190,6 +190,23 @@ module Fedex
 
       end
 
+      context "when there are no valid services available", :vcr do
+
+        let(:bad_shipper) { shipper.merge(state: 'Anywhere') }
+        let(:rates) {
+          fedex.rate({
+            :shipper => bad_shipper,
+            :recipient => recipient,
+            :packages => packages
+          })
+        }
+
+        it 'returns empty array' do
+          rates.should eq []
+        end
+
+      end
+
     end
   end
 end
