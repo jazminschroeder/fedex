@@ -41,16 +41,16 @@ module Fedex
 
       context "domestic shipment", :vcr do
         it "should return a rate" do
-          rate = fedex.rate({:shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
-          rate.should be_an_instance_of(Rate)
+          rates = fedex.rate({:shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
+          rates.first.should be_an_instance_of(Rate)
         end
       end
 
       context "canadian shipment", :vcr do
         it "should return a rate" do
           canadian_recipient = {:name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address=>"Address Line 1", :city => "Richmond", :state => "BC", :postal_code => "V7C4V4", :country_code => "CA", :residential => "true" }
-          rate = fedex.rate({:shipper => shipper, :recipient => canadian_recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
-          rate.should be_an_instance_of(Rate)
+          rates = fedex.rate({:shipper => shipper, :recipient => canadian_recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
+          rates.first.should be_an_instance_of(Rate)
         end
       end
 
@@ -140,10 +140,73 @@ module Fedex
           ]
 
           customs_clearance = { :broker => broker, :clearance_brokerage => clearance_brokerage, :importer_of_record => importer_of_record, :recipient_customs_id => recipient_customs_id, :duties_payment => duties_payment, :commodities => commodities }
-          rate = fedex.rate({:shipper => shipper, :recipient => canadian_recipient, :packages => packages, :service_type => "FEDEX_GROUND", :customs_clearance => customs_clearance})
-          rate.should be_an_instance_of(Rate)
+          rates = fedex.rate({:shipper => shipper, :recipient => canadian_recipient, :packages => packages, :service_type => "FEDEX_GROUND", :customs_clearance => customs_clearance})
+          rates.first.should be_an_instance_of(Rate)
         end
       end
+
+      context "with service type specified", :vcr do
+
+        let(:rates) {
+          fedex.rate({
+            :shipper => shipper,
+            :recipient => recipient,
+            :packages => packages,
+            :service_type => "FEDEX_GROUND"
+          })
+        }
+
+        it "returns a single rate" do
+          rates.count.should eq 1
+        end
+
+        it "has service_type attribute" do
+          rates.first.service_type == 'FEDEX_GROUND'
+        end
+
+      end
+
+      context "with no service type specified", :vcr do
+
+        let(:rates) {
+          fedex.rate({
+            :shipper => shipper,
+            :recipient => recipient,
+            :packages => packages
+          })
+        }
+
+        it "returns multiple rates" do
+          rates.count.should > 1
+        end
+
+        context "each rate" do
+
+          it 'has service type attribute' do
+            rates.first.should respond_to(:service_type)
+          end
+
+        end
+
+      end
+
+      context "when there are no valid services available", :vcr do
+
+        let(:bad_shipper) { shipper.merge(state: 'Anywhere') }
+        let(:rates) {
+          fedex.rate({
+            :shipper => bad_shipper,
+            :recipient => recipient,
+            :packages => packages
+          })
+        }
+
+        it 'returns empty array' do
+          rates.should eq []
+        end
+
+      end
+
     end
   end
 end
