@@ -67,8 +67,8 @@ module Fedex
 
       def add_address_to_validate(xml)
         xml.AddressesToValidate{
+          xml.CompanyName           @address[:company] unless @address[:company].nil? or @address[:company].empty?
           xml.Address{
-            xml.CompanyName         @address[:company] unless @address[:company].nil? or @address[:company].empty?
             Array(@address[:street]).take(2).each do |address_line|
               xml.StreetLines address_line
             end
