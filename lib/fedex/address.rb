@@ -17,7 +17,7 @@ module Fedex
 
       address        = options[:address]
 
-      @company       = address[:company_name]
+      @company       = options[:company_name]
       @street_lines  = address[:street_lines]
       @city          = address[:city]
       @state         = address[:state_or_province_code]
