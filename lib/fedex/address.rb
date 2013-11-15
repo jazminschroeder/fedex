@@ -2,8 +2,8 @@ module Fedex
   class Address
 
     attr_reader :changes, :score, :confirmed, :available, :status, :residential,
-                :business, :street_lines, :city, :state, :province_code,
-                :postal_code, :country_code
+                :business, :company, :street_lines, :city, :state, 
+                :province_code, :postal_code, :country_code
 
     def initialize(options)
       @changes   = options[:changes]
@@ -17,6 +17,7 @@ module Fedex
 
       address        = options[:address]
 
+      @company       = options[:company_name]
       @street_lines  = address[:street_lines]
       @city          = address[:city]
       @state         = address[:state_or_province_code]
