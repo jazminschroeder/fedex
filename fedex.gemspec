@@ -13,7 +13,7 @@ Gem::Specification.new do |s|
   s.description = %q{Provides an interface to Fedex Web Services(version 10) - shipping rates, generate labels and address validation}
 
   s.rubyforge_project = "fedex"
-  
+
   s.license = 'MIT'
 
   s.add_dependency 'httparty',            '~> 0.11.0'
