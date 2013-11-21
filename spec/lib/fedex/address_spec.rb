@@ -34,6 +34,26 @@ module Fedex
         end
       end
 
+      context "multiple address validation results", :vcr do
+        let(:address) do
+          {
+            :street      => "301 Las Colinas Blvd",
+            :city        => "Irving",
+            :state       => "TX",
+            :postal_code => "75039",
+            :country     => "USA"
+          }
+        end
+
+        let(:options) do
+          { :address => address }
+        end
+
+        it "validates the address" do
+          expect{ fedex.validate_address(options) }.to_not raise_error
+        end
+      end
+
     end
   end
 end
