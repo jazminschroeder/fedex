@@ -240,16 +240,18 @@ Fedex::Shipment::DROP_OFF_TYPES
 ````
 
 # Contributors:
-- [jazminschroeder](http://github.com/jazminschroeder) (Jazmin Schroeder)
-- [parndt](https://github.com/parndt) (Philip Arndt)
-- [mmell](https://github.com/mmell) (Michael Mell)
-- [jordanbyron](https://github.com/jordanbyron) (Jordan Byron)
-- [geermc4](https://github.com/geermc4) (German Garcia)
+- [jazminschroeder] (http://github.com/jazminschroeder) (Jazmin Schroeder)
+- [parndt] (https://github.com/parndt) (Philip Arndt)
+- [mmell] (https://github.com/mmell) (Michael Mell)
+- [jordanbyron] (https://github.com/jordanbyron) (Jordan Byron)
+- [geermc4] (https://github.com/geermc4) (German Garcia)
 - [janders223] (https://github.com/janders223) (Jim Anders)
 - [jlambert121] (https://github.com/jlambert121) (Justin Lambert)
 - [sborsje] (https://github.com/sborsje) (Stefan Borsje)
 - [bradediger] (https://github.com/bradediger) (Brad Ediger)
 - [yevgenko] (https://github.com/yevgenko) (Yevgeniy Viktorov)
+- [smartacus] (https://github.com/smartacus) (Michael Lippold)
+- [jonathandean] (https://github.com/jonathandean) (Jonathan Dean)
 
 # Copyright/License:
 Copyright 2011 [Jazmin Schroeder](http://jazminschroeder.com)
