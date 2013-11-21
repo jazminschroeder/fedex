@@ -9,6 +9,8 @@ module Fedex
         requires!(options, :address)
         @credentials = credentials
         @address     = options[:address]
+
+        @address[:address] ||= @address[:street]
       end
 
       def process_request
@@ -69,7 +71,7 @@ module Fedex
         xml.AddressesToValidate{
           xml.CompanyName           @address[:company] unless @address[:company].nil? or @address[:company].empty?
           xml.Address{
-            Array(@address[:street]).take(2).each do |address_line|
+            Array(@address[:address]).take(2).each do |address_line|
               xml.StreetLines address_line
             end
             xml.City                @address[:city]
