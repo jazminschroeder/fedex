@@ -177,6 +177,12 @@ module Fedex
         @packages.each do |package|
           xml.RequestedPackageLineItems{
             xml.GroupPackageCount 1
+            if package[:insured_value]
+              xml.InsuredValue{
+                xml.Currency package[:insured_value][:currency]
+                xml.Amount package[:insured_value][:amount]
+              }
+            end
             xml.Weight{
               xml.Units package[:weight][:units]
               xml.Value package[:weight][:value]
