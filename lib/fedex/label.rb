@@ -12,7 +12,7 @@ module Fedex
       package_details = label_details[:process_shipment_reply][:completed_shipment_detail][:completed_package_details]
       @options = package_details[:label]
       @options[:format] = label_details[:format]
-      @options[:tracking_number] = package_details[:tracking_ids][:tracking_number]
+      @options[:tracking_number] = [package_details[:tracking_ids]].flatten.first[:tracking_number]
       @options[:file_name] = label_details[:file_name]
 
       @image = Base64.decode64(options[:parts][:image]) if has_image?
