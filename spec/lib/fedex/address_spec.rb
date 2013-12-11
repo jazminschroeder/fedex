@@ -11,7 +11,7 @@ module Fedex
       context "valid address", :vcr do
         let(:address) do
           {
-            :street      => "5 Elm Street",
+            :address     => "5 Elm Street",
             :city        => "Norwalk",
             :state       => "CT",
             :postal_code => "06850",
@@ -37,7 +37,7 @@ module Fedex
       context "multiple address validation results", :vcr do
         let(:address) do
           {
-            :street      => "301 Las Colinas Blvd",
+            :address     => "301 Las Colinas Blvd",
             :city        => "Irving",
             :state       => "TX",
             :postal_code => "75039",

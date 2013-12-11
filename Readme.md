@@ -212,7 +212,7 @@ To verify an address is valid and deliverable:
 ```ruby
 
 address = {
-  :street      => "5 Elm Street",
+  :address     => "5 Elm Street",
   :city        => "Norwalk",
   :state       => "CT",
   :postal_code => "06850",
