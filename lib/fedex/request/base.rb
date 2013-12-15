@@ -32,6 +32,9 @@ module Fedex
       # Recipient Custom ID Type
       RECIPIENT_CUSTOM_ID_TYPE = %w(COMPANY INDIVIDUAL PASSPORT)
 
+      # List of available Payment Types
+      PAYMENT_TYPE = %w(RECIPIENT SENDER THIRD_PARTY)
+
       # In order to use Fedex rates API you must first apply for a developer(and later production keys),
       # Visit {http://www.fedex.com/us/developer/ Fedex Developer Center} for more information about how to obtain your keys.
       # @param [String] key - Fedex web service key
@@ -47,6 +50,8 @@ module Fedex
         @shipper, @recipient, @packages, @service_type, @customs_clearance, @debug = options[:shipper], options[:recipient], options[:packages], options[:service_type], options[:customs_clearance], options[:debug]
         @debug = ENV['DEBUG'] == 'true'
         @shipping_options =  options[:shipping_options] ||={}
+        @payment_options = options[:payment_options] ||={}
+        requires!(@payment_options, :type, :account_number, :name, :company, :phone_number, :country_code) if @payment_options.length > 0
         # Expects hash with addr and port
         if options[:http_proxy]
           self.class.http_proxy options[:http_proxy][:host], options[:http_proxy][:port]
@@ -151,20 +156,20 @@ module Fedex
       # Add shipping charges to xml request
       def add_shipping_charges_payment(xml)
         xml.ShippingChargesPayment{
-          xml.PaymentType "SENDER"
+          xml.PaymentType @payment_options[:type] || "SENDER"
           xml.Payor{
             if service[:version] >= 12
               xml.ResponsibleParty {
-                xml.AccountNumber @credentials.account_number
+                xml.AccountNumber @payment_options[:account_number] || @credentials.account_number
                 xml.Contact {
-                  xml.PersonName @shipper[:name]
-                  xml.CompanyName @shipper[:company]
-                  xml.PhoneNumber @shipper[:phone_number]
+                  xml.PersonName @payment_options[:name] || @shipper[:name]
+                  xml.CompanyName @payment_options[:company] || @shipper[:company]
+                  xml.PhoneNumber @payment_options[:phone_number] || @shipper[:phone_number]
                 }
               }
             else
-              xml.AccountNumber @credentials.account_number
-              xml.CountryCode @shipper[:country_code]
+              xml.AccountNumber @payment_options[:account_number] || @credentials.account_number
+              xml.CountryCode @payment_options[:country_code] || @shipper[:country_code]
             end
           }
         }

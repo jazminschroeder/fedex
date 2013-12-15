@@ -68,12 +68,26 @@ packages << {
 ```
 
 By default packaging type is "YOUR PACKAGING" and the drop off type is "REGULAR PICKUP".
-If you need something different you can pass an extra hash for shipping options
+If you need something different you can pass an extra hash for shipping options.
 
 ```ruby
 shipping_options = {
   :packaging_type => "YOUR_PACKAGING",
   :drop_off_type => "REGULAR_PICKUP"
+}
+```
+
+By default the shipping charges will be assigned to the sender. If you may
+change this by passing an extra hash of payment options.
+
+```ruby
+payment_options = {
+  :type => "THIRD_PARTY",
+  :account_number => "123456789"
+  :name => "Third Party Payor",
+  :company => "Company",
+  :phone_number => "555-555-5555",
+  :country_code => "US"
 }
 ```
 
