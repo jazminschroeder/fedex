@@ -266,6 +266,7 @@ Fedex::Shipment::DROP_OFF_TYPES
 - [yevgenko] (https://github.com/yevgenko) (Yevgeniy Viktorov)
 - [smartacus] (https://github.com/smartacus) (Michael Lippold)
 - [jonathandean] (https://github.com/jonathandean) (Jonathan Dean)
+- and more... (https://github.com/jazminschroeder/fedex/graphs/contributors)
 
 # Copyright/License:
 Copyright 2011 [Jazmin Schroeder](http://jazminschroeder.com)
