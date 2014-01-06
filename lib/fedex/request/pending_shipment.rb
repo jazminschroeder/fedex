@@ -39,6 +39,7 @@ module Fedex
       # Callback used after a successful shipment response.
       def success_response(api_response, response)
         @response_details = response[:create_pending_shipment_reply]
+        Fedex::PendingShipmentLabel.new @response_details
       end
 
       # Add information for shipments
