@@ -1,4 +1,5 @@
 require 'fedex/request/base'
+require 'fedex/pending_shipment_label'
 
 module Fedex
   module Request
