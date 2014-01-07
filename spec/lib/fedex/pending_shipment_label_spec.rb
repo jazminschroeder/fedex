@@ -4,8 +4,8 @@ require 'tmpdir'
 
 module Fedex
   describe PendingShipmentLabel do
-    describe "ship service for label" do
-      let(:fedex) { Shipment.new(fedex_credentials) }
+    describe "service for email label" do
+      let(:fedex) { Fedex::Shipment.new(fedex_production_credentials)}
       let(:shipper) do
         {:name => "Sender", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Harrison", :state => "AR", :postal_code => "72601", :country_code => "US"}
       end
@@ -15,8 +15,7 @@ module Fedex
       let(:packages) do
         [
             {
-                :weight => {:units => "LB", :value => 2},
-                :dimensions => {:length => 10, :width => 5, :height => 4, :units => "IN" }
+                :weight => {:units => "LB", :value => 2},:dimensions => {:length => 10, :width => 5, :height => 4, :units => "IN" },:item_description=>'Test'
             }
         ]
       end
@@ -62,23 +61,13 @@ module Fedex
           @pending_shipment_label = fedex.pending_shipment(options)
         end
 
-        it "should create a label" do
-          File.should exist(filename)
-        end
 
         it "should return email label url" do
-          @label.should respond_to('email_label_url')
+          @pending_shipment_label.should respond_to('email_label_url')
         end
 
 
-        after do
-          require 'fileutils'
-          FileUtils.rm_r(filename) if File.exist?(filename)
-        end
 
-        it "should expose the file_name" do
-          @label.should respond_to('file_name')
-        end
       end
     end
   end
