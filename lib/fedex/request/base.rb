@@ -47,7 +47,7 @@ module Fedex
       def initialize(credentials, options={})
         requires!(options, :shipper, :recipient, :packages)
         @credentials = credentials
-        @shipper, @recipient, @packages, @service_type, @customs_clearance, @debug = options[:shipper], options[:recipient], options[:packages], options[:service_type], options[:customs_clearance], options[:debug]
+        @shipper, @recipient, @packages, @service_type, @customs_clearance_detail, @debug = options[:shipper], options[:recipient], options[:packages], options[:service_type], options[:customs_clearance_detail], options[:debug]
         @debug = ENV['DEBUG'] == 'true'
         @shipping_options =  options[:shipping_options] ||={}
         @payment_options = options[:payment_options] ||={}
@@ -106,7 +106,7 @@ module Fedex
           add_shipper(xml)
           add_recipient(xml)
           add_shipping_charges_payment(xml)
-          add_customs_clearance(xml) if @customs_clearance
+          add_customs_clearance(xml) if @customs_clearance_detail
           xml.RateRequestTypes "ACCOUNT"
           add_packages(xml)
         }
@@ -158,7 +158,7 @@ module Fedex
         xml.ShippingChargesPayment{
           xml.PaymentType @payment_options[:type] || "SENDER"
           xml.Payor{
-            if service[:version] >= 12
+            if service[:version] >= Fedex::API_VERSION
               xml.ResponsibleParty {
                 xml.AccountNumber @payment_options[:account_number] || @credentials.account_number
                 xml.Contact {
@@ -276,7 +276,7 @@ module Fedex
       # Add customs clearance(for international shipments)
       def add_customs_clearance(xml)
         xml.CustomsClearanceDetail{
-          hash_to_xml(xml, @customs_clearance)
+          hash_to_xml(xml, @customs_clearance_detail)
         }
       end
 

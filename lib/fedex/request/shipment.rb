@@ -45,7 +45,7 @@ module Fedex
           add_recipient(xml)
           add_shipping_charges_payment(xml)
           add_special_services(xml) if @shipping_options[:return_reason]
-          add_customs_clearance(xml) if @customs_clearance
+          add_customs_clearance(xml) if @customs_clearance_detail
           add_custom_components(xml)
           xml.RateRequestTypes "ACCOUNT"
           add_packages(xml)
@@ -96,7 +96,7 @@ module Fedex
       # Build xml Fedex Web Service request
       def build_xml
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml.ProcessShipmentRequest(:xmlns => "http://fedex.com/ws/ship/v12"){
+          xml.ProcessShipmentRequest(:xmlns => "http://fedex.com/ws/ship/v#{Fedex::API_VERSION}"){
             add_web_authentication_detail(xml)
             add_client_detail(xml)
             add_version(xml)
@@ -107,7 +107,7 @@ module Fedex
       end
 
       def service
-        { :id => 'ship', :version => 12 }
+        { :id => 'ship', :version => Fedex::API_VERSION }
       end
 
       # Successful request
