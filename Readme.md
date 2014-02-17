@@ -83,7 +83,7 @@ change this by passing an extra hash of payment options.
 ```ruby
 payment_options = {
   :type => "THIRD_PARTY",
-  :account_number => "123456789"
+  :account_number => "123456789",
   :name => "Third Party Payor",
   :company => "Company",
   :phone_number => "555-555-5555",
