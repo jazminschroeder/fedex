@@ -36,7 +36,7 @@ module Fedex
       # Build xml Fedex Web Service request
       def build_xml
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml.AddressValidationRequest(:xmlns => "http://fedex.com/ws/addressvalidation/v2"){
+          xml.AddressValidationRequest(:xmlns => "http://fedex.com/ws/addressvalidation/v#{service[:version]}"){
             add_web_authentication_detail(xml)
             add_client_detail(xml)
             add_version(xml)
