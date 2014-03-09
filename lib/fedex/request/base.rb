@@ -158,7 +158,7 @@ module Fedex
         xml.ShippingChargesPayment{
           xml.PaymentType @payment_options[:type] || "SENDER"
           xml.Payor{
-            if service[:version] >= Fedex::API_VERSION
+            if service[:version].to_i >= Fedex::API_VERSION.to_i
               xml.ResponsibleParty {
                 xml.AccountNumber @payment_options[:account_number] || @credentials.account_number
                 xml.Contact {

@@ -59,7 +59,7 @@ module Fedex
       end
 
       def service
-        { :id => 'crs', :version => 10 }
+        { :id => 'crs', :version => Fedex::API_VERSION }
       end
 
       # Successful request

@@ -93,7 +93,7 @@ module Fedex
         :packages => packages,
         :service_type => "INTERNATIONAL_PRIORITY",
         :shipping_details => shipping_options,
-        :customs_clearance => customs,
+        :customs_clearance_detail => customs,
         :shipping_document => document,
         :filenames => filenames
       }

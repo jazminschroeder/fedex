@@ -177,7 +177,7 @@ module Fedex
         }
 
         it "returns multiple rates" do
-          rates.count.should > 1
+          rates.count.should >= 1
         end
 
         context "each rate" do
