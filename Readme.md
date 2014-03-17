@@ -1,5 +1,5 @@
 # Fedex Rate Web Service
-
+## Fedex API Shipment Version: 13
 
 For more information visit [Fedex Web Services for Shipping](https://www.fedex.com/wpor/web/jsp/drclinks.jsp?links=wss/index.html).
 
@@ -11,14 +11,6 @@ Note: Please make sure to test your results.
 
 # Installation:
 
-Rails 3.x using Bundler's Gemfile:
-
-```ruby
-gem 'fedex'
-````
-
-Rails 2.x or without Rails or Bundler:
-
 ```ruby
 gem install fedex
 ```
@@ -28,6 +20,7 @@ gem install fedex
 Define the shipper:
 
 ```ruby
+
 shipper = { :name => "Sender",
             :company => "Company",
             :phone_number => "555-555-5555",
