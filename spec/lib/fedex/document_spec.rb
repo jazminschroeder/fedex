@@ -5,16 +5,16 @@ module Fedex
   describe Document do
     let(:fedex) { Shipment.new(fedex_credentials) }
     let(:shipper) do
-      {:name => "Sender", :company => "Company", :phone_number => "555-555-5555", :address => "King Street", :city => "Ashbourne", :postal_code => "DE6 1EA", :country_code => "GB"}
+      { :name => "Sender", :company => "Company", :phone_number => "555-555-5555", :address => "King Street", :city => "Ashbourne", :postal_code => "DE6 1EA", :country_code => "GB" }
     end
     let(:recipient) do
-      {:name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Frankin Park", :state => "IL", :postal_code => "60131", :country_code => "US", :residential => true }
+      { :name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Frankin Park", :state => "IL", :postal_code => "60131", :country_code => "US", :residential => true }
     end
     let(:packages) do
       [
         {
-          :weight => {:units => "LB", :value => 2},
-          :dimensions => {:length => 10, :width => 5, :height => 4, :units => "IN" }
+          :weight => { :units => "LB", :value => 2 },
+          :dimensions => { :length => 10, :width => 5, :height => 4, :units => "IN" }
         }
       ]
     end
