@@ -18,20 +18,20 @@ module Fedex
     describe "rate service" do
       let(:fedex) { Shipment.new(fedex_credentials) }
       let(:shipper) do
-        {:name => "Sender", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Harrison", :state => "AR", :postal_code => "72601", :country_code => "US"}
+        { :name => "Sender", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Harrison", :state => "AR", :postal_code => "72601", :country_code => "US" }
       end
       let(:recipient) do
-        {:name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Frankin Park", :state => "IL", :postal_code => "60131", :country_code => "US", :residential => true }
+        { :name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Frankin Park", :state => "IL", :postal_code => "60131", :country_code => "US", :residential => true }
       end
       let(:packages) do
         [
           {
-            :weight => {:units => "LB", :value => 2},
-            :dimensions => {:length => 10, :width => 5, :height => 4, :units => "IN" }
+            :weight => { :units => "LB", :value => 2 },
+            :dimensions => { :length => 10, :width => 5, :height => 4, :units => "IN" }
           },
           {
-            :weight => {:units => "LB", :value => 6},
-            :dimensions => {:length => 5, :width => 5, :height => 4, :units => "IN" }
+            :weight => { :units => "LB", :value => 6 },
+            :dimensions => { :length => 5, :width => 5, :height => 4, :units => "IN" }
           }
         ]
       end
@@ -41,22 +41,22 @@ module Fedex
 
       context "domestic shipment", :vcr do
         it "should return a rate" do
-          rates = fedex.rate({:shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
+          rates = fedex.rate({ :shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
           rates.first.should be_an_instance_of(Rate)
         end
       end
 
       context "canadian shipment", :vcr do
         it "should return a rate" do
-          canadian_recipient = {:name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address=>"Address Line 1", :city => "Richmond", :state => "BC", :postal_code => "V7C4V4", :country_code => "CA", :residential => "true" }
-          rates = fedex.rate({:shipper => shipper, :recipient => canadian_recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
+          canadian_recipient = { :name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address=>"Address Line 1", :city => "Richmond", :state => "BC", :postal_code => "V7C4V4", :country_code => "CA", :residential => "true" }
+          rates = fedex.rate({ :shipper => shipper, :recipient => canadian_recipient, :packages => packages, :service_type => "FEDEX_GROUND" })
           rates.first.should be_an_instance_of(Rate)
         end
       end
 
       context "canadian shipment including customs", :vcr do
         it "should return a rate including international fees" do
-          canadian_recipient = {:name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address=>"Address Line 1", :city => "Richmond", :state => "BC", :postal_code => "V7C4V4", :country_code => "CA", :residential => "true" }
+          canadian_recipient = { :name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address=>"Address Line 1", :city => "Richmond", :state => "BC", :postal_code => "V7C4V4", :country_code => "CA", :residential => "true" }
           broker = {
             :account_number => "510087143",
             :tins => { :tin_type => "BUSINESS_NATIONAL",
@@ -121,10 +121,10 @@ module Fedex
               :description => "Cotton Coat",
               :country_of_manufacture => "US",
               :harmonized_code => "6103320000",
-              :weight => {:units => "LB", :value => "2"},
+              :weight => { :units => "LB", :value => "2" },
               :quantity => "3",
-              :unit_price => {:currency => "USD", :amount => "50" },
-              :customs_value => {:currency => "USD", :amount => "150" }
+              :unit_price => { :currency => "USD", :amount => "50" },
+              :customs_value => { :currency => "USD", :amount => "150" }
             },
             {
               :name => "Poster",
@@ -132,15 +132,15 @@ module Fedex
               :description => "Paper Poster",
               :country_of_manufacture => "US",
               :harmonized_code => "4817100000",
-              :weight => {:units => "LB", :value => "0.2"},
+              :weight => { :units => "LB", :value => "0.2" },
               :quantity => "3",
-              :unit_price => {:currency => "USD", :amount => "50" },
-              :customs_value => {:currency => "USD", :amount => "150" }
+              :unit_price => { :currency => "USD", :amount => "50" },
+              :customs_value => { :currency => "USD", :amount => "150" }
             }
           ]
 
           customs_clearance = { :broker => broker, :clearance_brokerage => clearance_brokerage, :importer_of_record => importer_of_record, :recipient_customs_id => recipient_customs_id, :duties_payment => duties_payment, :commodities => commodities }
-          rates = fedex.rate({:shipper => shipper, :recipient => canadian_recipient, :packages => packages, :service_type => "FEDEX_GROUND", :customs_clearance => customs_clearance})
+          rates = fedex.rate({ :shipper => shipper, :recipient => canadian_recipient, :packages => packages, :service_type => "FEDEX_GROUND", :customs_clearance => customs_clearance })
           rates.first.should be_an_instance_of(Rate)
         end
       end

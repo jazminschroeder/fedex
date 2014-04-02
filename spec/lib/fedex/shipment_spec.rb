@@ -5,10 +5,10 @@ describe Fedex::Request::Shipment do
   describe "ship service" do
     let(:fedex) { Fedex::Shipment.new(fedex_credentials) }
     let(:shipper) do
-      {:name => "Sender", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Harrison", :state => "AR", :postal_code => "72601", :country_code => "US"}
+      { :name => "Sender", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Harrison", :state => "AR", :postal_code => "72601", :country_code => "US" }
     end
     let(:recipient) do
-      {:name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Frankin Park", :state => "IL", :postal_code => "60131", :country_code => "US", :residential => true }
+      { :name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Frankin Park", :state => "IL", :postal_code => "60131", :country_code => "US", :residential => true }
     end
     let(:packages) do
       [
@@ -32,7 +32,7 @@ describe Fedex::Request::Shipment do
 
     context "domestic shipment", :vcr do
       let(:options) do
-        {:shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND", :filename => filename}
+        { :shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND", :filename => filename }
       end
 
       it "succeeds" do
@@ -55,7 +55,7 @@ describe Fedex::Request::Shipment do
 
     context 'without service_type specified', :vcr do
       let(:options) do
-        {:shipper => shipper, :recipient => recipient, :packages => packages, :filename => filename}
+        { :shipper => shipper, :recipient => recipient, :packages => packages, :filename => filename }
       end
 
       it 'raises error' do
@@ -67,7 +67,7 @@ describe Fedex::Request::Shipment do
 
     context 'with invalid payment_options' do
       let(:options) do
-        {:shipper => shipper, :recipient => recipient, :packages => packages, :filename => filename, :payment_options => payment_options.merge(:account_number => nil)}
+        { :shipper => shipper, :recipient => recipient, :packages => packages, :filename => filename, :payment_options => payment_options.merge(:account_number => nil) }
       end
 
       it 'raises error' do
