@@ -41,6 +41,7 @@ module Fedex
           xml.DropoffType @shipping_options[:drop_off_type] ||= "REGULAR_PICKUP"
           xml.ServiceType service_type
           xml.PackagingType @shipping_options[:packaging_type] ||= "YOUR_PACKAGING"
+          add_total_weight(xml) if @mps.has_key? :total_weight
           add_shipper(xml)
           add_recipient(xml)
           add_shipping_charges_payment(xml)
@@ -50,6 +51,15 @@ module Fedex
           xml.RateRequestTypes "ACCOUNT"
           add_packages(xml)
         }
+      end
+
+      def add_total_weight(xml)
+        if @mps.has_key? :total_weight
+          xml.TotalWeight{
+            xml.Units @mps[:total_weight][:units]
+            xml.Value @mps[:total_weight][:value]
+          }
+        end
       end
 
       # Hook that can be used to add custom parts.
