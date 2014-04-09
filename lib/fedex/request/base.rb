@@ -52,6 +52,13 @@ module Fedex
         @shipping_options =  options[:shipping_options] ||={}
         @payment_options = options[:payment_options] ||={}
         requires!(@payment_options, :type, :account_number, :name, :company, :phone_number, :country_code) if @payment_options.length > 0
+        if options.has_key?(:mps)
+          @mps = options[:mps]
+          requires!(@mps, :package_count, :total_weight, :sequence_number)
+          requires!(@mps, :master_tracking_id) if @mps.has_key?(:sequence_number) && @mps[:sequence_number].to_i >= 2
+        else
+          @mps = {}
+        end
         # Expects hash with addr and port
         if options[:http_proxy]
           self.class.http_proxy options[:http_proxy][:host], options[:http_proxy][:port]
@@ -175,13 +182,32 @@ module Fedex
         }
       end
 
+      # Add Master Tracking Id (for MPS Shipping Labels, this is required when requesting labels 2 through n)
+      def add_master_tracking_id(xml)
+        if @mps.has_key? :master_tracking_id
+          xml.MasterTrackingId{
+            xml.TrackingIdType @mps[:master_tracking_id][:tracking_id_type]
+            xml.TrackingNumber @mps[:master_tracking_id][:tracking_number]
+          }
+        end
+      end
+
       # Add packages to xml request
       def add_packages(xml)
+        add_master_tracking_id(xml) if @mps.has_key? :master_tracking_id
         package_count = @packages.size
-        xml.PackageCount package_count
+        if @mps.has_key? :package_count
+          xml.PackageCount @mps[:package_count]
+        else
+          xml.PackageCount package_count
+        end
         @packages.each do |package|
           xml.RequestedPackageLineItems{
-            xml.GroupPackageCount 1
+            if @mps.has_key? :sequence_number
+              xml.SequenceNumber @mps[:sequence_number]
+            else
+              xml.GroupPackageCount 1
+            end
             if package[:insured_value]
               xml.InsuredValue{
                 xml.Currency package[:insured_value][:currency]
