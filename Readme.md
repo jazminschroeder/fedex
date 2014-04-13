@@ -189,6 +189,44 @@ shipment.save!
 
 Documentation for setting up Paperclip with Amazon S3 can be found in the Paperclip [README](https://github.com/thoughtbot/paperclip/#storage).
 
+### ** Generate shipping labels for multi-package shipments (MPS) **
+
+Multiple packages for a single pick-up, destination and payer can be combined into a single MPS shipment. The first label will provide a master tracking number which must be used in the subsequent calls for the remaining packages in the shipment.
+
+Parameters for the first label:
+```ruby
+label = fedex.label(
+  :filename => file_name,
+  :shipper => shipper,
+  :recipient => recipient,
+  :packages => packages,
+  :service_type => service_type,
+  :shipping_details => shipping_details,
+  :shipping_charges_payment => shipping_charges_payment,
+  :customs_clearance_detail => customs_clearance_detail,
+  :mps => {:package_count => package_count, :total_weight => total_weight, :sequence_number => '1'}
+  )
+```
+
+Parameters for labels 2 through 'n':
+```ruby
+fedex.label(
+  :filename => file_name,
+  :shipper => shipper,
+  :recipient => recipient,
+  :packages => packages,
+  :service_type => service_type,
+  :shipping_details => shipping_details,
+  :shipping_charges_payment => shipping_charges_payment,
+  :customs_clearance_detail => customs_clearance_detail,
+  :mps => {
+      :master_tracking_id => {:tracking_id_type => 'FEDEX', :tracking_number =>tracking_number},
+      :package_count => package_count,
+      :total_weight => total_weight,
+      :sequence_number => 'n'
+      }
+   )
+```
 
 ### ** Tracking a shipment **
 
