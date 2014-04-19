@@ -70,6 +70,21 @@ shipping_options = {
 }
 ```
 
+If you pass a non-nil `:return_reason` as part of the shipping options, you will create
+a return shipment. The request to fedex will include the following additional XML.
+
+```xml
+<SpecialServicesRequested>
+  <SpecialServiceTypes>RETURN_SHIPMENT</SpecialServiceTypes>
+  <ReturnShipmentDetail>
+    <ReturnType>PRINT_RETURN_LABEL</ReturnType>
+    <Rma>
+      <Reason>YOUR RETURN REASON HERE</Reason>
+    </Rma>
+  </ReturnShipmentDetail>
+</SpecialServicesRequested>
+```
+
 By default the shipping charges will be assigned to the sender. If you may
 change this by passing an extra hash of payment options.
 
