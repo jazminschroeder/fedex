@@ -320,7 +320,11 @@ module Fedex
       # Build xml nodes dynamically from the hash keys and values
       def hash_to_xml(xml, hash)
         hash.each do |key, value|
-          element = camelize(key)
+          if key.to_s.downcase.match(/^commodities_\d{1,}$/).present?
+            element = 'Commodities'
+          else
+            element = camelize(key)
+          end
           if value.is_a?(Hash)
             xml.send element do |x|
               hash_to_xml(x, value)
