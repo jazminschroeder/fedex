@@ -15,6 +15,7 @@ module Fedex
           :label_stock_type => 'PAPER_LETTER'
         }
         @label_specification.merge! options[:label_specification] if options[:label_specification]
+        @customer_specified_detail = options[:customer_specified_detail] if options[:customer_specified_detail]
       end
 
       # Sends post request to Fedex web service and parse the response.
@@ -73,6 +74,7 @@ module Fedex
           xml.LabelFormatType @label_specification[:label_format_type]
           xml.ImageType @label_specification[:image_type]
           xml.LabelStockType @label_specification[:label_stock_type]
+          xml.CustomerSpecifiedDetail{ hash_to_xml(xml, @customer_specified_detail) } if @customer_specified_detail.present?
         }
       end
 

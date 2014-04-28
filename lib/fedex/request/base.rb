@@ -322,6 +322,8 @@ module Fedex
         hash.each do |key, value|
           if key.to_s.downcase.match(/^commodities_\d{1,}$/).present?
             element = 'Commodities'
+          elsif key.to_s.downcase.match(/^masked_data_\d{1,}$/).present?
+            element = 'MaskedData'
           else
             element = camelize(key)
           end
