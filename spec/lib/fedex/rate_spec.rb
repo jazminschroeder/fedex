@@ -44,12 +44,19 @@ module Fedex
           rates = fedex.rate({ :shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
           rates.first.should be_an_instance_of(Rate)
         end
+        it "should return a transit time" do
+          rates = fedex.rate({ :shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
+          rates.first.transit_time.should_not be_nil
+        end
       end
 
       context "canadian shipment", :vcr do
         it "should return a rate" do
           canadian_recipient = { :name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address=>"Address Line 1", :city => "Richmond", :state => "BC", :postal_code => "V7C4V4", :country_code => "CA", :residential => "true" }
           rates = fedex.rate({ :shipper => shipper, :recipient => canadian_recipient, :packages => packages, :service_type => "FEDEX_GROUND" })
+          File.open("log.yml", "w") do |file|
+            file.write rates.to_yaml
+          end
           rates.first.should be_an_instance_of(Rate)
         end
       end
