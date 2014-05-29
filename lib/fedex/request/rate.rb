@@ -49,10 +49,13 @@ module Fedex
         ns = "http://fedex.com/ws/rate/v#{service[:version]}"
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.RateRequest(:xmlns => ns){
+            xml.ReturnTransitAndCommit true             # DN: added for transit time
+            xml.ReturnTransitAndCommitSpecified true    # DN: added for transit time
             add_web_authentication_detail(xml)
             add_client_detail(xml)
             add_version(xml)
             add_requested_shipment(xml)
+
           }
         end
         builder.doc.root.to_xml
