@@ -4,6 +4,7 @@ require 'fedex/request/rate'
 require 'fedex/request/tracking_information'
 require 'fedex/request/address'
 require 'fedex/request/document'
+require 'fedex/request/delete'
 
 module Fedex
   class Shipment
@@ -67,6 +68,11 @@ module Fedex
     # @param [Array] filenames, A locations where the label and shipment documents will be saved
     def document(options = {})
       Request::Document.new(@credentials, options).process_request
+    end
+
+    # @param [Hash] package_id, A string with the tracking number to delete
+    def delete(options = {})
+      Request::Delete.new(@credentials, options).process_request
     end
 
   end
