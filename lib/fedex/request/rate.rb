@@ -48,7 +48,6 @@ module Fedex
       # Add transite time options
       def add_transit_time(xml)
         xml.ReturnTransitAndCommit true
-        #xml.ReturnTransitAndCommitSpecified = true;
       end
 
       # Build xml Fedex Web Service request
