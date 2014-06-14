@@ -51,6 +51,11 @@ describe Fedex::Request::Shipment do
         @shipment.class.should_not == Fedex::RateError
       end
 
+      it "should return a transit time" do
+        @shipment = fedex.ship(options)
+        @shipment[:completed_shipment_detail][:operational_detail][:transit_time].should eql("TWO_DAYS")
+      end
+
     end
 
     context 'without service_type specified', :vcr do
