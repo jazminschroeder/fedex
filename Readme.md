@@ -146,7 +146,7 @@ ship = fedex.ship(:shipper=>shipper,
                   :packages => packages,
                   :service_type => "FEDEX_GROUND",
                   :shipping_options => shipping_options)
-puts ship[:completed_shipment_detail][:operational_detail] [:transit_time]
+puts ship[:completed_shipment_detail][:operational_detail][:transit_time]
 ```
 Above code will give you the transit time.
 
@@ -291,12 +291,26 @@ address_result.postal_code
 # => "06850-3901"
 ```
 
+### ** Requesting a Pickup **
+
+To request a pickup:
+
+```ruby
+
+pickup = fedex.pickup(:carrier_code => 'FDXE',
+                      :packages => {:weight => {:units => "LB", :value => 10}, :count => 2},
+                      :ready_timestamp => Date.today.to_datetime + 1.375,
+                      :close_time => Date.today.to_time + 60 * 60 * 17)
+puts pickup[:pickup_confirmation_number]
+```
+
 # Services/Options Available
 
 ```ruby
 Fedex::Shipment::SERVICE_TYPES
 Fedex::Shipment::PACKAGING_TYPES
 Fedex::Shipment::DROP_OFF_TYPES
+Fedex::Shipment::CARRIER_CODES
 ````
 
 # Contributors:
