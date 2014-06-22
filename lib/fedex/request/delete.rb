@@ -3,9 +3,9 @@ require 'fedex/request/base'
 module Fedex
   module Request
     class Delete < Base
-      
+
       attr_reader :tracking_number
-      
+
       def initialize(credentials, options={})
         requires!(options, :tracking_number)
 
