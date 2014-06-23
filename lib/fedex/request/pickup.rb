@@ -4,7 +4,7 @@ module Fedex
   module Request
     class Pickup < Base
       def initialize(credentials, options={})
-        requires!(options, :packages, :ready_timestamp, :close_time, :carrier_code)
+        requires!(options, :packages, :ready_timestamp, :close_time, :carrier_code, :country_relationship)
         @debug = ENV['DEBUG'] == 'true'
 
         @credentials = credentials
@@ -12,8 +12,10 @@ module Fedex
         @ready_timestamp = options[:ready_timestamp]
         @close_time = options[:close_time]
         @carrier_code = options[:carrier_code]
-
+        @remarks = options[:remarks] if options[:remarks]
         @pickup_location = options[:pickup_location]
+        @commodity_description = options[:commodity_description] if options[:commodity_description]
+        @country_relationship = options[:country_relationship]
       end
 
       # Sends post request to Fedex web service and parse the response, a Pickup object is created if the response is successful
@@ -22,14 +24,9 @@ module Fedex
         puts api_response if @debug
         response = parse_response(api_response)
         if success?(response)
-          response[:create_pickup_reply]
+          success_response(api_response, response)
         else
-          error_message = if response[:create_pickup_reply]
-            [response[:create_pickup_reply][:notifications]].flatten.first[:message]
-          else
-            "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{Array(api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"]).join("\n--")}"
-          end rescue $1
-          raise RateError, error_message
+          failure_response(api_response, response)
         end
       end
 
@@ -45,7 +42,6 @@ module Fedex
             add_version(xml)
             add_origin_detail(xml)
             add_package_details(xml)
-            xml.CarrierCode @carrier_code
           }
         end
         builder.doc.root.to_xml
@@ -64,7 +60,7 @@ module Fedex
           else
             xml.UseAccountAddress true
           end
-          xml.ReadyTimestamp @ready_timestamp.to_s
+          xml.ReadyTimestamp @ready_timestamp
           xml.CompanyCloseTime @close_time.strftime("%H:%M:%S")
         }
       end
@@ -75,6 +71,10 @@ module Fedex
           xml.Units @packages[:weight][:units]
           xml.Value @packages[:weight][:value]
         }
+        xml.CarrierCode @carrier_code
+        xml.Remarks @remarks if @remarks
+        xml.CommodityDescription @commodity_description if @commodity_description
+        xml.CountryRelationship @country_relationship
       end
 
       def add_pickup_location(xml)
@@ -94,6 +94,21 @@ module Fedex
             xml.CountryCode @pickup_location[:country_code]
           }
         }
+      end
+
+      # Callback used after a failed pickup response.
+      def failure_response(api_response, response)
+        error_message = if response[:create_pickup_reply]
+          [response[:create_pickup_reply][:notifications]].flatten.first[:message]
+        else
+          "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{Array(api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"]).join("\n--")}"
+        end rescue $1
+        raise RateError, error_message
+      end
+
+      # Callback used after a successful pickup response.
+      def success_response(api_response, response)
+        @response_details = response[:create_pickup_reply]
       end
 
       # Successful request
