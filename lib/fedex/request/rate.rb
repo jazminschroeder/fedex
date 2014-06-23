@@ -15,6 +15,7 @@ module Fedex
           rate_reply_details.map do |rate_reply|
             rate_details = [rate_reply[:rated_shipment_details]].flatten.first[:shipment_rate_detail]
             rate_details.merge!(service_type: rate_reply[:service_type])
+            rate_details.merge!(transit_time: rate_reply[:transit_time])
             Fedex::Rate.new(rate_details)
           end
         else
@@ -44,6 +45,11 @@ module Fedex
         }
       end
 
+      # Add transite time options
+      def add_transit_time(xml)
+        xml.ReturnTransitAndCommit true
+      end
+
       # Build xml Fedex Web Service request
       def build_xml
         ns = "http://fedex.com/ws/rate/v#{service[:version]}"
@@ -52,6 +58,7 @@ module Fedex
             add_web_authentication_detail(xml)
             add_client_detail(xml)
             add_version(xml)
+            add_transit_time(xml)
             add_requested_shipment(xml)
           }
         end

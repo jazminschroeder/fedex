@@ -44,6 +44,10 @@ module Fedex
           rates = fedex.rate({ :shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
           rates.first.should be_an_instance_of(Rate)
         end
+        it "should return a transit time" do
+          rates = fedex.rate({ :shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
+          rates.first.transit_time.should_not be_nil
+        end
       end
 
       context "canadian shipment", :vcr do

@@ -23,6 +23,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'vcr',     '~> 2.0.0'
   s.add_development_dependency 'webmock', '~> 1.8.0'
   s.add_development_dependency 'pry'
+  s.add_development_dependency 'rake'
   # s.add_runtime_dependency "rest-client"
 
   s.files         = `git ls-files`.split("\n")

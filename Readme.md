@@ -242,6 +242,15 @@ fedex.label(
       }
    )
 ```
+### ** Delete a shipment **
+
+If you do not intend to use a label you should delete it. This will notify FedEx that you will not be using the label and they won't charge you. 
+
+To delete a shipment:
+
+```ruby
+fedex.delete(:tracking_number => "1234567890123")
+```
 
 ### ** Tracking a shipment **
 
