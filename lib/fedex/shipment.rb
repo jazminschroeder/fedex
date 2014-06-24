@@ -6,6 +6,7 @@ require 'fedex/request/address'
 require 'fedex/request/document'
 require 'fedex/request/delete'
 require 'fedex/request/pickup'
+require 'fedex/request/pickup_availability'
 
 module Fedex
   class Shipment
@@ -83,6 +84,16 @@ module Fedex
     # @param [Hash] package_id, A string with the tracking number to delete
     def delete(options = {})
       Request::Delete.new(@credentials, options).process_request
+    end
+
+    # @param [String] country_code, A string containing country code
+    # @param [String] state_code, A string containing state code
+    # @param [String] postal_code, A string containing postal code
+    # @param [String] carrier_code, A string containing carrier code
+    # @param [String] request_type, A string with request type
+    # @param [String] dispatch_date, A string with dispatch date in YYYY-MM-DD format
+    def pickup_availability(options = {})
+      Request::PickupAvailability.new(@credentials, options).process_request
     end
 
   end
