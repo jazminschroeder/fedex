@@ -16,6 +16,7 @@ module Fedex
         }
         @label_specification.merge! options[:label_specification] if options[:label_specification]
         @customer_specified_detail = options[:customer_specified_detail] if options[:customer_specified_detail]
+        @commerical_invoice = options[:commerical_invoice] if options[:commerical_invoice]
       end
 
       # Sends post request to Fedex web service and parse the response.
@@ -48,6 +49,7 @@ module Fedex
           add_shipping_charges_payment(xml)
           add_special_services(xml) if @shipping_options[:return_reason]
           add_customs_clearance(xml) if @customs_clearance_detail
+          add_commerical_invoice(xml) if @commerical_invoice
           add_custom_components(xml)
           xml.RateRequestTypes "ACCOUNT"
           add_packages(xml)
@@ -87,6 +89,12 @@ module Fedex
               xml.Reason "#{@shipping_options[:return_reason]}"
             }
           }
+        }
+      end
+
+      def add_commerical_invoice(xml)
+        xml.CommericalInvoice{
+          xml.Purpose @commerical_invoice[:purpose] if @commerical_invoice[:purpose]
         }
       end
 
