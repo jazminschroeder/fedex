@@ -3,22 +3,23 @@ require 'fedex/shipment'
 
 describe Fedex::Request::Pickup do
   describe "pickup service" do
-    let(:fedex) { Fedex::Shipment.new(fedex_credentials) }
+    let(:fedex) { Fedex::Shipment.new(fedex_production_credentials) }
     let(:pickup_location) do
-      {:name => "Sender", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Harrison", :state => "AR", :postal_code => "72601", :country_code => "US"}
+      {:name => "Sender", :company => "Company", :phone_number => "555-555-5555 ", :address => "Main Street",
+       :city => "Mumbai", :state => "MH", :postal_code => "400012", :country_code => "IN"}
     end
     let(:packages) do
-      {
-        :weight => {:units => "LB", :value => 2},
-        :count => 2
-      }
+      {:weight => {:units => "LB", :value => 2}, :count => 2}
     end
-    let(:ready_timestamp) { Date.today.to_datetime + 1.375 } # 9 AM Tomorrow
-    let(:close_time) { Date.today.to_time + 60 * 60 * 17 } # 5 PM
+    let(:ready_timestamp) { DateTime.now + 1 }
+    let(:close_time) { DateTime.now + 1.2 }
 
     context "alternate address", :vcr do
       let(:options) do
-        {:carrier_code => "FDXE", :packages => packages, :ready_timestamp => ready_timestamp, :close_time => close_time, :pickup_location => pickup_location}
+        {:carrier_code => "FDXE", :packages => packages, :ready_timestamp => ready_timestamp,
+         :close_time => close_time, :pickup_location => pickup_location, :remarks => 'TEST. DO NOT PICKUP', :commodity_description => 'Ladies Item as per invoice',
+         :country_relationship => 'DOMESTIC'
+       }
       end
 
       it "succeeds" do
