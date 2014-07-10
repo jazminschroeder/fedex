@@ -47,7 +47,7 @@ module Fedex
           add_shipper(xml)
           add_recipient(xml)
           add_shipping_charges_payment(xml)
-          add_special_services(xml) if @shipping_options[:return_reason]
+          add_special_services(xml) if @shipping_options[:return_reason] || @shipping_options[:cod]
           add_customs_clearance(xml) if @customs_clearance_detail
           add_commerical_invoice(xml) if @commerical_invoice
           add_custom_components(xml)
@@ -82,13 +82,25 @@ module Fedex
 
       def add_special_services(xml)
         xml.SpecialServicesRequested {
-          xml.SpecialServiceTypes "RETURN_SHIPMENT"
-          xml.ReturnShipmentDetail {
-            xml.ReturnType "PRINT_RETURN_LABEL"
-            xml.Rma {
-              xml.Reason "#{@shipping_options[:return_reason]}"
+          if @shipping_options[:return_reason].present?
+            xml.SpecialServiceTypes "RETURN_SHIPMENT"
+            xml.ReturnShipmentDetail {
+              xml.ReturnType "PRINT_RETURN_LABEL"
+              xml.Rma {
+                xml.Reason "#{@shipping_options[:return_reason]}"
+              }
             }
-          }
+          end
+          if @shipping_options[:cod].present?
+            xml.SpecialServiceTypes "COD"
+            xml.CodDetail {
+              xml.CodCollectionAmount {
+                xml.Currency @shipping_options[:cod][:currency].upcase if @shipping_options[:cod][:currency]
+                xml.Amount @shipping_options[:cod][:amount] if @shipping_options[:cod][:amount]
+              }
+              xml.CollectionType @shipping_options[:cod][:collection_type] if @shipping_options[:cod][:collection_type]
+            }
+          end
         }
       end
 
