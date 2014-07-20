@@ -4,14 +4,14 @@ module Fedex
   describe Shipment do
     context "missing required parameters" do
       it "should raise Rate exception" do
-        lambda{ Shipment.new}.should raise_error(RateError)
+        expect{ Shipment.new}.to raise_error(RateError)
       end
     end
 
     context "required parameters present" do
       subject { Shipment.new(fedex_credentials) }
       it "should create a valid instance" do
-        subject.should be_an_instance_of(Shipment)
+        expect(subject).to be_an_instance_of(Shipment)
       end
     end
 
@@ -42,11 +42,11 @@ module Fedex
       context "domestic shipment", :vcr do
         it "should return a rate" do
           rates = fedex.rate({ :shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
-          rates.first.should be_an_instance_of(Rate)
+          expect(rates.first).to be_an_instance_of(Rate)
         end
         it "should return a transit time" do
           rates = fedex.rate({ :shipper => shipper, :recipient => recipient, :packages => packages, :service_type => "FEDEX_GROUND"})
-          rates.first.transit_time.should_not be_nil
+          expect(rates.first.transit_time).not_to be_nil
         end
       end
 
@@ -54,7 +54,7 @@ module Fedex
         it "should return a rate" do
           canadian_recipient = { :name => "Recipient", :company => "Company", :phone_number => "555-555-5555", :address=>"Address Line 1", :city => "Richmond", :state => "BC", :postal_code => "V7C4V4", :country_code => "CA", :residential => "true" }
           rates = fedex.rate({ :shipper => shipper, :recipient => canadian_recipient, :packages => packages, :service_type => "FEDEX_GROUND" })
-          rates.first.should be_an_instance_of(Rate)
+          expect(rates.first).to be_an_instance_of(Rate)
         end
       end
 
@@ -145,7 +145,7 @@ module Fedex
 
           customs_clearance = { :broker => broker, :clearance_brokerage => clearance_brokerage, :importer_of_record => importer_of_record, :recipient_customs_id => recipient_customs_id, :duties_payment => duties_payment, :commodities => commodities }
           rates = fedex.rate({ :shipper => shipper, :recipient => canadian_recipient, :packages => packages, :service_type => "FEDEX_GROUND", :customs_clearance => customs_clearance })
-          rates.first.should be_an_instance_of(Rate)
+          expect(rates.first).to be_an_instance_of(Rate)
         end
       end
 
@@ -161,7 +161,7 @@ module Fedex
         }
 
         it "returns a single rate" do
-          rates.count.should eq 1
+          expect(rates.count).to eq 1
         end
 
         it "has service_type attribute" do
@@ -181,13 +181,13 @@ module Fedex
         }
 
         it "returns multiple rates" do
-          rates.count.should >= 1
+          expect(rates.count).to be >= 1
         end
 
         context "each rate" do
 
           it 'has service type attribute' do
-            rates.first.should respond_to(:service_type)
+            expect(rates.first).to respond_to(:service_type)
           end
 
         end
@@ -206,7 +206,7 @@ module Fedex
         }
 
         it 'returns empty array' do
-          rates.should eq []
+          expect(rates).to eq []
         end
 
       end
