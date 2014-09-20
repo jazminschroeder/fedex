@@ -8,6 +8,7 @@ module Fedex
       include Helpers
       include HTTParty
       format :xml
+
       # If true the rate method will return the complete response from the Fedex Web Service
       attr_accessor :debug
       # Fedex Text URL
@@ -15,6 +16,17 @@ module Fedex
 
       # Fedex Production URL
       PRODUCTION_URL = "https://ws.fedex.com:443/xml/"
+
+      def initialize(credentials, options={})
+        @credentials = credentials
+        @debug = ENV['DEBUG'] == 'true'
+
+        # Expects hash with addr and port
+        if options[:http_proxy]
+          self.class.http_proxy options[:http_proxy][:host], options[:http_proxy][:port]
+        end
+      end
+
 
       # Sends post request to Fedex web service and parse the response.
       # Implemented by each subclass

@@ -40,7 +40,7 @@ describe Fedex::Request::Shipment do
           @shipment = fedex.ship(options)
         }.to_not raise_error
 
-        expect(@shipment.class).not_to eq(Fedex::RateError)
+        expect(@shipment.class).not_to eq(Fedex::FedexError)
       end
 
       it "succeeds with payments_options" do
@@ -48,7 +48,7 @@ describe Fedex::Request::Shipment do
           @shipment = fedex.ship(options.merge(:payment_options => payment_options))
         }.to_not raise_error
 
-        expect(@shipment.class).not_to eq(Fedex::RateError)
+        expect(@shipment.class).not_to eq(Fedex::FedexError)
       end
 
       it "should return a transit time" do

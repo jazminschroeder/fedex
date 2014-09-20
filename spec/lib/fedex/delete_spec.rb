@@ -18,7 +18,7 @@ module Fedex
         end
 
         it "raises an error" do
-          expect {fedex.delete(options) }.to raise_error(Fedex::RateError, 'Invalid tracking number')
+          expect {fedex.delete(options) }.to raise_error(Fedex::FedexError, 'Invalid tracking number')
         end
       end
     end
