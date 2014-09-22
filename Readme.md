@@ -237,7 +237,10 @@ fedex.label(
   :mps => {
       :master_tracking_id => {:tracking_id_type => 'FEDEX', :tracking_number =>tracking_number},
       :package_count => package_count,
-      :total_weight => total_weight,
+      :total_weight => {
+          :value => total_weight,
+          :units => 'KG'
+      }
       :sequence_number => 'n'
       }
    )
