@@ -5,6 +5,7 @@ require 'fedex/request/tracking_information'
 require 'fedex/request/address'
 require 'fedex/request/document'
 require 'fedex/request/delete'
+require 'fedex/request/ground_close'
 
 module Fedex
   class Shipment
@@ -73,6 +74,12 @@ module Fedex
     # @param [Hash] package_id, A string with the tracking number to delete
     def delete(options = {})
       Request::Delete.new(@credentials, options).process_request
+    end
+
+    # @param [Date] up_to_time, A time up to which shipments are to be closed
+    # @param [String] filename, A location where the manifest (text file) will be saved
+    def ground_close(options = {})
+      Request::GroundClose.new(@credentials, options).process_request
     end
 
   end
