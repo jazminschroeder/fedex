@@ -27,7 +27,8 @@ module Fedex
         end
 
         it "completes with success result" do
-          sleep(7) # wait a little else close request won't see the shipment
+          # When running this spec you may need to uncomment the line below to allow shipment to be created before close request
+          #sleep(7)
           expect{ fedex.ground_close(:up_to_time => Time.now, :filename => filename) }.to_not raise_error
         end
       end
