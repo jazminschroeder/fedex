@@ -269,6 +269,23 @@ customs_clearance_detail['commodites_2']
 
 ```
 
+### ** Masking shipper details in label **
+
+this allows you hide shipper details on the label
+
+Add customer_specified_detail = {:masked_data_1 => 'SOMETHING', :masked_data_2 => 'SOMETHING'} in :label_specification key
+
+Example
+
+```
+  customer_specified_detail = {
+      :masked_data_1 => "SHIPPER_ACCOUNT_NUMBER",
+      :masked_data_2 => "TRANSPORTATION_CHARGES_PAYOR_ACCOUNT_NUMBER",
+      :masked_data_3 => "DUTIES_AND_TAXES_PAYOR_ACCOUNT_NUMBER"
+  }
+
+```
+
 ### ** Delete a shipment **
 
 If you do not intend to use a label you should delete it. This will notify FedEx that you will not be using the label and they won't charge you. 
