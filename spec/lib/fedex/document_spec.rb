@@ -108,23 +108,23 @@ module Fedex
         end
 
         it "saves a label to file" do
-          File.should exist(filenames[:label])
+          expect(File).to exist(filenames[:label])
         end
 
         it "saves invoice to file" do
-          File.should exist(filenames[:commercial_invoice])
+          expect(File).to exist(filenames[:commercial_invoice])
         end
 
         it "returns tracking number" do
-          @document.should respond_to('tracking_number')
+          expect(@document).to respond_to('tracking_number')
         end
 
         it "exposes complete response" do
-          @document.should respond_to('response_details')
+          expect(@document).to respond_to('response_details')
         end
 
         it "exposes the filenames" do
-          @document.should respond_to('filenames')
+          expect(@document).to respond_to('filenames')
         end
 
       end
@@ -138,11 +138,11 @@ module Fedex
         end
 
         it "saves a label to file" do
-          File.should exist(filenames[:label])
+          expect(File).to exist(filenames[:label])
         end
 
         it "has no others files" do
-          File.should_not exist(filenames[:commercial_invoice])
+          expect(File).not_to exist(filenames[:commercial_invoice])
         end
 
       end
@@ -155,7 +155,7 @@ module Fedex
           end
 
           it "saves invoice to file" do
-            File.should exist(filenames[:commercial_invoice])
+            expect(File).to exist(filenames[:commercial_invoice])
           end
         end
 
@@ -166,7 +166,7 @@ module Fedex
           end
 
           it "saves label to file" do
-            File.should exist(filenames[:label])
+            expect(File).to exist(filenames[:label])
           end
         end
       end

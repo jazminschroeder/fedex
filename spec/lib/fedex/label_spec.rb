@@ -49,15 +49,15 @@ module Fedex
         end
 
         it "should create a label" do
-          File.should exist(filename)
+          expect(File).to exist(filename)
         end
 
         it "should return tracking number" do
-          @label.should respond_to('tracking_number')
+          expect(@label).to respond_to('tracking_number')
         end
 
         it "should expose complete response" do
-          @label.should respond_to('response_details')
+          expect(@label).to respond_to('response_details')
         end
         after do
           require 'fileutils'
@@ -65,7 +65,7 @@ module Fedex
         end
 
         it "should expose the file_name" do
-          @label.should respond_to('file_name')
+          expect(@label).to respond_to('file_name')
         end
       end
     end

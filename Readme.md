@@ -237,7 +237,10 @@ fedex.label(
   :mps => {
       :master_tracking_id => {:tracking_id_type => 'FEDEX', :tracking_number =>tracking_number},
       :package_count => package_count,
-      :total_weight => total_weight,
+      :total_weight => {
+          :value => total_weight,
+          :units => 'KG'
+      }
       :sequence_number => 'n'
       }
    )
@@ -281,7 +284,7 @@ To verify an address is valid and deliverable:
 ```ruby
 
 address = {
-  :address     => "5 Elm Street",
+  :street     => "5 Elm Street",
   :city        => "Norwalk",
   :state       => "CT",
   :postal_code => "06850",

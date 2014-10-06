@@ -16,13 +16,13 @@ module Fedex
 
       it "returns an array of tracking information results" do
         results = fedex.track(options)
-        results.should_not be_empty
+        expect(results).not_to be_empty
       end
 
       it "returns events with tracking information" do
         tracking_info = fedex.track(options.merge(:uuid => uuid)).first
 
-        tracking_info.events.should_not be_empty
+        expect(tracking_info.events).not_to be_empty
       end
 
       it "fails if using an invalid package type" do
@@ -30,7 +30,7 @@ module Fedex
 
         fail_options[:package_type] = "UNKNOWN_PACKAGE"
 
-        lambda { fedex.track(options) }.should raise_error
+        expect { fedex.track(options) }.to raise_error
       end
 
       it "allows short hand tracking number queries" do
@@ -38,13 +38,13 @@ module Fedex
 
         tracking_info = fedex.track(shorthand_options).first
 
-        tracking_info.tracking_number.should == options[:package_id]
+        expect(tracking_info.tracking_number).to eq(options[:package_id])
       end
 
       it "reports the status of the package" do
         tracking_info = fedex.track(options.merge(:uuid => uuid)).first
 
-        tracking_info.status.should_not be_nil
+        expect(tracking_info.status).not_to be_nil
       end
 
     end
