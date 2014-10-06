@@ -411,6 +411,7 @@ Fedex::Shipment::CARRIER_CODES
 - [yevgenko] (https://github.com/yevgenko) (Yevgeniy Viktorov)
 - [smartacus] (https://github.com/smartacus) (Michael Lippold)
 - [jonathandean] (https://github.com/jonathandean) (Jonathan Dean)
+- [chirag7jain] (https://github.com/chirag7jain) (Chirag Jain)
 - and more... (https://github.com/jazminschroeder/fedex/graphs/contributors)
 
 # Copyright/License:
