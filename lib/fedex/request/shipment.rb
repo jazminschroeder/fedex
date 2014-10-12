@@ -74,13 +74,13 @@ module Fedex
           xml.LabelFormatType @label_specification[:label_format_type]
           xml.ImageType @label_specification[:image_type]
           xml.LabelStockType @label_specification[:label_stock_type]
-          xml.CustomerSpecifiedDetail{ hash_to_xml(xml, @customer_specified_detail) } if @customer_specified_detail.present?
+          xml.CustomerSpecifiedDetail{ hash_to_xml(xml, @customer_specified_detail) } if @customer_specified_detail
         }
       end
 
       def add_special_services(xml)
         xml.SpecialServicesRequested {
-          if @shipping_options[:return_reason].present?
+          if @shipping_options[:return_reason]
             xml.SpecialServiceTypes "RETURN_SHIPMENT"
             xml.ReturnShipmentDetail {
               xml.ReturnType "PRINT_RETURN_LABEL"
@@ -89,7 +89,7 @@ module Fedex
               }
             }
           end
-          if @shipping_options[:cod].present?
+          if @shipping_options[:cod]
             xml.SpecialServiceTypes "COD"
             xml.CodDetail {
               xml.CodCollectionAmount {

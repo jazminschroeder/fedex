@@ -59,7 +59,7 @@ module Fedex
     end
 
     def associated_shipments
-      if (label_details = @response_details[:completed_shipment_detail][:associated_shipments]).present?
+      if (label_details = @response_details[:completed_shipment_detail][:associated_shipments])
         label_details[:format] = format
         label_details[:file_name] = file_name
         Label.new(label_details, true)

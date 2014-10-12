@@ -324,9 +324,9 @@ module Fedex
       def hash_to_xml(xml, hash)
         hash.each do |key, value|
           key_s_down = key.to_s.downcase
-          if key_s_down.match(/^commodities_\d{1,}$/).present?
+          if key_s_down.match(/^commodities_\d{1,}$/)
             element = 'Commodities'
-          elsif key_s_down.match(/^masked_data_\d{1,}$/).present?
+          elsif key_s_down.match(/^masked_data_\d{1,}$/)
             element = 'MaskedData'
           else
             element = camelize(key)
