@@ -1,9 +1,9 @@
 require 'spec_helper'
 require 'fedex/shipment'
 
-describe Fedex::Request::Pickup do
-  describe "pickup availability service" do
-    let(:fedex) { Fedex::Shipment.new(fedex_credentials) }
+module Fedex
+  describe Request::PickupAvailability do
+    let(:fedex) { Shipment.new(fedex_credentials) }
     let(:dispatch_date) {Date.tomorrow.strftime('%Y-%m-%d')}
 
     let(:options) do
@@ -14,7 +14,6 @@ describe Fedex::Request::Pickup do
       expect {
         @pickup_availability = fedex.pickup_availability(options)
       }.to_not raise_error
-      @pickup_availability.class.should_not == Fedex::RateError
     end
   end
 end

@@ -22,7 +22,7 @@ module Fedex
         else
           failure_response(api_response, response)
         end
-      end      
+      end
 
       def build_xml
         builder = Nokogiri::XML::Builder.new do |xml|
@@ -70,7 +70,7 @@ module Fedex
       # Callback used after a successful shipment response.
       def success_response(api_response, response)
         @response_details = response[:service_availability_reply]
-      end      
+      end
 
       def service
         { :id => 'pmis', :version => Fedex::SERVICE_AVAILABILITY_API_VERSION }
