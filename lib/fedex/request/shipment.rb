@@ -22,7 +22,9 @@ module Fedex
       # The parsed Fedex response is available in #response_details
       # e.g. response_details[:completed_shipment_detail][:completed_package_details][:tracking_ids][:tracking_number]
       def process_request
-        api_response = self.class.post api_url, :body => build_xml
+        xml = build_xml
+        puts xml if @debug
+        api_response = self.class.post api_url, :body => xml
         puts api_response if @debug
         response = parse_response(api_response)
         if success?(response)
@@ -44,6 +46,7 @@ module Fedex
           add_total_weight(xml) if @mps.has_key? :total_weight
           add_shipper(xml)
           add_recipient(xml)
+          add_origin(xml) if @origin
           add_shipping_charges_payment(xml)
           add_special_services(xml) if @shipping_options[:return_reason]
           add_customs_clearance(xml) if @customs_clearance_detail
@@ -95,7 +98,7 @@ module Fedex
         else
           "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
         end rescue $1
-        raise RateError, error_message
+        raise FedexError, error_message
       end
 
       # Callback used after a successful shipment response.

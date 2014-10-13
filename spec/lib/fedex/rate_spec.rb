@@ -4,7 +4,7 @@ module Fedex
   describe Shipment do
     context "missing required parameters" do
       it "should raise Rate exception" do
-        expect{ Shipment.new}.to raise_error(RateError)
+        expect{ Shipment.new}.to raise_error(FedexError)
       end
     end
 

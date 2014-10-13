@@ -1,22 +1,9 @@
-require 'httparty'
-require 'nokogiri'
-require 'fedex/helpers'
 require 'fedex/rate'
+require 'fedex/request/common'
 
 module Fedex
   module Request
-    class Base
-      include Helpers
-      include HTTParty
-      format :xml
-      # If true the rate method will return the complete response from the Fedex Web Service
-      attr_accessor :debug
-      # Fedex Text URL
-      TEST_URL = "https://wsbeta.fedex.com:443/xml/"
-
-      # Fedex Production URL
-      PRODUCTION_URL = "https://ws.fedex.com:443/xml/"
-
+    class Base < Common
       # List of available Service Types
       SERVICE_TYPES = %w(EUROPE_FIRST_INTERNATIONAL_PRIORITY FEDEX_1_DAY_FREIGHT FEDEX_2_DAY FEDEX_2_DAY_AM FEDEX_2_DAY_FREIGHT FEDEX_3_DAY_FREIGHT FEDEX_EXPRESS_SAVER FEDEX_FIRST_FREIGHT FEDEX_FREIGHT_ECONOMY FEDEX_FREIGHT_PRIORITY FEDEX_GROUND FIRST_OVERNIGHT GROUND_HOME_DELIVERY INTERNATIONAL_ECONOMY INTERNATIONAL_ECONOMY_FREIGHT INTERNATIONAL_FIRST INTERNATIONAL_PRIORITY INTERNATIONAL_PRIORITY_FREIGHT PRIORITY_OVERNIGHT SMART_POST STANDARD_OVERNIGHT)
 
@@ -45,10 +32,9 @@ module Fedex
       #
       # return a Fedex::Request::Base object
       def initialize(credentials, options={})
+        super
         requires!(options, :shipper, :recipient, :packages)
-        @credentials = credentials
-        @shipper, @recipient, @packages, @service_type, @customs_clearance_detail, @debug = options[:shipper], options[:recipient], options[:packages], options[:service_type], options[:customs_clearance_detail], options[:debug]
-        @debug = ENV['DEBUG'] == 'true'
+        @shipper, @recipient, @origin, @packages, @service_type, @customs_clearance_detail, @debug = options[:shipper], options[:recipient], options[:origin], options[:packages], options[:service_type], options[:customs_clearance_detail], options[:debug]
         @shipping_options =  options[:shipping_options] ||={}
         @payment_options = options[:payment_options] ||={}
         requires!(@payment_options, :type, :account_number, :name, :company, :phone_number, :country_code) if @payment_options.length > 0
@@ -59,51 +45,9 @@ module Fedex
         else
           @mps = {}
         end
-        # Expects hash with addr and port
-        if options[:http_proxy]
-          self.class.http_proxy options[:http_proxy][:host], options[:http_proxy][:port]
-        end
-      end
-
-      # Sends post request to Fedex web service and parse the response.
-      # Implemented by each subclass
-      def process_request
-        raise NotImplementedError, "Override process_request in subclass"
       end
 
       private
-      # Add web authentication detail information(key and password) to xml request
-      def add_web_authentication_detail(xml)
-        xml.WebAuthenticationDetail{
-          xml.UserCredential{
-            xml.Key @credentials.key
-            xml.Password @credentials.password
-          }
-        }
-      end
-
-      # Add Client Detail information(account_number and meter_number) to xml request
-      def add_client_detail(xml)
-        xml.ClientDetail{
-          xml.AccountNumber @credentials.account_number
-          xml.MeterNumber @credentials.meter
-          xml.Localization{
-            xml.LanguageCode 'en' # English
-            xml.LocaleCode   'us' # United States
-          }
-        }
-      end
-
-      # Add Version to xml request, using the version identified in the subclass
-      def add_version(xml)
-        xml.Version{
-          xml.ServiceId service[:id]
-          xml.Major     service[:version]
-          xml.Intermediate 0
-          xml.Minor 0
-        }
-      end
-
       # Add information for shipments
       def add_requested_shipment(xml)
         xml.RequestedShipment{
@@ -135,6 +79,26 @@ module Fedex
             xml.StateOrProvinceCode @shipper[:state]
             xml.PostalCode @shipper[:postal_code]
             xml.CountryCode @shipper[:country_code]
+          }
+        }
+      end
+
+      # Add origin to xml request
+      def add_origin(xml)
+        xml.Origin{
+          xml.Contact{
+            xml.PersonName @origin[:name]
+            xml.CompanyName @origin[:company]
+            xml.PhoneNumber @origin[:phone_number]
+          }
+          xml.Address {
+            Array(@origin[:address]).take(2).each do |address_line|
+              xml.StreetLines address_line
+            end
+            xml.City @origin[:city]
+            xml.StateOrProvinceCode @origin[:state]
+            xml.PostalCode @origin[:postal_code]
+            xml.CountryCode @origin[:country_code]
           }
         }
       end
@@ -305,73 +269,6 @@ module Fedex
           hash_to_xml(xml, @customs_clearance_detail)
         }
       end
-
-      # Fedex Web Service Api
-      def api_url
-        @credentials.mode == "production" ? PRODUCTION_URL : TEST_URL
-      end
-
-      # Build xml Fedex Web Service request
-      # Implemented by each subclass
-      def build_xml
-        raise NotImplementedError, "Override build_xml in subclass"
-      end
-
-      # Build xml nodes dynamically from the hash keys and values
-      def hash_to_xml(xml, hash)
-        hash.each do |key, value|
-          element = camelize(key)
-          if value.is_a?(Hash)
-            xml.send element do |x|
-              hash_to_xml(x, value)
-            end
-          elsif value.is_a?(Array)
-            value.each do |v|
-              xml.send element do |x|
-                hash_to_xml(x, v)
-              end
-            end
-          else
-            xml.send element, value
-          end
-        end
-      end
-
-      # Parse response, convert keys to underscore symbols
-      def parse_response(response)
-        response = sanitize_response_keys(response)
-      end
-
-      # Recursively sanitizes the response object by cleaning up any hash keys.
-      def sanitize_response_keys(response)
-        if response.is_a?(Hash)
-          response.inject({}) { |result, (key, value)| result[underscorize(key).to_sym] = sanitize_response_keys(value); result }
-        elsif response.is_a?(Array)
-          response.collect { |result| sanitize_response_keys(result) }
-        else
-          response
-        end
-      end
-
-      def service
-        raise NotImplementedError,
-          "Override service in subclass: {:id => 'service', :version => 1}"
-      end
-
-      # Use GROUND_HOME_DELIVERY for shipments going to a residential address within the US.
-      def service_type
-        if @recipient[:residential].to_s =~ /true/i and @service_type =~ /GROUND/i and @recipient[:country_code] =~ /US/i
-          "GROUND_HOME_DELIVERY"
-        else
-          @service_type
-        end
-      end
-
-      # Successful request
-      def success?(response)
-        (!response[:rate_reply].nil? and %w{SUCCESS WARNING NOTE}.include? response[:rate_reply][:highest_severity])
-      end
-
     end
   end
 end

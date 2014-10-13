@@ -10,7 +10,7 @@ module Fedex
 
     # Helper method to validate required fields
     def requires!(hash, *params)
-       params.each { |param| raise RateError, "Missing Required Parameter #{param}" if hash[param].nil? }
+       params.each { |param| raise FedexError, "Missing Required Parameter #{param}" if hash[param].nil? }
     end
 
     def underscorize(key) #:nodoc:

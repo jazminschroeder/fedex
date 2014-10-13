@@ -13,3 +13,4 @@ spec/vcr
 .DS_Store
 hacks
 .ruby-version
+.ruby-gemset
