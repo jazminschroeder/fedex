@@ -7,14 +7,19 @@ module Fedex
 
     # Initialize Fedex::Label Object
     # @param [Hash] options
-    def initialize(label_details = {})
-      @response_details = label_details[:process_shipment_reply]
-      package_details = label_details[:process_shipment_reply][:completed_shipment_detail][:completed_package_details]
-      @options = package_details[:label]
+    def initialize(label_details = {}, associated_shipments = false)
+      if associated_shipments
+        package_details = label_details
+        @options = package_details[:label]
+        @options[:tracking_number] = package_details[:tracking_id]
+      else
+        @response_details = label_details[:process_shipment_reply]
+        package_details = label_details[:process_shipment_reply][:completed_shipment_detail][:completed_package_details]
+        @options = package_details[:label]
+        @options[:tracking_number] = package_details[:tracking_ids][:tracking_number]
+      end
       @options[:format] = label_details[:format]
-      @options[:tracking_number] = package_details[:tracking_ids][:tracking_number]
       @options[:file_name] = label_details[:file_name]
-
       @image = Base64.decode64(options[:parts][:image]) if has_image?
 
       if file_name = @options[:file_name]
@@ -50,6 +55,16 @@ module Fedex
 
       File.open(full_path, 'wb') do|f|
         f.write(@image)
+      end
+    end
+
+    def associated_shipments
+      if (label_details = @response_details[:completed_shipment_detail][:associated_shipments])
+        label_details[:format] = format
+        label_details[:file_name] = file_name
+        Label.new(label_details, true)
+      else
+        nil
       end
     end
   end

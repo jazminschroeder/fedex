@@ -15,6 +15,7 @@ module Fedex
           :label_stock_type => 'PAPER_LETTER'
         }
         @label_specification.merge! options[:label_specification] if options[:label_specification]
+        @customer_specified_detail = options[:customer_specified_detail] if options[:customer_specified_detail]
       end
 
       # Sends post request to Fedex web service and parse the response.
@@ -45,7 +46,7 @@ module Fedex
           add_shipper(xml)
           add_recipient(xml)
           add_shipping_charges_payment(xml)
-          add_special_services(xml) if @shipping_options[:return_reason]
+          add_special_services(xml) if @shipping_options[:return_reason] || @shipping_options[:cod]
           add_customs_clearance(xml) if @customs_clearance_detail
           add_custom_components(xml)
           xml.RateRequestTypes "ACCOUNT"
@@ -73,18 +74,31 @@ module Fedex
           xml.LabelFormatType @label_specification[:label_format_type]
           xml.ImageType @label_specification[:image_type]
           xml.LabelStockType @label_specification[:label_stock_type]
+          xml.CustomerSpecifiedDetail{ hash_to_xml(xml, @customer_specified_detail) } if @customer_specified_detail
         }
       end
 
       def add_special_services(xml)
         xml.SpecialServicesRequested {
-          xml.SpecialServiceTypes "RETURN_SHIPMENT"
-          xml.ReturnShipmentDetail {
-            xml.ReturnType "PRINT_RETURN_LABEL"
-            xml.Rma {
-              xml.Reason "#{@shipping_options[:return_reason]}"
+          if @shipping_options[:return_reason]
+            xml.SpecialServiceTypes "RETURN_SHIPMENT"
+            xml.ReturnShipmentDetail {
+              xml.ReturnType "PRINT_RETURN_LABEL"
+              xml.Rma {
+                xml.Reason "#{@shipping_options[:return_reason]}"
+              }
             }
-          }
+          end
+          if @shipping_options[:cod]
+            xml.SpecialServiceTypes "COD"
+            xml.CodDetail {
+              xml.CodCollectionAmount {
+                xml.Currency @shipping_options[:cod][:currency].upcase if @shipping_options[:cod][:currency]
+                xml.Amount @shipping_options[:cod][:amount] if @shipping_options[:cod][:amount]
+              }
+              xml.CollectionType @shipping_options[:cod][:collection_type] if @shipping_options[:cod][:collection_type]
+            }
+          end
         }
       end
 

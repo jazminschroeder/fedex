@@ -35,6 +35,9 @@ module Fedex
       # List of available Payment Types
       PAYMENT_TYPE = %w(RECIPIENT SENDER THIRD_PARTY)
 
+      # List of available Carrier Codes
+      CARRIER_CODES = %w(FDXC FDXE FDXG FDCC FXFR FXSP)
+
       # In order to use Fedex rates API you must first apply for a developer(and later production keys),
       # Visit {http://www.fedex.com/us/developer/ Fedex Developer Center} for more information about how to obtain your keys.
       # @param [String] key - Fedex web service key
@@ -320,7 +323,14 @@ module Fedex
       # Build xml nodes dynamically from the hash keys and values
       def hash_to_xml(xml, hash)
         hash.each do |key, value|
-          element = camelize(key)
+          key_s_down = key.to_s.downcase
+          if key_s_down.match(/^commodities_\d{1,}$/)
+            element = 'Commodities'
+          elsif key_s_down.match(/^masked_data_\d{1,}$/)
+            element = 'MaskedData'
+          else
+            element = camelize(key)
+          end
           if value.is_a?(Hash)
             xml.send element do |x|
               hash_to_xml(x, value)

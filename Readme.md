@@ -146,7 +146,7 @@ ship = fedex.ship(:shipper=>shipper,
                   :packages => packages,
                   :service_type => "FEDEX_GROUND",
                   :shipping_options => shipping_options)
-puts ship[:completed_shipment_detail][:operational_detail] [:transit_time]
+puts ship[:completed_shipment_detail][:operational_detail][:transit_time]
 ```
 Above code will give you the transit time.
 
@@ -245,6 +245,47 @@ fedex.label(
       }
    )
 ```
+
+### ** Create COD Shipment **
+
+To create a Cash On Delivery label for a shipment:
+
+change "commerical_invoice = {:purpose => 'SOLD'}" in customs_clearance_detail
+
+add shipping_options with {:cod => {:currency => "currency", :amount => "amount", :collection_type => 'PAYMENT COLLECTION TYPE'}
+
+PAYMENT COLLECTION TYPE - CASH, CHEQUE, DEMAND DRAFT
+
+### ** To add multiple commodities in customs_clearance_detail
+
+use this format commodities_1 .... commodities_N
+
+example 
+
+```
+
+customs_clearance_detail['commodites_1'] 
+customs_clearance_detail['commodites_2']
+
+```
+
+### ** Masking shipper details in label **
+
+this allows you hide shipper details on the label
+
+Add customer_specified_detail = {:masked_data_1 => 'SOMETHING', :masked_data_2 => 'SOMETHING'} in :label_specification key
+
+Example
+
+```
+  customer_specified_detail = {
+      :masked_data_1 => "SHIPPER_ACCOUNT_NUMBER",
+      :masked_data_2 => "TRANSPORTATION_CHARGES_PAYOR_ACCOUNT_NUMBER",
+      :masked_data_3 => "DUTIES_AND_TAXES_PAYOR_ACCOUNT_NUMBER"
+  }
+
+```
+
 ### ** Delete a shipment **
 
 If you do not intend to use a label you should delete it. This will notify FedEx that you will not be using the label and they won't charge you. 
@@ -303,12 +344,58 @@ address_result.postal_code
 # => "06850-3901"
 ```
 
+### ** Requesting a Pickup **
+
+To request a pickup:
+
+```ruby
+
+pickup = fedex.pickup(:carrier_code => 'FDXE',
+                      :packages => {:weight => {:units => "LB", :value => 10}, :count => 2},
+                      :ready_timestamp => Date.today.to_datetime + 1.375,
+                      :close_time => Date.today.to_time + 60 * 60 * 17)
+puts pickup[:pickup_confirmation_number]
+```
+
+### ** Getting pickup availability details **
+
+To check for pickup availability:
+
+```ruby
+
+dispatch = Date.tomorrow.strftime('%Y-%m-%d')
+
+pickup_availability = fedex.pickup_availability(:country_code => 'IN',
+                                   :postal_code => '400061',
+                                   :request_type => 'FUTURE_DAY',
+                                   :dispatch_date => dispatch_date,
+                                   :carrier_code => 'FDXE')
+
+puts pickup_availability[:options]
+```
+
+### ** Getting service availability **
+
+To check service availability:
+
+```ruby
+
+origin = {:postal_code => '400012', :country_code => 'IN'}
+destination = { :postal_code => '400020', :country_code => 'IN'}
+fedex_service_hash = {:origin => origin, :destination => destination, :ship_date => '2014-06-28', :carrier_code => 'FDXE'}
+
+service = fedex.service_availability(fedex_service_hash)
+
+puts service[:options]
+```
+
 # Services/Options Available
 
 ```ruby
 Fedex::Shipment::SERVICE_TYPES
 Fedex::Shipment::PACKAGING_TYPES
 Fedex::Shipment::DROP_OFF_TYPES
+Fedex::Shipment::CARRIER_CODES
 ````
 
 # Contributors:
@@ -324,6 +411,7 @@ Fedex::Shipment::DROP_OFF_TYPES
 - [yevgenko] (https://github.com/yevgenko) (Yevgeniy Viktorov)
 - [smartacus] (https://github.com/smartacus) (Michael Lippold)
 - [jonathandean] (https://github.com/jonathandean) (Jonathan Dean)
+- [chirag7jain] (https://github.com/chirag7jain) (Chirag Jain)
 - and more... (https://github.com/jazminschroeder/fedex/graphs/contributors)
 
 # Copyright/License:
