@@ -13,7 +13,7 @@ module Fedex
             @service_availability = fedex.service_availability(options)
           }.to_not raise_error
 
-        @service_availability.class.should_not == Fedex::RateError
+        expect(@service_availability.class).not_to eq(Fedex::RateError)
       end
     end
   end

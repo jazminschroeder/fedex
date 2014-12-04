@@ -26,8 +26,6 @@ describe Fedex::Request::Pickup do
         expect {
           @pickup = fedex.pickup(options)
         }.to_not raise_error
-
-        @pickup.class.should_not == Fedex::RateError
       end
     end
   end
