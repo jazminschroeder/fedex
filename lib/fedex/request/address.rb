@@ -20,12 +20,16 @@ module Fedex
 
           Fedex::Address.new(options)
         else
-          error_message = if response[:address_validation_reply]
-            [response[:address_validation_reply][:notifications]].flatten.first[:message]
+          if response[:address_validation_reply]
+            notifications = response[:address_validation_reply][:notifications]
+            notification = [notifications].flatten.first
+            error_message = notification[:message]
+            error_code = notification[:code]
           else
-            api_response["Fault"]["detail"]["fault"]["reason"]
+            error_message = api_response["Fault"]["detail"]["fault"]["reason"]
+            error_code = api_response["Fault"]["detail"]["fault"]["errorCode"]
           end rescue $1
-          raise RateError, error_message
+          raise RateError.new(error_message, code: error_code)
         end
       end
 
