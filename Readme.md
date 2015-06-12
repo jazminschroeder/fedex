@@ -392,10 +392,10 @@ puts service[:options]
 # Services/Options Available
 
 ```ruby
-Fedex::Shipment::SERVICE_TYPES
-Fedex::Shipment::PACKAGING_TYPES
-Fedex::Shipment::DROP_OFF_TYPES
-Fedex::Shipment::CARRIER_CODES
+Fedex::Request::Base::SERVICE_TYPES
+Fedex::Request::Base::PACKAGING_TYPES
+Fedex::Request::Base::DROP_OFF_TYPES
+Fedex::Request::Base::CARRIER_CODES
 ````
 
 # Contributors:
