@@ -258,6 +258,12 @@ module Fedex
                     end
                   }
                 end
+                # Alcohol for v15
+                if package[:special_services_requested][:alcohol_detail]						 
+									 xml.AlcoholDetail {
+										xml.RecipientType package[:special_services_requested][:alcohol_detail][:recipient_type]
+									 }											 
+                end
                 # DangerousGoodsDetail goes here
                 if package[:special_services_requested][:dry_ice_weight]
                   xml.DryIceWeight{
