@@ -40,7 +40,7 @@ module Fedex
           add_recipient(xml)
           add_shipping_charges_payment(xml)
           add_customs_clearance(xml) if @customs_clearance_detail
-          xml.RateRequestTypes "ACCOUNT"
+          xml.RateRequestTypes @shipping_options[:rate_request_type] ||= "PREFERRED"
           add_packages(xml)
         }
       end
@@ -66,7 +66,7 @@ module Fedex
       end
 
       def service
-        { :id => 'crs', :version => Fedex::API_VERSION }
+        { :id => 'crs', :version => Fedex::RATE_API_VERSION }
       end
 
       # Successful request

@@ -11,6 +11,7 @@ module Fedex
         @packages = options[:packages]
         @ready_timestamp = options[:ready_timestamp]
         @close_time = options[:close_time]
+        @package_location = options[:package_location]
         @carrier_code = options[:carrier_code]
         @remarks = options[:remarks] if options[:remarks]
         @pickup_location = options[:pickup_location]
@@ -48,7 +49,7 @@ module Fedex
       end
 
       def service
-        { :id => 'pickup', :version => Fedex::PICKUP_API_VERSION }
+        { :id => 'disp', :version => Fedex::PICKUP_API_VERSION }
       end
 
       # Add shipper to xml request
@@ -60,6 +61,7 @@ module Fedex
           else
             xml.UseAccountAddress true
           end
+          xml.PackageLocation @package_location
           xml.ReadyTimestamp @ready_timestamp
           xml.CompanyCloseTime @close_time.strftime("%H:%M:%S")
         }

@@ -117,7 +117,7 @@ module Fedex
           add_recipient(xml)
           add_shipping_charges_payment(xml)
           add_customs_clearance(xml) if @customs_clearance_detail
-          xml.RateRequestTypes "ACCOUNT"
+          xml.RateRequestTypes @shipping_options[:rate_request_type] ||= "PREFERRED"
           add_packages(xml)
         }
       end
@@ -257,6 +257,12 @@ module Fedex
                       xml.ReferenceIndicator package[:special_services_requested][:cod_detail][:reference_indicator]
                     end
                   }
+                end
+                # Alcohol for v15
+                if package[:special_services_requested][:alcohol_detail]						 
+									 xml.AlcoholDetail {
+										xml.RecipientType package[:special_services_requested][:alcohol_detail][:recipient_type]
+									 }											 
                 end
                 # DangerousGoodsDetail goes here
                 if package[:special_services_requested][:dry_ice_weight]

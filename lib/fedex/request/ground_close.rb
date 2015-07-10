@@ -8,10 +8,12 @@ module Fedex
       attr_reader :up_to_time, :filename
 
       def initialize(credentials, options={})
-        requires!(options, :up_to_time)
+       requires!(options)
 
         @credentials = credentials
         @up_to_time = options[:up_to_time]
+        @close_grouping = options[:close_grouping]
+        @manifest_reference_detail = options[:manifest_reference_detail]
         @filename = options[:filename]
         @debug = ENV['DEBUG'] == 'true'
       end
@@ -48,19 +50,29 @@ module Fedex
       # Build xml Fedex Web Service request
       def build_xml
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml.GroundCloseRequest(:xmlns => "http://fedex.com/ws/close/v2"){
+          xml.GroundCloseRequest(:xmlns => "http://fedex.com/ws/close/v3"){
             add_web_authentication_detail(xml)
             add_client_detail(xml)
             add_version(xml)
 
-            xml.TimeUpToWhichShipmentsAreToBeClosed up_to_time.utc.iso8601(2)
+            xml.CloseGrouping @close_grouping if @closing_group
+            xml.TimeUpToWhichShipmentsAreToBeClosed up_to_time.utc.iso8601(2) if up_to_time
+						add_manifest_reference_detail(xml) if @manifest_reference_detail
           }
         end
         builder.doc.root.to_xml
       end
+      
+      def add_manifest_reference_detail(xml)
+				@manifest_reference_detail.each do |md|
+          xml.ManifestReferenceDetail{
+						hash_to_xml(xml, md)
+					}				
+				end
+			end
 
       def service
-        { :id => 'clos', :version => '2' }
+        { :id => 'clos', :version => '3' }
       end
 
       # Successful request

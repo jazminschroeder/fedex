@@ -49,7 +49,7 @@ module Fedex
           add_special_services(xml) if @shipping_options[:return_reason] || @shipping_options[:cod]
           add_customs_clearance(xml) if @customs_clearance_detail
           add_custom_components(xml)
-          xml.RateRequestTypes "ACCOUNT"
+          xml.RateRequestTypes @shipping_options[:rate_request_type] ||= "PREFERRED"
           add_packages(xml)
         }
       end
