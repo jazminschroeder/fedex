@@ -47,7 +47,7 @@ module Fedex
       end
 
       def service
-        { :id => 'pickup', :version => Fedex::PICKUP_API_VERSION }
+        { :id => 'disp', :version => Fedex::PICKUP_API_VERSION }
       end
 
       def add_pickup_address(xml)
