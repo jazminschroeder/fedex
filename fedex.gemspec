@@ -15,7 +15,7 @@ Gem::Specification.new do |s|
   s.rubyforge_project = "fedex"
 
   s.add_dependency 'httparty',            '~> 0.11.0'
-  s.add_dependency 'nokogiri',            '~> 1.5.0'
+  s.add_dependency 'nokogiri',            '~> 1.6.0'
 
   s.add_development_dependency "rspec",   '~> 2.9.0'
   s.add_development_dependency 'vcr',     '~> 2.0.0'
