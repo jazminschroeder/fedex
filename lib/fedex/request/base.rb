@@ -230,14 +230,16 @@ module Fedex
               }
             end
             add_customer_references(xml, package)
-            if package[:special_services_requested] && package[:special_services_requested][:special_service_types]
+            if package[:special_services_requested]
               xml.SpecialServicesRequested{
-                if package[:special_services_requested][:special_service_types].is_a? Array
-                  package[:special_services_requested][:special_service_types].each do |type|
-                    xml.SpecialServiceTypes type
+                if package[:special_services_requested][:special_service_types]
+                  if package[:special_services_requested][:special_service_types].is_a? Array
+                    package[:special_services_requested][:special_service_types].each do |type|
+                      xml.SpecialServiceTypes type
+                    end
+                  else
+                    xml.SpecialServiceTypes package[:special_services_requested][:special_service_types]
                   end
-                else
-                  xml.SpecialServiceTypes package[:special_services_requested][:special_service_types]
                 end
                 # Handle COD Options
                 if package[:special_services_requested][:cod_detail]
