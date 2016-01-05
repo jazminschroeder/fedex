@@ -18,7 +18,7 @@ module Fedex
     #     @total_net_freight #The freight charge minus dicounts
     #     @total_surcharges #The total amount of all surcharges applied to this shipment
     #     @total_base_charge #The total base charge
-    attr_accessor :service_type, :transit_time, :rate_type, :rate_zone, :total_billing_weight, :total_freight_discounts, :total_net_charge, :total_taxes, :total_net_freight, :total_surcharges, :total_base_charge, :total_net_currency
+    attr_accessor :service_type, :transit_time, :rate_type, :rate_zone, :total_billing_weight, :total_freight_discounts, :total_net_charge, :total_taxes, :total_net_freight, :total_surcharges, :total_base_charge, :total_net_charge_currency
     def initialize(options = {})
       @service_type = options[:service_type]
       @transit_time = options[:transit_time]
@@ -27,7 +27,7 @@ module Fedex
       @total_billing_weight = "#{options[:total_billing_weight][:value]} #{options[:total_billing_weight][:units]}"
       @total_freight_discounts = options[:total_freight_discounts]
       @total_net_charge = options[:total_net_charge][:amount]
-      @total_net_currency = options[:total_net_charge][:currency]
+      @total_net_charge_currency = options[:total_net_charge][:currency]
       @total_taxes = options[:total_taxes][:amount]
       @total_net_freight = options[:total_net_freight][:amount]
       @total_surcharges = options[:total_surcharges][:amount]
