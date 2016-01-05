@@ -28,8 +28,7 @@ module Fedex
       STANDARD_MPS
     }
 
-    attr_reader :tracking_number, :signature_name, :service_type, :status, :status_code
-                :delivery_at, :events, :unique_tracking_number, :details, :other_identifiers
+    attr_reader :tracking_number, :signature_name, :service_type, :status, :status_code, :delivery_at, :events, :unique_tracking_number, :details, :other_identifiers
 
     def initialize(details = {})
       @details = details
