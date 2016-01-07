@@ -9,6 +9,7 @@ require 'fedex/request/ground_close'
 require 'fedex/request/pickup'
 require 'fedex/request/pickup_availability'
 require 'fedex/request/service_availability'
+require 'fedex/request/location'
 
 module Fedex
   class Shipment
@@ -111,5 +112,8 @@ module Fedex
       Request::ServiceAvailability.new(@credentials, options).process_request
     end
 
+    def location(options = {})
+      Request::Location.new(@credentials, options).process_request
+    end
   end
 end
