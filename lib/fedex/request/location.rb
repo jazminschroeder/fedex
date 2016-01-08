@@ -49,7 +49,7 @@ module Fedex
 		            add_location(xml)
 		          }
 		        end
-		        puts builder.doc.root.to_xml				
+		        puts builder.doc.root.to_xml if @debug		
 		        builder.doc.root.to_xml				
 			end
 

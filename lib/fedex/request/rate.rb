@@ -19,11 +19,11 @@ module Fedex
             Fedex::Rate.new(rate_details)
           end
         else
-          error_message = if response[:rate_reply]
-            [response[:rate_reply][:notifications]].flatten.first[:message]
+          error_message = if response[:fault]
+            response[:fault][:detail][:desc]
           else
             "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
-          end rescue $1
+          end rescue $!
           raise RateError, error_message
         end
       end
@@ -63,6 +63,7 @@ module Fedex
             add_requested_shipment(xml)
           }
         end
+        puts builder.doc.root.to_xml if @debug    
         builder.doc.root.to_xml
       end
 
