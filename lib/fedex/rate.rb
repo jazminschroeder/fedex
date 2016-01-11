@@ -22,6 +22,7 @@ module Fedex
     def initialize(options = {})
       @service_type = options[:service_type]
       @transit_time = options[:transit_time]
+      @commit_timestamp = options[:commit_timestamp]
       @rate_type = options[:rate_type]
       @rate_zone = options[:rate_zone]
       @total_billing_weight = "#{options[:total_billing_weight][:value]} #{options[:total_billing_weight][:units]}"
