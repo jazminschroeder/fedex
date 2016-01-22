@@ -3,6 +3,8 @@ require 'fedex/request/base'
 module Fedex
   module Request
     class Rate < Base
+      #debug_output $stdout
+
       # Sends post request to Fedex web service and parse the response, a Rate object is created if the response is successful
       def process_request
         api_response = self.class.post(api_url, :body => build_xml)
@@ -41,7 +43,7 @@ module Fedex
           add_recipient(xml)
           add_shipping_charges_payment(xml)
           add_customs_clearance(xml) if @customs_clearance_detail
-          xml.RateRequestTypes "ACCOUNT"
+          xml.RateRequestTypes "PREFERRED"
           add_packages(xml)
         }
       end
@@ -63,7 +65,7 @@ module Fedex
             add_requested_shipment(xml)
           }
         end
-        puts builder.doc.root.to_xml if @debug    
+        puts builder.doc.root.to_xml if @debug
         builder.doc.root.to_xml
       end
 
