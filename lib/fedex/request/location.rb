@@ -24,21 +24,24 @@ module Fedex
       end
 
       def process_request
-            api_response = self.class.post(api_url, :body => build_xml)
-            puts api_response.to_json if @debug
-            response = parse_response(api_response)
-            if success?(response)
-          atlr = response[:search_locations_reply][:address_to_location_relationships]
+        api_response = self.class.post(api_url, :body => build_xml)
+        puts api_response.to_json if @debug
+        response = parse_response(api_response)
+        if success?(response)
+          atlr = response.dig(:search_locations_reply, :address_to_location_relationships, :distance_and_location_details)  #response[:search_locations_reply][:address_to_location_relationships][:disa]
           atlr = [atlr] if atlr.is_a? Hash
-          atlr.map{|location| Fedex::Location.new(location)}
-            else
-              error_message = if response[:search_locations_reply]
-                [response[:search_locations_reply][:notifications]].flatten.first[:message]
-              else
-                "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
-              end rescue $1
-              raise RateError, error_message
-          end
+          atlr.map{|location|
+            location_detail = location[:location_detail]
+            Fedex::Location.new(location_detail) if  !!location_detail && !location_detail.empty?
+          }.compact
+        else
+          error_message = if response[:search_locations_reply]
+            [response[:search_locations_reply][:notifications]].flatten.first[:message]
+          else
+            "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
+          end rescue $1
+          raise RateError, error_message
+        end
       end
 
       def build_xml

@@ -1,4 +1,5 @@
 require 'fedex/shipment'
+require 'core/hash'
 
 # Get shipping rates trough Fedex Web Services
 #
