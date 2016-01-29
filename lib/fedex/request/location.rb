@@ -16,6 +16,8 @@ module Fedex
           @radius_distance = constraints[:radius_distance]
           @required_location_attributes = constraints[:required_location_attributes]
           @results_requested = constraints[:results_requested]
+          @results_to_skip = constraints[:results_to_skip]
+          @supported_redirect_to_hold_services = constraints[:supported_redirect_to_hold_services]
         end
 
         @debug = ENV['DEBUG'] == 'true'
@@ -36,7 +38,7 @@ module Fedex
                 "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
               end rescue $1
               raise RateError, error_message
-          end       
+          end
       end
 
       def build_xml
@@ -49,26 +51,24 @@ module Fedex
                 add_location(xml)
               }
             end
-            puts builder.doc.root.to_xml if @debug    
-            builder.doc.root.to_xml       
+            puts builder.doc.root.to_xml if @debug
+            builder.doc.root.to_xml
       end
 
         def service
             { :id => 'locs', :version => Fedex::LOCATION_API_VERSION }
           end
-      
-      private 
+
+      private
 
       def add_location(xml)
         xml.LocationsSearchCriterion "ADDRESS"
         xml.Address {
-              Array(@address.take(2)).each do |address_line|
-            xml.StreetLines address_line
-                end
+                xml.StreetLines @address[:street]
                 xml.City @address[:city]
                 xml.StateOrProvinceCode @address[:state]
                 xml.PostalCode @address[:postal_code]
-                xml.CountryCode @address[:country_code]               
+                xml.CountryCode @address[:country_code]
               }
               xml.MultipleMatchesAction(@multiple_matches_action) unless @multiple_matches_action.nil?
               xml.Constraints {
@@ -76,7 +76,13 @@ module Fedex
                   xml.Value @radius_distance[:value]
                   xml.Units @radius_distance[:units]
                 } unless @radius_distance.nil?
-                xml.RequiredLocationAttributes(@required_location_attributes.join(',')) unless @required_location_attributes.nil?
+                @supported_redirect_to_hold_services.each{|val|
+                  xml.SupportedRedirectToHoldServices(val)
+                } unless @supported_redirect_to_hold_services.nil?
+                @required_location_attributes.each{|val|
+                  xml.RequiredLocationAttributes(val)
+                } unless @required_location_attributes.nil?
+                xml.ResultsToSkip(@results_to_skip) unless @results_to_skip.nil?
                 xml.ResultsRequested(@results_requested) unless @results_requested.nil?
               } unless @constraints.nil?
 
