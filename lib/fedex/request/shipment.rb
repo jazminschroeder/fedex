@@ -44,6 +44,7 @@ module Fedex
           xml.PackagingType @shipping_options[:packaging_type] ||= "YOUR_PACKAGING"
           add_total_weight(xml) if @mps.has_key? :total_weight
           add_shipper(xml)
+          add_origin(xml) if @origin
           add_recipient(xml)
           add_shipping_charges_payment(xml)
           add_special_services(xml) if @shipping_options[:return_reason] || @shipping_options[:cod] || @shipping_options[:saturday_delivery]

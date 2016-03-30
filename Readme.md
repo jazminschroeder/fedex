@@ -353,7 +353,8 @@ To request a pickup:
 pickup = fedex.pickup(:carrier_code => 'FDXE',
                       :packages => {:weight => {:units => "LB", :value => 10}, :count => 2},
                       :ready_timestamp => Date.today.to_datetime + 1.375,
-                      :close_time => Date.today.to_time + 60 * 60 * 17)
+                      :close_time => Date.today.to_time + 60 * 60 * 17,
+                      :country_relationship => "DOMESTIC")
 puts pickup[:pickup_confirmation_number]
 ```
 
