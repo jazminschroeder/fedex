@@ -247,7 +247,7 @@ fedex.label(
       :total_weight => {
           :value => total_weight,
           :units => 'KG'
-      }
+      },
       :sequence_number => 'n'
       }
    )
