@@ -219,7 +219,14 @@ label = fedex.label(
   :shipping_details => shipping_details,
   :shipping_charges_payment => shipping_charges_payment,
   :customs_clearance_detail => customs_clearance_detail,
-  :mps => {:package_count => package_count, :total_weight => total_weight, :sequence_number => '1'}
+  :mps => {
+      :package_count => package_count,
+      :total_weight => {
+          :value => total_weight,
+          :units => 'KG'
+      },
+      :sequence_number => '1'
+      }
   )
 ```
 
