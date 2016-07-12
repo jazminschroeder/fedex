@@ -4,6 +4,8 @@ module Fedex
   # Rate totals are contained in the node
   #    response[:rate_reply][:rate_reply_details][:rated_shipment_details]
   class Rate
+    attr_accessor :service_type, :transit_time, :rate_type, :rate_zone, :total_billing_weight, :total_freight_discounts, :total_net_charge, :total_taxes, :total_net_freight, :total_surcharges, :total_base_charge, :data
+
     # Initialize Fedex::Rate Object
     # @param [Hash] options
     #
@@ -18,21 +20,26 @@ module Fedex
     #     @total_net_freight #The freight charge minus dicounts
     #     @total_surcharges #The total amount of all surcharges applied to this shipment
     #     @total_base_charge #The total base charge
-    attr_accessor :service_type, :transit_time, :rate_type, :rate_zone, :total_billing_weight, :total_freight_discounts, :total_net_charge, :total_taxes, :total_net_freight, :total_surcharges, :total_base_charge
     def initialize(options = {})
+      @data = options
       @service_type = options[:service_type]
       @transit_time = options[:transit_time]
-      @rate_type = options[:rate_type]
-      @rate_zone = options[:rate_zone]
-      @total_billing_weight = "#{options[:total_billing_weight][:value]} #{options[:total_billing_weight][:units]}"
-      @total_freight_discounts = options[:total_freight_discounts]
-      @total_net_charge = options[:total_net_charge][:amount]
-      @total_taxes = options[:total_taxes][:amount]
-      @total_net_freight = options[:total_net_freight][:amount]
-      @total_surcharges = options[:total_surcharges][:amount]
-      @total_base_charge = options[:total_base_charge][:amount]
-      @total_net_fedex_charge = (options[:total_net_fe_dex_charge]||{})[:amount]
-      @total_rebates = (options[:total_rebates]||{})[:amount]
+      rate_details = [options[:rated_shipment_details]].flatten.first[:shipment_rate_detail]
+      @rate_type = rate_details[:rate_type]
+      @rate_zone = rate_details[:rate_zone]
+      @total_billing_weight = "#{rate_details[:total_billing_weight][:value]} #{rate_details[:total_billing_weight][:units]}"
+      @total_freight_discounts = rate_details[:total_freight_discounts]
+      @total_net_charge = rate_details[:total_net_charge][:amount]
+      @total_taxes = rate_details[:total_taxes][:amount]
+      @total_net_freight = rate_details[:total_net_freight][:amount]
+      @total_surcharges = rate_details[:total_surcharges][:amount]
+      @total_base_charge = rate_details[:total_base_charge][:amount]
+      @total_net_fedex_charge = (rate_details[:total_net_fe_dex_charge]||{})[:amount]
+      @total_rebates = (rate_details[:total_rebates]||{})[:amount]
+    end
+
+    def [](key)
+      @data[key]
     end
   end
 end

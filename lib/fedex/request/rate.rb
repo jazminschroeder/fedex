@@ -13,10 +13,7 @@ module Fedex
           rate_reply_details = [rate_reply_details] if rate_reply_details.is_a?(Hash)
 
           rate_reply_details.map do |rate_reply|
-            rate_details = [rate_reply[:rated_shipment_details]].flatten.first[:shipment_rate_detail]
-            rate_details.merge!(service_type: rate_reply[:service_type])
-            rate_details.merge!(transit_time: rate_reply[:transit_time])
-            Fedex::Rate.new(rate_details)
+            Fedex::Rate.new(rate_reply)
           end
         else
           error_message = if response[:rate_reply]
