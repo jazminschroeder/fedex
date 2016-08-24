@@ -1,4 +1,5 @@
 require 'fedex/shipment'
+require 'core/hash'
 
 # Get shipping rates trough Fedex Web Services
 #
@@ -52,4 +53,5 @@ module Fedex
   require 'fedex/version'
   #Exceptions: Fedex::RateError
   class RateError < StandardError; end
+  class LocationError < StandardError; end
 end

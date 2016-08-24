@@ -3,10 +3,12 @@ require 'fedex/request/base'
 module Fedex
   module Request
     class Rate < Base
+      #debug_output $stdout
+
       # Sends post request to Fedex web service and parse the response, a Rate object is created if the response is successful
       def process_request
         api_response = self.class.post(api_url, :body => build_xml)
-        puts api_response if @debug
+        puts api_response.to_json if @debug
         response = parse_response(api_response)
         if success?(response)
           rate_reply_details = response[:rate_reply][:rate_reply_details] || []
@@ -15,7 +17,7 @@ module Fedex
           rate_reply_details.map do |rate_reply|
             rate_details = [rate_reply[:rated_shipment_details]].flatten.first[:shipment_rate_detail]
             rate_details.merge!(service_type: rate_reply[:service_type])
-            rate_details.merge!(transit_time: rate_reply[:transit_time])
+            rate_details.merge!(commit_timestamp: rate_reply[:commit_details][:commit_timestamp]) if !!rate_reply[:commit_details]
             Fedex::Rate.new(rate_details)
           end
         else
@@ -23,7 +25,7 @@ module Fedex
             [response[:rate_reply][:notifications]].flatten.first[:message]
           else
             "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
-          end rescue $1
+          end rescue $!
           raise RateError, error_message
         end
       end
@@ -36,11 +38,12 @@ module Fedex
           xml.DropoffType @shipping_options[:drop_off_type] ||= "REGULAR_PICKUP"
           xml.ServiceType service_type if service_type
           xml.PackagingType @shipping_options[:packaging_type] ||= "YOUR_PACKAGING"
+          xml.PreferredCurrency(@shipping_options[:preferred_currency]) unless @shipping_options[:preferred_currency].nil?
           add_shipper(xml)
           add_recipient(xml)
           add_shipping_charges_payment(xml)
           add_customs_clearance(xml) if @customs_clearance_detail
-          xml.RateRequestTypes "ACCOUNT"
+          xml.RateRequestTypes "PREFERRED"
           add_packages(xml)
         }
       end
@@ -62,6 +65,7 @@ module Fedex
             add_requested_shipment(xml)
           }
         end
+        puts builder.doc.root.to_xml if @debug
         builder.doc.root.to_xml
       end
 
