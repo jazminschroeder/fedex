@@ -1,3 +1,6 @@
+# IMPORTANT!!
+I plan a major refactor to this gem. Sorry but at this moment I am not merging PR's. I appreciate your effort but need some time to catch up. Thanks!! 
+
 # Fedex Rate Web Service
 ## Fedex API Shipment Version: 13
 
