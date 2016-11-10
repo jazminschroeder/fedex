@@ -30,6 +30,7 @@ module Fedex
       # Add information for shipments
       def add_requested_shipment(xml)
         xml.RequestedShipment{
+          xml.ShipTimestamp @shipping_options[:ship_timestamp] if @shipping_options[:ship_timestamp]
           xml.DropoffType @shipping_options[:drop_off_type] ||= "REGULAR_PICKUP"
           xml.ServiceType service_type if service_type
           xml.PackagingType @shipping_options[:packaging_type] ||= "YOUR_PACKAGING"
@@ -42,7 +43,7 @@ module Fedex
         }
       end
 
-      # Add transite time options
+      # Add transit time options
       def add_transit_time(xml)
         xml.ReturnTransitAndCommit true
       end
@@ -71,7 +72,6 @@ module Fedex
         response[:rate_reply] &&
           %w{SUCCESS WARNING NOTE}.include?(response[:rate_reply][:highest_severity])
       end
-
     end
   end
 end
