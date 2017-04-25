@@ -261,8 +261,8 @@ module Fedex
             value.each do |v|
               xml.send element do |x|
                 hash_to_xml(x, v)
-              end  
-            end  
+              end
+            end
           else
             xml.send element, value
           end
@@ -271,7 +271,7 @@ module Fedex
 
       # Parse response, convert keys to underscore symbols
       def parse_response(response)
-        response = sanitize_response_keys(response)
+        response = sanitize_response_keys(response.parsed_response)
       end
 
       # Recursively sanitizes the response object by cleaning up any hash keys.
