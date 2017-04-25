@@ -14,7 +14,7 @@ Gem::Specification.new do |s|
 
   s.rubyforge_project = "fedex"
 
-  s.add_dependency 'httparty',            '>= 0.8.3'
+  s.add_dependency 'httparty',            '~> 0.14.0'
   s.add_dependency 'nokogiri',            '>= 1.5.6'
 
   s.add_development_dependency "rspec",   '~> 2.9.0'
@@ -26,6 +26,4 @@ Gem::Specification.new do |s|
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")
   s.executables   = `git ls-files -- bin/*`.split("\n").map{ |f| File.basename(f) }
   s.require_paths = ["lib"]
-
-
 end
