@@ -36,8 +36,10 @@ module Fedex
 
       # Add information for shipments
       def add_requested_shipment(xml)
+        ship_timestamp = @shipping_options[:ship_timestamp] ||= Time.now.utc.iso8601(2) # Adds the ability to set ship date, for future packages.
+
         xml.RequestedShipment{
-          xml.ShipTimestamp Time.now.utc.iso8601(2)
+          xml.ShipTimestamp ship_timestamp
           xml.DropoffType @shipping_options[:drop_off_type] ||= "REGULAR_PICKUP"
           xml.ServiceType service_type
           xml.PackagingType @shipping_options[:packaging_type] ||= "YOUR_PACKAGING"
@@ -45,10 +47,25 @@ module Fedex
           add_recipient(xml)
           add_shipping_charges_payment(xml)
           add_customs_clearance(xml) if @customs_clearance
+          add_saturday_delivery_option(xml)
+          add_delivery_instructions(xml)
           add_custom_components(xml)
           xml.RateRequestTypes "ACCOUNT"
           add_packages(xml)
         }
+      end
+
+      def add_saturday_delivery_option(xml)
+        if @shipping_options[:saturday_delivery]
+          xml.SpecialServicesRequested {
+            xml.SpecialServiceTypes "SATURDAY_DELIVERY"
+          }
+        end
+      end
+
+      def add_delivery_instructions(xml)
+        xml.DeliveryInstructions @shipping_options[:delivery_instructions] if
+          @shipping_options[:delivery_instructions].present?
       end
 
       # Hook that can be used to add custom parts.

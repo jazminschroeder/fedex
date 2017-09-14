@@ -5,31 +5,50 @@ require 'fileutils'
 module Fedex
   module Request
     class Address < Base
+      # Don't let address validation calls block application if FedEx is sluggish
+      default_timeout 10
+
       def initialize(credentials, options={})
         requires!(options, :address)
         @credentials = credentials
         @address     = options[:address]
       end
 
+      def add_address_to_validate(xml)
+        # Create two street line entries to prevent false negatives
+        # when people include a company in an address line.
+        street_lines = (@address[:street].is_a? Array) ? @address[:street] : [@address[:street],'']
+
+        xml.AddressesToValidate{
+          xml.Address{
+            xml.StreetLines         street_lines[0]
+            xml.StreetLines         street_lines[1]
+            xml.City                @address[:city]
+            xml.StateOrProvinceCode @address[:state]
+            xml.PostalCode          @address[:postal_code]
+            xml.CountryCode         @address[:country]
+          }
+        }
+      end
+
       def process_request
         api_response = self.class.post(api_url, :body => build_xml)
         puts api_response if @debug == true
+
         response = parse_response(api_response)
         if success?(response)
           options = response[:address_validation_reply][:address_results][:proposed_address_details]
 
           Fedex::Address.new(options)
         else
-          if response[:address_validation_reply]
-            notifications = response[:address_validation_reply][:notifications]
-            notification = [notifications].flatten.first
-            error_message = notification[:message]
-            error_code = notification[:code]
+          # Add full API response logging for failed address validation requests
+          Rails.logger.info "fedex: request: address: error: #{api_response}"
+          error_message = if response[:address_validation_reply]
+            [response[:address_validation_reply][:notifications]].flatten.first[:message]
           else
-            error_message = api_response["Fault"]["detail"]["fault"]["reason"]
-            error_code = api_response["Fault"]["detail"]["fault"]["errorCode"]
+            api_response["Fault"]["detail"]["fault"]["reason"]
           end rescue $1
-          raise RateError.new(error_message, code: error_code)
+          raise RateError, error_message
         end
       end
 

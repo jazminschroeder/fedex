@@ -57,5 +57,9 @@ module Fedex
       Request::TrackingInformation.new(@credentials, options).process_request
     end
 
+    # Performs a ground close
+    def close(options = {})
+      Request::GroundClose.new(@credentials, options).process_request
+    end
   end
 end

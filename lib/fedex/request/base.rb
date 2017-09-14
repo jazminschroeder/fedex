@@ -12,7 +12,7 @@ module Fedex
       # If true the rate method will return the complete response from the Fedex Web Service
       attr_accessor :debug
       # Fedex Text URL
-      TEST_URL = "https://gatewaybeta.fedex.com:443/xml/"
+      TEST_URL = 'https://wsbeta.fedex.com:443/xml/'
 
       # Fedex Production URL
       PRODUCTION_URL = "https://gateway.fedex.com:443/xml/"
@@ -147,9 +147,9 @@ module Fedex
       # Add shipping charges to xml request
       def add_shipping_charges_payment(xml)
         xml.ShippingChargesPayment{
-          xml.PaymentType "SENDER"
+          xml.PaymentType @shipping_options[:payment_type] ||= "SENDER"
           xml.Payor{
-            xml.AccountNumber @credentials.account_number
+            xml.AccountNumber (@shipping_options[:payor] && @shipping_options[:payor][:account_number]) || @credentials.account_number
             xml.CountryCode @shipper[:country_code]
           }
         }

@@ -57,6 +57,7 @@ module Fedex
             add_client_detail(xml)
             add_version(xml)
             add_package_identifier(xml)
+            xml.ShipmentAccountNumber AppConfigs['fedex'][:account_number] if package_type == "FREE_FORM_REFERENCE"
             xml.IncludeDetailedScans @include_detailed_scans
 
             # Optional
@@ -67,8 +68,9 @@ module Fedex
         builder.doc.root.to_xml
       end
 
+      # Use version 6 of tracking API
       def service
-        { :id => 'trck', :version => 5 }
+        { :id => 'trck', :version => 6 }
       end
 
       def add_package_identifier(xml)
