@@ -13,10 +13,7 @@ module Fedex
           rate_reply_details = [rate_reply_details] if rate_reply_details.is_a?(Hash)
 
           rate_reply_details.map do |rate_reply|
-            rate_details = [rate_reply[:rated_shipment_details]].flatten.first[:shipment_rate_detail]
-            rate_details.merge!(service_type: rate_reply[:service_type])
-            rate_details.merge!(transit_time: rate_reply[:transit_time])
-            Fedex::Rate.new(rate_details)
+            Fedex::Rate.new(rate_reply)
           end
         else
           error_message = if response[:rate_reply]
@@ -33,6 +30,7 @@ module Fedex
       # Add information for shipments
       def add_requested_shipment(xml)
         xml.RequestedShipment{
+          xml.ShipTimestamp @shipping_options[:ship_timestamp] if @shipping_options[:ship_timestamp]
           xml.DropoffType @shipping_options[:drop_off_type] ||= "REGULAR_PICKUP"
           xml.ServiceType service_type if service_type
           xml.PackagingType @shipping_options[:packaging_type] ||= "YOUR_PACKAGING"
@@ -45,7 +43,7 @@ module Fedex
         }
       end
 
-      # Add transite time options
+      # Add transit time options
       def add_transit_time(xml)
         xml.ReturnTransitAndCommit true
       end
@@ -74,7 +72,6 @@ module Fedex
         response[:rate_reply] &&
           %w{SUCCESS WARNING NOTE}.include?(response[:rate_reply][:highest_severity])
       end
-
     end
   end
 end
