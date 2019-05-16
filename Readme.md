@@ -1,5 +1,5 @@
 # IMPORTANT!!
-I plan a major refactor to this gem. Sorry but at this moment I am not merging PR's. I appreciate your effort but need some time to catch up. Thanks!! 
+I plan a major refactor to this gem. Sorry but at this moment I am not merging PR's. I appreciate your effort but need some time to catch up. Thanks!!
 
 # Fedex Rate Web Service
 ## Fedex API Shipment Version: 13
@@ -10,7 +10,6 @@ This version uses the Non-SOAP Web Services so there is no need to download the
 Fedex WSDL files, note however that you will need to apply for development/production credentials.
 
 Note: Please make sure to test your results.
-
 
 # Installation:
 
@@ -263,11 +262,11 @@ PAYMENT COLLECTION TYPE - CASH, CHEQUE, DEMAND DRAFT
 
 use this format commodities_1 .... commodities_N
 
-example 
+example
 
 ```
 
-customs_clearance_detail['commodites_1'] 
+customs_clearance_detail['commodites_1']
 customs_clearance_detail['commodites_2']
 
 ```
@@ -291,7 +290,7 @@ Example
 
 ### ** Delete a shipment **
 
-If you do not intend to use a label you should delete it. This will notify FedEx that you will not be using the label and they won't charge you. 
+If you do not intend to use a label you should delete it. This will notify FedEx that you will not be using the label and they won't charge you.
 
 To delete a shipment:
 
