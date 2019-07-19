@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fedex/credentials'
 require 'fedex/request/label'
 require 'fedex/request/rate'
@@ -12,7 +14,6 @@ require 'fedex/request/service_availability'
 
 module Fedex
   class Shipment
-
     # In order to use Fedex rates API you must first apply for a developer(and later production keys),
     # Visit {http://www.fedex.com/us/developer/ Fedex Developer Center} for more information about how to obtain your keys.
     # @param [String] key - Fedex web service key
@@ -22,7 +23,7 @@ module Fedex
     # @param [String] mode - [development/production]
     #
     # return a Fedex::Shipment object
-    def initialize(options={})
+    def initialize(options = {})
       @credentials = Credentials.new(options)
     end
 
@@ -93,6 +94,7 @@ module Fedex
     def ground_close(options = {})
       Request::GroundClose.new(@credentials, options).process_request
     end
+
     # @param [String] country_code, A string containing country code
     # @param [String] state_code, A string containing state code
     # @param [String] postal_code, A string containing postal code
@@ -102,7 +104,7 @@ module Fedex
     def pickup_availability(options = {})
       Request::PickupAvailability.new(@credentials, options).process_request
     end
-    
+
     # param [Hash] origin, A hash containing origin information
     # param [Hash] destination, A hash containing destination information
     # param [date] ship_date, A string containing ship date in YYYY-MM-DD format
@@ -110,6 +112,5 @@ module Fedex
     def service_availability(options = {})
       Request::ServiceAvailability.new(@credentials, options).process_request
     end
-
   end
 end

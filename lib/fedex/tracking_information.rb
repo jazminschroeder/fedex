@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fedex/tracking_information/event'
 
 module Fedex
@@ -26,7 +28,7 @@ module Fedex
       TRANSPORTATION_CONTROL_NUMBER
       SHIPPER_REFERENCE
       STANDARD_MPS
-    }
+    }.freeze
 
     attr_reader :tracking_number, :signature_name, :service_type, :status, :status_code, :delivery_at, :events, :unique_tracking_number, :details, :other_identifiers
 
@@ -41,7 +43,7 @@ module Fedex
       @status_code            = details[:status_code]
       @other_identifiers      = details[:other_identifiers]
 
-      if details.has_key?(:actual_delivery_timestamp)
+      if details.key?(:actual_delivery_timestamp)
         @delivery_at = Time.parse(details[:actual_delivery_timestamp])
       end
 
@@ -49,6 +51,5 @@ module Fedex
         Event.new(event_details)
       end
     end
-
   end
 end

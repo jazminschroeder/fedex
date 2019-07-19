@@ -1,7 +1,9 @@
+# frozen_string_literal: true
+
 require 'vcr'
 
 VCR.configure do |config|
-  config.cassette_library_dir  = File.expand_path('../../vcr', __FILE__)
+  config.cassette_library_dir = File.expand_path('../vcr', __dir__)
   config.hook_into :webmock
 
   config.filter_sensitive_data('FEDEX_DEVELOPMENT_CREDENTIAL_KEY') { fedex_development_credentials[:key] }
@@ -20,7 +22,7 @@ end
 RSpec.configure do |c|
   c.include Fedex::Helpers
   c.around(:each, :vcr) do |example|
-    name = underscorize(example.metadata[:full_description].split(/\s+/, 2).join("/")).gsub(/[^\w\/]+/, "_")
+    name = underscorize(example.metadata[:full_description].split(/\s+/, 2).join('/')).gsub(/[^\w\/]+/, '_')
     VCR.use_cassette(name) { example.call }
   end
 end

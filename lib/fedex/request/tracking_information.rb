@@ -1,17 +1,18 @@
+# frozen_string_literal: true
+
 require 'fedex/request/base'
 require 'fedex/tracking_information'
 
 module Fedex
   module Request
     class TrackingInformation < Base
-
       attr_reader :package_type, :package_id
 
-      def initialize(credentials, options={})
-        requires!(options, :package_type, :package_id) unless options.has_key?(:tracking_number)
+      def initialize(credentials, options = {})
+        requires!(options, :package_type, :package_id) unless options.key?(:tracking_number)
 
         @package_id   = options[:package_id]   || options.delete(:tracking_number)
-        @package_type = options[:package_type] || "TRACKING_NUMBER_OR_DOORTAG"
+        @package_type = options[:package_type] || 'TRACKING_NUMBER_OR_DOORTAG'
         @credentials  = credentials
 
         # Optional
@@ -19,23 +20,21 @@ module Fedex
         @uuid                   = options[:uuid]
         @paging_token           = options[:paging_token]
 
-        unless package_type_valid?
-          raise "Unknown package type '#{package_type}'"
-        end
+        raise "Unknown package type '#{package_type}'" unless package_type_valid?
       end
 
       def process_request
-        api_response = self.class.post(api_url, :body => build_xml)
+        api_response = self.class.post(api_url, body: build_xml)
         puts api_response if @debug == true
         response = parse_response(api_response)
 
         if success?(response)
           options = response[:track_reply][:track_details]
 
-          if response[:track_reply][:duplicate_waybill].downcase == 'true'
+          if response[:track_reply][:duplicate_waybill].casecmp('true').zero?
             shipments = []
             [options].flatten.map do |details|
-              options = {:tracking_number => @package_id, :uuid => details[:tracking_number_unique_identifier]}
+              options = { tracking_number: @package_id, uuid: details[:tracking_number_unique_identifier] }
               shipments << Request::TrackingInformation.new(@credentials, options).process_request
             end
             shipments.flatten
@@ -45,11 +44,15 @@ module Fedex
             end
           end
         else
-          error_message = if response[:track_reply]
-            response[:track_reply][:notifications][:message]
-          else
-            "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
-          end rescue $1
+          error_message = begin
+                            if response[:track_reply]
+                              response[:track_reply][:notifications][:message]
+                            else
+                              "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
+                            end
+                          rescue StandardError
+                            $1
+                          end
           raise RateError, error_message
         end
       end
@@ -59,7 +62,7 @@ module Fedex
       # Build xml Fedex Web Service request
       def build_xml
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml.TrackRequest(:xmlns => "http://fedex.com/ws/track/v#{service[:version]}"){
+          xml.TrackRequest(xmlns: "http://fedex.com/ws/track/v#{service[:version]}")  do
             add_web_authentication_detail(xml)
             add_client_detail(xml)
             add_version(xml)
@@ -67,20 +70,20 @@ module Fedex
             xml.TrackingNumberUniqueIdentifier @uuid         if @uuid
             xml.IncludeDetailedScans           @include_detailed_scans
             xml.PagingToken                    @paging_token if @paging_token
-          }
+          end
         end
         builder.doc.root.to_xml
       end
 
       def service
-        { :id => 'trck', :version => 6 }
+        { id: 'trck', version: 6 }
       end
 
       def add_package_identifier(xml)
-        xml.PackageIdentifier{
+        xml.PackageIdentifier  do
           xml.Value package_id
           xml.Type  package_type
-        }
+        end
       end
 
       # Successful request
@@ -92,7 +95,6 @@ module Fedex
       def package_type_valid?
         Fedex::TrackingInformation::PACKAGE_IDENTIFIER_TYPES.include? package_type
       end
-
     end
   end
 end

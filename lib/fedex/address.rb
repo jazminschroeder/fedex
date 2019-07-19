@@ -1,19 +1,20 @@
+# frozen_string_literal: true
+
 module Fedex
   class Address
-
     attr_reader :changes, :score, :confirmed, :available, :status, :residential,
-                :business, :company, :street_lines, :city, :state, 
+                :business, :company, :street_lines, :city, :state,
                 :province_code, :postal_code, :country_code
 
     def initialize(options)
       @changes   = options[:changes]
       @score     = options[:score].to_i
-      @confirmed = options[:delivery_point_validation] == "CONFIRMED"
-      @available = options[:delivery_point_validation] != "UNAVAILABLE"
+      @confirmed = options[:delivery_point_validation] == 'CONFIRMED'
+      @available = options[:delivery_point_validation] != 'UNAVAILABLE'
 
       @status      = options[:residential_status]
-      @residential = status == "RESIDENTIAL"
-      @business    = status == "BUSINESS"
+      @residential = status == 'RESIDENTIAL'
+      @business    = status == 'BUSINESS'
 
       address        = options[:address]
 

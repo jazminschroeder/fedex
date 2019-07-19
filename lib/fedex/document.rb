@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 module Fedex
   class Document
     attr_reader :tracking_number, :filenames, :response_details
@@ -17,9 +19,7 @@ module Fedex
       shipment_documents = @response_details[:completed_shipment_detail][:shipment_documents] || []
 
       # unify iteration interface
-      unless shipment_documents.kind_of?(Array)
-        shipment_documents = [shipment_documents]
-      end
+      shipment_documents = [shipment_documents] unless shipment_documents.is_a?(Array)
 
       # keeps the filenames which actually saved
       save(@filenames[:label], label)
@@ -36,7 +36,7 @@ module Fedex
 
       image = Base64.decode64(content[:parts][:image])
       full_path = Pathname.new(path)
-      File.open(full_path, 'wb') do|f|
+      File.open(full_path, 'wb') do |f|
         f.write(image)
       end
 
@@ -46,6 +46,5 @@ module Fedex
     def has_image?(content)
       content[:parts] && content[:parts][:image]
     end
-
   end
 end

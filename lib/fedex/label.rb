@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'base64'
 require 'pathname'
 
@@ -53,7 +55,7 @@ module Fedex
       full_path = Pathname.new(path)
       full_path = full_path.join(name) if append_name
 
-      File.open(full_path, 'wb') do|f|
+      File.open(full_path, 'wb') do |f|
         f.write(@image)
       end
     end
@@ -63,8 +65,6 @@ module Fedex
         label_details[:format] = format
         label_details[:file_name] = file_name
         Label.new(label_details, true)
-      else
-        nil
       end
     end
   end
