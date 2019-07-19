@@ -1,0 +1,136 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://wsbeta.fedex.com/xml/
+    body:
+      encoding: UTF-8
+      string: |-
+        <ProcessShipmentRequest xmlns="http://fedex.com/ws/ship/v22">
+          <WebAuthenticationDetail>
+            <UserCredential>
+              <Key>FEDEX_DEVELOPMENT_CREDENTIAL_KEY</Key>
+              <Password>FEDEX_DEVELOPMENT_CREDENTIAL_PASSWORD</Password>
+            </UserCredential>
+          </WebAuthenticationDetail>
+          <ClientDetail>
+            <AccountNumber>FEDEX_DEVELOPMENT_CREDENTIAL_ACCOUNT_NUMBER</AccountNumber>
+            <MeterNumber>FEDEX_DEVELOPMENT_CREDENTIAL_METER</MeterNumber>
+            <Localization>
+              <LanguageCode>en</LanguageCode>
+              <LocaleCode>us</LocaleCode>
+            </Localization>
+          </ClientDetail>
+          <Version>
+            <ServiceId>ship</ServiceId>
+            <Major>22</Major>
+            <Intermediate>0</Intermediate>
+            <Minor>0</Minor>
+          </Version>
+          <RequestedShipment>
+            <ShipTimestamp>2019-07-19T10:45:18.81Z</ShipTimestamp>
+            <DropoffType>REGULAR_PICKUP</DropoffType>
+            <ServiceType>GROUND_HOME_DELIVERY</ServiceType>
+            <PackagingType>YOUR_PACKAGING</PackagingType>
+            <Shipper>
+              <Contact>
+                <PersonName>Sender</PersonName>
+                <CompanyName>Company</CompanyName>
+                <PhoneNumber>555-555-5555</PhoneNumber>
+              </Contact>
+              <Address>
+                <StreetLines>Main Street</StreetLines>
+                <City>Harrison</City>
+                <StateOrProvinceCode>AR</StateOrProvinceCode>
+                <PostalCode>72601</PostalCode>
+                <CountryCode>US</CountryCode>
+              </Address>
+            </Shipper>
+            <Recipient>
+              <Contact>
+                <PersonName>Recipient</PersonName>
+                <CompanyName>Company</CompanyName>
+                <PhoneNumber>555-555-5555</PhoneNumber>
+              </Contact>
+              <Address>
+                <StreetLines>Main Street</StreetLines>
+                <City>Frankin Park</City>
+                <StateOrProvinceCode>IL</StateOrProvinceCode>
+                <PostalCode>60131</PostalCode>
+                <CountryCode>US</CountryCode>
+                <Residential>true</Residential>
+              </Address>
+            </Recipient>
+            <ShippingChargesPayment>
+              <PaymentType>SENDER</PaymentType>
+              <Payor>
+                <ResponsibleParty>
+                  <AccountNumber>FEDEX_DEVELOPMENT_CREDENTIAL_ACCOUNT_NUMBER</AccountNumber>
+                  <Contact>
+                    <PersonName>Sender</PersonName>
+                    <CompanyName>Company</CompanyName>
+                    <PhoneNumber>555-555-5555</PhoneNumber>
+                  </Contact>
+                </ResponsibleParty>
+              </Payor>
+            </ShippingChargesPayment>
+            <LabelSpecification>
+              <LabelFormatType>COMMON2D</LabelFormatType>
+              <ImageType>PNG</ImageType>
+              <LabelStockType>PAPER_LETTER</LabelStockType>
+            </LabelSpecification>
+            <RateRequestTypes>NONE</RateRequestTypes>
+            <PackageCount>1</PackageCount>
+            <RequestedPackageLineItems>
+              <GroupPackageCount>1</GroupPackageCount>
+              <Weight>
+                <Units>LB</Units>
+                <Value>2</Value>
+              </Weight>
+              <Dimensions>
+                <Length>10</Length>
+                <Width>5</Width>
+                <Height>4</Height>
+                <Units>IN</Units>
+              </Dimensions>
+            </RequestedPackageLineItems>
+          </RequestedShipment>
+        </ProcessShipmentRequest>
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 19 Jul 2019 10:45:19 GMT
+      Server:
+      - Apache
+      Set-Cookie:
+      - siteDC=wtc; path=/; domain=.fedex.com; expires=Sat, 20-Jul-2019 10:45:19 GMT
+      X-Csr-Log-Transaction-Id:
+      - e744e562-8dd6-4f9e-a07e-ef56043f0786
+      X-Csr-Elapsed-Millis:
+      - '396'
+      Vary:
+      - Accept-Encoding
+      Responsesslprotocol:
+      - TLSv1.2
+      Transfer-Encoding:
+      - chunked
+      Content-Type:
+      - application/xml
+    body:
+      encoding: ASCII-8BIT
+      string: <?xml version="1.0" encoding="UTF-8"?><ProcessShipmentReply xmlns="http://fedex.com/ws/ship/v22"><HighestSeverity>SUCCESS</HighestSeverity><Notifications><Severity>SUCCESS</Severity><Source>ship</Source><Code>0000</Code><Message>Success</Message><LocalizedMessage>Success</LocalizedMessage></Notifications><Version><ServiceId>ship</ServiceId><Major>22</Major><Intermediate>0</Intermediate><Minor>0</Minor></Version><JobId>419e6060505321q12615j023178</JobId><CompletedShipmentDetail><UsDomestic>true</UsDomestic><CarrierCode>FDXG</CarrierCode><MasterTrackingId><TrackingIdType>FEDEX</TrackingIdType><TrackingNumber>794627639528</TrackingNumber></MasterTrackingId><ServiceTypeDescription>FXH</ServiceTypeDescription><PackagingDescription>YOUR_PACKAGING</PackagingDescription><OperationalDetail><OriginLocationNumber>726</OriginLocationNumber><DestinationLocationNumber>3607</DestinationLocationNumber><TransitTime>TWO_DAYS</TransitTime><IneligibleForMoneyBackGuarantee>false</IneligibleForMoneyBackGuarantee><DeliveryEligibilities>SATURDAY_DELIVERY</DeliveryEligibilities><ServiceCode>90</ServiceCode><PackagingCode>01</PackagingCode></OperationalDetail><CompletedPackageDetails><SequenceNumber>1</SequenceNumber><TrackingIds><TrackingIdType>FEDEX</TrackingIdType><TrackingNumber>794627639528</TrackingNumber></TrackingIds><GroupNumber>0</GroupNumber><OperationalDetail><OperationalInstructions><Number>2</Number><Content>TRK#</Content></OperationalInstructions><OperationalInstructions><Number>7</Number><Content>9622080430008000295000794627639528</Content></OperationalInstructions><OperationalInstructions><Number>8</Number><Content>567J2/A6F9/05A2</Content></OperationalInstructions><OperationalInstructions><Number>10</Number><Content>7946
+        2763 9528</Content></OperationalInstructions><OperationalInstructions><Number>15</Number><Content>60131</Content></OperationalInstructions><OperationalInstructions><Number>18</Number><Content>9622
+        0804 3 (000 800 0295) 0 00 7946 2763 9528</Content></OperationalInstructions><Barcodes><BinaryBarcodes><Type>COMMON_2D</Type><Value>Wyk+HjAxHTAyNjAxMzEdODQwHTgwNB03OTQ2Mjc2Mzk1MjgdRkRFRx04MDAwMjk1HTIwMB0dMS8xHTIuMDBMQh1OHU1haW4gU3RyZWV0HUZyYW5raW4gUGFyax1JTB1SZWNpcGllbnQeMDYdMTBaR0gwMDcdMTFaQ29tcGFueR0xMlo1NTU1NTU1NTU1HTIwWhwdMzFaOTYyMjA4MDQzMDAwODAwMDI5NTAwMDc5NDYyNzYzOTUyOB0eBA==</Value></BinaryBarcodes><StringBarcodes><Type>FEDEX_1D</Type><Value>9622080430008000295000794627639528</Value></StringBarcodes></Barcodes><GroundServiceCode>804</GroundServiceCode></OperationalDetail><Label><Type>OUTBOUND_LABEL</Type><ShippingDocumentDisposition>RETURNED</ShippingDocumentDisposition><ImageType>PNG</ImageType><Resolution>200</Resolution><CopiesToPrint>1</CopiesToPrint><Parts><DocumentPartSequenceNumber>1</DocumentPartSequenceNumber><Image>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</Image></Parts></Label><SignatureOption>SERVICE_DEFAULT</SignatureOption></CompletedPackageDetails></CompletedShipmentDetail></ProcessShipmentReply>
+    http_version: 
+  recorded_at: Fri, 19 Jul 2019 10:45:19 GMT
+recorded_with: VCR 5.0.0

@@ -1,0 +1,150 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://wsbeta.fedex.com/xml/
+    body:
+      encoding: UTF-8
+      string: |-
+        <RateRequest xmlns="http://fedex.com/ws/rate/v22">
+          <WebAuthenticationDetail>
+            <UserCredential>
+              <Key>FEDEX_DEVELOPMENT_CREDENTIAL_KEY</Key>
+              <Password>FEDEX_DEVELOPMENT_CREDENTIAL_PASSWORD</Password>
+            </UserCredential>
+          </WebAuthenticationDetail>
+          <ClientDetail>
+            <AccountNumber>FEDEX_DEVELOPMENT_CREDENTIAL_ACCOUNT_NUMBER</AccountNumber>
+            <MeterNumber>FEDEX_DEVELOPMENT_CREDENTIAL_METER</MeterNumber>
+            <Localization>
+              <LanguageCode>en</LanguageCode>
+              <LocaleCode>us</LocaleCode>
+            </Localization>
+          </ClientDetail>
+          <Version>
+            <ServiceId>crs</ServiceId>
+            <Major>22</Major>
+            <Intermediate>0</Intermediate>
+            <Minor>0</Minor>
+          </Version>
+          <ReturnTransitAndCommit>true</ReturnTransitAndCommit>
+          <RequestedShipment>
+            <DropoffType>REGULAR_PICKUP</DropoffType>
+            <ServiceType>GROUND_HOME_DELIVERY</ServiceType>
+            <PackagingType>YOUR_PACKAGING</PackagingType>
+            <Shipper>
+              <Contact>
+                <PersonName>Sender</PersonName>
+                <CompanyName>Company</CompanyName>
+                <PhoneNumber>555-555-5555</PhoneNumber>
+              </Contact>
+              <Address>
+                <StreetLines>Main Street</StreetLines>
+                <City>Harrison</City>
+                <StateOrProvinceCode>AR</StateOrProvinceCode>
+                <PostalCode>72601</PostalCode>
+                <CountryCode>US</CountryCode>
+              </Address>
+            </Shipper>
+            <Recipient>
+              <Contact>
+                <PersonName>Recipient</PersonName>
+                <CompanyName>Company</CompanyName>
+                <PhoneNumber>555-555-5555</PhoneNumber>
+              </Contact>
+              <Address>
+                <StreetLines>Main Street</StreetLines>
+                <City>Frankin Park</City>
+                <StateOrProvinceCode>IL</StateOrProvinceCode>
+                <PostalCode>60131</PostalCode>
+                <CountryCode>US</CountryCode>
+                <Residential>true</Residential>
+              </Address>
+            </Recipient>
+            <ShippingChargesPayment>
+              <PaymentType>SENDER</PaymentType>
+              <Payor>
+                <ResponsibleParty>
+                  <AccountNumber>FEDEX_DEVELOPMENT_CREDENTIAL_ACCOUNT_NUMBER</AccountNumber>
+                  <Contact>
+                    <PersonName>Sender</PersonName>
+                    <CompanyName>Company</CompanyName>
+                    <PhoneNumber>555-555-5555</PhoneNumber>
+                  </Contact>
+                </ResponsibleParty>
+              </Payor>
+            </ShippingChargesPayment>
+            <RateRequestTypes>NONE</RateRequestTypes>
+            <PackageCount>2</PackageCount>
+            <RequestedPackageLineItems>
+              <GroupPackageCount>1</GroupPackageCount>
+              <Weight>
+                <Units>LB</Units>
+                <Value>2</Value>
+              </Weight>
+              <Dimensions>
+                <Length>10</Length>
+                <Width>5</Width>
+                <Height>4</Height>
+                <Units>IN</Units>
+              </Dimensions>
+            </RequestedPackageLineItems>
+            <RequestedPackageLineItems>
+              <GroupPackageCount>1</GroupPackageCount>
+              <Weight>
+                <Units>LB</Units>
+                <Value>6</Value>
+              </Weight>
+              <Dimensions>
+                <Length>5</Length>
+                <Width>5</Width>
+                <Height>4</Height>
+                <Units>IN</Units>
+              </Dimensions>
+            </RequestedPackageLineItems>
+          </RequestedShipment>
+        </RateRequest>
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 19 Jul 2019 10:45:26 GMT
+      Server:
+      - Apache
+      Set-Cookie:
+      - siteDC=wtc; path=/; domain=.fedex.com; expires=Sat, 20-Jul-2019 10:45:26 GMT
+      X-Csr-Log-Transaction-Id:
+      - 5b1f8a31-da3b-404a-978f-6364f8bf1fd3
+      X-Csr-Elapsed-Millis:
+      - '318'
+      Vary:
+      - Accept-Encoding
+      Responsesslprotocol:
+      - TLSv1.2
+      Transfer-Encoding:
+      - chunked
+      Content-Type:
+      - application/xml
+    body:
+      encoding: ASCII-8BIT
+      string: <?xml version="1.0" encoding="UTF-8"?><RateReply xmlns="http://fedex.com/ws/rate/v22"><HighestSeverity>SUCCESS</HighestSeverity><Notifications><Severity>SUCCESS</Severity><Source>crs</Source><Code>0</Code><Message>Request
+        was successfully processed. </Message><LocalizedMessage>Request was successfully
+        processed. </LocalizedMessage></Notifications><Version><ServiceId>crs</ServiceId><Major>22</Major><Intermediate>0</Intermediate><Minor>0</Minor></Version><RateReplyDetails><ServiceType>GROUND_HOME_DELIVERY</ServiceType><PackagingType>YOUR_PACKAGING</PackagingType><CommitDetails><ServiceType>GROUND_HOME_DELIVERY</ServiceType><DerivedOriginDetail><CountryCode>US</CountryCode><StateOrProvinceCode>AR</StateOrProvinceCode><PostalCode>72601</PostalCode><LocationNumber>726</LocationNumber></DerivedOriginDetail><DerivedDestinationDetail><CountryCode>US</CountryCode><StateOrProvinceCode>IL</StateOrProvinceCode><PostalCode>60131</PostalCode><LocationNumber>3607</LocationNumber><AirportId>ORD</AirportId></DerivedDestinationDetail><TransitTime>TWO_DAYS</TransitTime><BrokerToDestinationDays>0</BrokerToDestinationDays></CommitDetails><DestinationAirportId>ORD</DestinationAirportId><IneligibleForMoneyBackGuarantee>false</IneligibleForMoneyBackGuarantee><TransitTime>TWO_DAYS</TransitTime><SignatureOption>SERVICE_DEFAULT</SignatureOption><ActualRateType>PAYOR_ACCOUNT_PACKAGE</ActualRateType><RatedShipmentDetails><ShipmentRateDetail><RateType>PAYOR_ACCOUNT_PACKAGE</RateType><RateZone>4</RateZone><RatedWeightMethod>ACTUAL</RatedWeightMethod><DimDivisor>0</DimDivisor><FuelSurchargePercent>5.5</FuelSurchargePercent><TotalBillingWeight><Units>LB</Units><Value>8.0</Value></TotalBillingWeight><TotalBaseCharge><Currency>USD</Currency><Amount>21.16</Amount></TotalBaseCharge><TotalFreightDiscounts><Currency>USD</Currency><Amount>0.0</Amount></TotalFreightDiscounts><TotalNetFreight><Currency>USD</Currency><Amount>21.16</Amount></TotalNetFreight><TotalSurcharges><Currency>USD</Currency><Amount>8.77</Amount></TotalSurcharges><TotalNetFedExCharge><Currency>USD</Currency><Amount>29.93</Amount></TotalNetFedExCharge><TotalTaxes><Currency>USD</Currency><Amount>0.0</Amount></TotalTaxes><TotalNetCharge><Currency>USD</Currency><Amount>29.93</Amount></TotalNetCharge><TotalRebates><Currency>USD</Currency><Amount>0.0</Amount></TotalRebates><TotalDutiesAndTaxes><Currency>USD</Currency><Amount>0.0</Amount></TotalDutiesAndTaxes><TotalAncillaryFeesAndTaxes><Currency>USD</Currency><Amount>0.0</Amount></TotalAncillaryFeesAndTaxes><TotalDutiesTaxesAndFees><Currency>USD</Currency><Amount>0.0</Amount></TotalDutiesTaxesAndFees><TotalNetChargeWithDutiesAndTaxes><Currency>USD</Currency><Amount>29.93</Amount></TotalNetChargeWithDutiesAndTaxes><Surcharges><SurchargeType>RESIDENTIAL_DELIVERY</SurchargeType><Level>PACKAGE</Level><Description>FedEx
+        Home Delivery Urban/Rural Charge</Description><Amount><Currency>USD</Currency><Amount>7.2</Amount></Amount></Surcharges><Surcharges><SurchargeType>FUEL</SurchargeType><Level>PACKAGE</Level><Description>FedEx
+        Ground Fuel</Description><Amount><Currency>USD</Currency><Amount>1.57</Amount></Amount></Surcharges></ShipmentRateDetail><RatedPackages><GroupNumber>0</GroupNumber><PackageRateDetail><RateType>PAYOR_ACCOUNT_PACKAGE</RateType><RatedWeightMethod>ACTUAL</RatedWeightMethod><BillingWeight><Units>LB</Units><Value>2.0</Value></BillingWeight><BaseCharge><Currency>USD</Currency><Amount>9.73</Amount></BaseCharge><TotalFreightDiscounts><Currency>USD</Currency><Amount>0.0</Amount></TotalFreightDiscounts><NetFreight><Currency>USD</Currency><Amount>9.73</Amount></NetFreight><TotalSurcharges><Currency>USD</Currency><Amount>4.34</Amount></TotalSurcharges><NetFedExCharge><Currency>USD</Currency><Amount>14.07</Amount></NetFedExCharge><TotalTaxes><Currency>USD</Currency><Amount>0.0</Amount></TotalTaxes><NetCharge><Currency>USD</Currency><Amount>14.07</Amount></NetCharge><TotalRebates><Currency>USD</Currency><Amount>0.0</Amount></TotalRebates><Surcharges><SurchargeType>RESIDENTIAL_DELIVERY</SurchargeType><Level>PACKAGE</Level><Description>FedEx
+        Home Delivery Urban/Rural Charge</Description><Amount><Currency>USD</Currency><Amount>3.6</Amount></Amount></Surcharges><Surcharges><SurchargeType>FUEL</SurchargeType><Level>PACKAGE</Level><Description>FedEx
+        Ground Fuel</Description><Amount><Currency>USD</Currency><Amount>0.74</Amount></Amount></Surcharges></PackageRateDetail></RatedPackages><RatedPackages><GroupNumber>0</GroupNumber><PackageRateDetail><RateType>PAYOR_ACCOUNT_PACKAGE</RateType><RatedWeightMethod>ACTUAL</RatedWeightMethod><BillingWeight><Units>LB</Units><Value>6.0</Value></BillingWeight><BaseCharge><Currency>USD</Currency><Amount>11.43</Amount></BaseCharge><TotalFreightDiscounts><Currency>USD</Currency><Amount>0.0</Amount></TotalFreightDiscounts><NetFreight><Currency>USD</Currency><Amount>11.43</Amount></NetFreight><TotalSurcharges><Currency>USD</Currency><Amount>4.43</Amount></TotalSurcharges><NetFedExCharge><Currency>USD</Currency><Amount>15.86</Amount></NetFedExCharge><TotalTaxes><Currency>USD</Currency><Amount>0.0</Amount></TotalTaxes><NetCharge><Currency>USD</Currency><Amount>15.86</Amount></NetCharge><TotalRebates><Currency>USD</Currency><Amount>0.0</Amount></TotalRebates><Surcharges><SurchargeType>RESIDENTIAL_DELIVERY</SurchargeType><Level>PACKAGE</Level><Description>FedEx
+        Home Delivery Urban/Rural Charge</Description><Amount><Currency>USD</Currency><Amount>3.6</Amount></Amount></Surcharges><Surcharges><SurchargeType>FUEL</SurchargeType><Level>PACKAGE</Level><Description>FedEx
+        Ground Fuel</Description><Amount><Currency>USD</Currency><Amount>0.83</Amount></Amount></Surcharges></PackageRateDetail></RatedPackages></RatedShipmentDetails></RateReplyDetails></RateReply>
+    http_version: 
+  recorded_at: Fri, 19 Jul 2019 10:45:27 GMT
+recorded_with: VCR 5.0.0

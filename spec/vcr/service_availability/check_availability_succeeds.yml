@@ -1,0 +1,77 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://wsbeta.fedex.com/xml/
+    body:
+      encoding: UTF-8
+      string: |-
+        <ServiceAvailabilityRequest xmlns="http://fedex.com/ws/packagemovementinformationservice/v5">
+          <WebAuthenticationDetail>
+            <UserCredential>
+              <Key>FEDEX_DEVELOPMENT_CREDENTIAL_KEY</Key>
+              <Password>FEDEX_DEVELOPMENT_CREDENTIAL_PASSWORD</Password>
+            </UserCredential>
+          </WebAuthenticationDetail>
+          <ClientDetail>
+            <AccountNumber>FEDEX_DEVELOPMENT_CREDENTIAL_ACCOUNT_NUMBER</AccountNumber>
+            <MeterNumber>FEDEX_DEVELOPMENT_CREDENTIAL_METER</MeterNumber>
+            <Localization>
+              <LanguageCode>en</LanguageCode>
+              <LocaleCode>us</LocaleCode>
+            </Localization>
+          </ClientDetail>
+          <Version>
+            <ServiceId>pmis</ServiceId>
+            <Major>5</Major>
+            <Intermediate>0</Intermediate>
+            <Minor>0</Minor>
+          </Version>
+          <Origin>
+            <PostalCode>400012</PostalCode>
+            <CountryCode>IN</CountryCode>
+          </Origin>
+          <Destination>
+            <PostalCode>400020</PostalCode>
+            <CountryCode>IN</CountryCode>
+          </Destination>
+          <ShipDate>2014-06-28</ShipDate>
+          <CarrierCode>FDXE</CarrierCode>
+        </ServiceAvailabilityRequest>
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 19 Jul 2019 10:45:33 GMT
+      Server:
+      - Apache
+      Set-Cookie:
+      - siteDC=wtc; path=/; domain=.fedex.com; expires=Sat, 20-Jul-2019 10:45:33 GMT
+      X-Csr-Log-Transaction-Id:
+      - 4d9b73e3-b00e-4751-8382-5017da693fb9
+      X-Csr-Elapsed-Millis:
+      - '191'
+      Vary:
+      - Accept-Encoding
+      Responsesslprotocol:
+      - TLSv1.2
+      Transfer-Encoding:
+      - chunked
+      Content-Type:
+      - application/xml
+    body:
+      encoding: ASCII-8BIT
+      string: <?xml version="1.0" encoding="UTF-8"?><ServiceAvailabilityReply xmlns="http://fedex.com/ws/packagemovementinformationservice/v5"><HighestSeverity>NOTE</HighestSeverity><Notifications><Severity>NOTE</Severity><Source>pmis</Source><Code>2002</Code><Message>Your
+        Packaging was assumed.</Message><LocalizedMessage>Your Packaging was assumed.</LocalizedMessage></Notifications><Version><ServiceId>pmis</ServiceId><Major>5</Major><Intermediate>0</Intermediate><Minor>0</Minor></Version><Options><Service>PRIORITY_OVERNIGHT</Service><DestinationStationId>BOMFT</DestinationStationId><DestinationAirportId>BOM</DestinationAirportId></Options><Options><Service>STANDARD_OVERNIGHT</Service><DestinationStationId>BOMFT</DestinationStationId><DestinationAirportId>BOM</DestinationAirportId></Options><Options><Service>FEDEX_EXPRESS_SAVER</Service><DestinationStationId>BOMFT</DestinationStationId><DestinationAirportId>BOM</DestinationAirportId></Options><Options><Service>FEDEX_1_DAY_FREIGHT</Service><DestinationStationId>BOMFT</DestinationStationId><DestinationAirportId>BOM</DestinationAirportId></Options></ServiceAvailabilityReply>
+    http_version: 
+  recorded_at: Fri, 19 Jul 2019 10:45:34 GMT
+recorded_with: VCR 5.0.0

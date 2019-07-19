@@ -8,7 +8,6 @@ doc/*
 pkg/*
 .yardopts
 fedex_credentials.yml
-spec/vcr
 *.bbprojectd
 .DS_Store
 hacks
