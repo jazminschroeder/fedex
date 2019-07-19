@@ -1,0 +1,80 @@
+---
+http_interactions:
+- request:
+    method: post
+    uri: https://wsbeta.fedex.com/xml/
+    body:
+      encoding: UTF-8
+      string: |-
+        <AddressValidationRequest xmlns="http://fedex.com/ws/addressvalidation/v2">
+          <WebAuthenticationDetail>
+            <UserCredential>
+              <Key>FEDEX_DEVELOPMENT_CREDENTIAL_KEY</Key>
+              <Password>FEDEX_DEVELOPMENT_CREDENTIAL_PASSWORD</Password>
+            </UserCredential>
+          </WebAuthenticationDetail>
+          <ClientDetail>
+            <AccountNumber>FEDEX_DEVELOPMENT_CREDENTIAL_ACCOUNT_NUMBER</AccountNumber>
+            <MeterNumber>FEDEX_DEVELOPMENT_CREDENTIAL_METER</MeterNumber>
+            <Localization>
+              <LanguageCode>en</LanguageCode>
+              <LocaleCode>us</LocaleCode>
+            </Localization>
+          </ClientDetail>
+          <Version>
+            <ServiceId>aval</ServiceId>
+            <Major>2</Major>
+            <Intermediate>0</Intermediate>
+            <Minor>0</Minor>
+          </Version>
+          <RequestTimestamp>2019-07-19T11:57:31+01:00</RequestTimestamp>
+          <Options>
+            <CheckResidentialStatus>true</CheckResidentialStatus>
+          </Options>
+          <AddressesToValidate>
+            <Address>
+              <StreetLines>5 Elm Street</StreetLines>
+              <City>Norwalk</City>
+              <StateOrProvinceCode>CT</StateOrProvinceCode>
+              <PostalCode>06850</PostalCode>
+              <CountryCode>USA</CountryCode>
+            </Address>
+          </AddressesToValidate>
+        </AddressValidationRequest>
+    headers:
+      Accept-Encoding:
+      - gzip;q=1.0,deflate;q=0.6,identity;q=0.3
+      Accept:
+      - "*/*"
+      User-Agent:
+      - Ruby
+  response:
+    status:
+      code: 200
+      message: OK
+    headers:
+      Date:
+      - Fri, 19 Jul 2019 10:57:32 GMT
+      Server:
+      - Apache
+      Set-Cookie:
+      - siteDC=wtc; path=/; domain=.fedex.com; expires=Sat, 20-Jul-2019 10:57:32 GMT
+      X-Csr-Log-Transaction-Id:
+      - b595a891-7653-43c5-8b4a-0af2faf620c1
+      X-Csr-Elapsed-Millis:
+      - '175'
+      Vary:
+      - Accept-Encoding
+      Responsesslprotocol:
+      - TLSv1.2
+      Transfer-Encoding:
+      - chunked
+      Content-Type:
+      - application/xml
+    body:
+      encoding: ASCII-8BIT
+      string: <?xml version="1.0" encoding="UTF-8"?><AddressValidationReply xmlns="http://fedex.com/ws/addressvalidation/v2"><HighestSeverity>SUCCESS</HighestSeverity><Notifications><Severity>SUCCESS</Severity><Source>wsi</Source></Notifications><TransactionDetail><Localization><LanguageCode/></Localization></TransactionDetail><Version><ServiceId>aval</ServiceId><Major>2</Major><Intermediate>0</Intermediate><Minor>0</Minor></Version><ReplyTimestamp>2019-07-19T05:57:32-05:00</ReplyTimestamp><AddressResults><AddressId/><ProposedAddressDetails><Score>100</Score><Changes>NO_CHANGES</Changes><ResidentialStatus>RESIDENTIAL</ResidentialStatus><DeliveryPointValidation>CONFIRMED</DeliveryPointValidation><Address><StreetLines>5
+        ELM ST</StreetLines><City>NORWALK</City><StateOrProvinceCode>CT</StateOrProvinceCode><PostalCode>06850-3901</PostalCode><CountryCode>US</CountryCode></Address><RemovedNonAddressData/></ProposedAddressDetails></AddressResults></AddressValidationReply>
+    http_version: 
+  recorded_at: Fri, 19 Jul 2019 10:57:32 GMT
+recorded_with: VCR 5.0.0
