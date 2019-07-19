@@ -29,9 +29,8 @@ module Fedex
       def build_xml
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.ServiceAvailabilityRequest(xmlns: "http://fedex.com/ws/packagemovementinformationservice/v#{service[:version]}")  do
-            add_web_authentication_detail(xml)
-            add_client_detail(xml)
-            add_version(xml)
+            add_standard_request_details(xml)
+
             add_origin(xml)
             add_destination(xml)
             add_other_details(xml)

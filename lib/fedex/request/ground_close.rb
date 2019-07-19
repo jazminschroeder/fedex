@@ -54,9 +54,7 @@ module Fedex
       def build_xml
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.GroundCloseRequest(xmlns: 'http://fedex.com/ws/close/v2')  do
-            add_web_authentication_detail(xml)
-            add_client_detail(xml)
-            add_version(xml)
+            add_standard_request_details(xml)
 
             xml.TimeUpToWhichShipmentsAreToBeClosed up_to_time.utc.iso8601(2)
           end

@@ -84,6 +84,12 @@ module Fedex
 
       private
 
+      def add_standard_request_details(xml)
+        add_web_authentication_detail(xml)
+        add_client_detail(xml)
+        add_version(xml)
+      end
+
       # Add web authentication detail information(key and password) to xml request
       def add_web_authentication_detail(xml)
         xml.WebAuthenticationDetail  do
