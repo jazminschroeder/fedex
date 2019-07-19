@@ -1,6 +1,3 @@
-# IMPORTANT!!
-I plan a major refactor to this gem. Sorry but at this moment I am not merging PR's. I appreciate your effort but need some time to catch up. Thanks!! 
-
 # Fedex Rate Web Service
 ## Fedex API Shipment Version: 13
 
@@ -263,11 +260,11 @@ PAYMENT COLLECTION TYPE - CASH, CHEQUE, DEMAND DRAFT
 
 use this format commodities_1 .... commodities_N
 
-example 
+example
 
 ```
 
-customs_clearance_detail['commodites_1'] 
+customs_clearance_detail['commodites_1']
 customs_clearance_detail['commodites_2']
 
 ```
@@ -291,7 +288,7 @@ Example
 
 ### ** Delete a shipment **
 
-If you do not intend to use a label you should delete it. This will notify FedEx that you will not be using the label and they won't charge you. 
+If you do not intend to use a label you should delete it. This will notify FedEx that you will not be using the label and they won't charge you.
 
 To delete a shipment:
 
@@ -393,6 +390,22 @@ service = fedex.service_availability(fedex_service_hash)
 puts service[:options]
 ```
 
+### **Uploading images via UploadDocument service **
+
+To upload images to use later in shipping documentation:
+
+```ruby
+# Replace 'image_X.png' with the path the image that needs to be uploaded
+images = [
+  { id: 'IMAGE_1', File.new('image_1.png') },
+  { id: 'IMAGE_2', File.new('image_2.png') },
+  { id: 'IMAGE_3', File.new('image_3.png') }
+]
+images_upload = fedex.upload_images(images: images)
+
+puts image_upload[:image_statuses]
+```
+
 # Services/Options Available
 
 ```ruby
@@ -403,19 +416,19 @@ Fedex::Request::Base::CARRIER_CODES
 ````
 
 # Contributors:
-- [jazminschroeder] (http://github.com/jazminschroeder) (Jazmin Schroeder)
-- [parndt] (https://github.com/parndt) (Philip Arndt)
-- [mmell] (https://github.com/mmell) (Michael Mell)
-- [jordanbyron] (https://github.com/jordanbyron) (Jordan Byron)
-- [geermc4] (https://github.com/geermc4) (German Garcia)
-- [janders223] (https://github.com/janders223) (Jim Anders)
-- [jlambert121] (https://github.com/jlambert121) (Justin Lambert)
-- [sborsje] (https://github.com/sborsje) (Stefan Borsje)
-- [bradediger] (https://github.com/bradediger) (Brad Ediger)
-- [yevgenko] (https://github.com/yevgenko) (Yevgeniy Viktorov)
-- [smartacus] (https://github.com/smartacus) (Michael Lippold)
-- [jonathandean] (https://github.com/jonathandean) (Jonathan Dean)
-- [chirag7jain] (https://github.com/chirag7jain) (Chirag Jain)
+- [jazminschroeder](http://github.com/jazminschroeder) (Jazmin Schroeder)
+- [parndt](https://github.com/parndt) (Philip Arndt)
+- [mmell](https://github.com/mmell) (Michael Mell)
+- [jordanbyron](https://github.com/jordanbyron) (Jordan Byron)
+- [geermc4](https://github.com/geermc4) (German Garcia)
+- [janders223](https://github.com/janders223) (Jim Anders)
+- [jlambert121](https://github.com/jlambert121) (Justin Lambert)
+- [sborsje](https://github.com/sborsje) (Stefan Borsje)
+- [bradediger](https://github.com/bradediger) (Brad Ediger)
+- [yevgenko](https://github.com/yevgenko) (Yevgeniy Viktorov)
+- [smartacus](https://github.com/smartacus) (Michael Lippold)
+- [jonathandean](https://github.com/jonathandean) (Jonathan Dean)
+- [chirag7jain](https://github.com/chirag7jain) (Chirag Jain)
 - and more... (https://github.com/jazminschroeder/fedex/graphs/contributors)
 
 # Copyright/License:
