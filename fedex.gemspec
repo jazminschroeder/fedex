@@ -19,9 +19,9 @@ Gem::Specification.new do |s|
   s.add_dependency 'httparty',            '>= 0.14.0'
   s.add_dependency 'nokogiri',            '>= 1.5.6'
 
-  s.add_development_dependency "rspec",   '~> 3.1'
-  s.add_development_dependency 'vcr',     '~> 2.0'
-  s.add_development_dependency 'webmock', '~> 1.8.0'
+  s.add_development_dependency "rspec",   '~> 3.8'
+  s.add_development_dependency 'vcr',     '~> 5.0'
+  s.add_development_dependency 'webmock', '~> 3.6'
   s.add_development_dependency 'pry'
   s.add_development_dependency 'rake'
 
