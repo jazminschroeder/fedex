@@ -1,9 +1,9 @@
-def fedex_credentials
-  @fedex_credentials ||= credentials["development"]
+def fedex_development_credentials
+  @fedex_credentials ||= credentials.fetch('development', {})
 end
 
 def fedex_production_credentials
-  @fedex_production_credentials ||= credentials["production"]
+  @fedex_production_credentials ||= credentials.fetch('production', {})
 end
 
 private

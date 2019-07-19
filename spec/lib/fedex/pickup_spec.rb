@@ -1,7 +1,7 @@
 require 'spec_helper'
 require 'fedex/shipment'
 
-describe Fedex::Request::Pickup do
+describe Fedex::Request::Pickup, :production do
   describe "pickup service" do
     let(:fedex) { Fedex::Shipment.new(fedex_production_credentials) }
     let(:pickup_location) do

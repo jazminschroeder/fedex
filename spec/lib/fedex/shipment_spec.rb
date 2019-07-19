@@ -3,7 +3,7 @@ require 'fedex/shipment'
 
 describe Fedex::Request::Shipment do
   describe "ship service" do
-    let(:fedex) { Fedex::Shipment.new(fedex_credentials) }
+    let(:fedex) { Fedex::Shipment.new(fedex_development_credentials) }
     let(:shipper) do
       { :name => "Sender", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Harrison", :state => "AR", :postal_code => "72601", :country_code => "US" }
     end
@@ -22,7 +22,7 @@ describe Fedex::Request::Shipment do
       { :packaging_type => "YOUR_PACKAGING", :drop_off_type => "REGULAR_PICKUP" }
     end
     let(:payment_options) do
-      { :type => "SENDER", :account_number => fedex_credentials[:account_number], :name => "Sender", :company => "Company", :phone_number => "555-555-5555", :country_code => "US" }
+      { :type => "SENDER", :account_number => fedex_development_credentials[:account_number], :name => "Sender", :company => "Company", :phone_number => "555-555-5555", :country_code => "US" }
     end
 
     let(:filename) {

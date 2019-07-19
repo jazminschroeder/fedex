@@ -3,7 +3,7 @@ require 'tmpdir'
 module Fedex
   describe Label do
     describe "ship service for label" do
-      let(:fedex) { Shipment.new(fedex_credentials) }
+      let(:fedex) { Shipment.new(fedex_development_credentials) }
       let(:shipper) do
         {:name => "Sender", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Harrison", :state => "AR", :postal_code => "72601", :country_code => "US"}
       end

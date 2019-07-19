@@ -2,7 +2,7 @@ require 'spec_helper'
 
 module Fedex
   describe Shipment do
-    let (:fedex) { Shipment.new(fedex_credentials) }
+    let (:fedex) { Shipment.new(fedex_development_credentials) }
 
     let(:filename) {
       require 'tmpdir'

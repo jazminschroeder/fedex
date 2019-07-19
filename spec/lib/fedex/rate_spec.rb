@@ -9,14 +9,14 @@ module Fedex
     end
 
     context "required parameters present" do
-      subject { Shipment.new(fedex_credentials) }
+      subject { Shipment.new(fedex_development_credentials) }
       it "should create a valid instance" do
         expect(subject).to be_an_instance_of(Shipment)
       end
     end
 
     describe "rate service" do
-      let(:fedex) { Shipment.new(fedex_credentials) }
+      let(:fedex) { Shipment.new(fedex_development_credentials) }
       let(:shipper) do
         { :name => "Sender", :company => "Company", :phone_number => "555-555-5555", :address => "Main Street", :city => "Harrison", :state => "AR", :postal_code => "72601", :country_code => "US" }
       end

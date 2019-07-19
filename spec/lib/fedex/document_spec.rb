@@ -3,7 +3,7 @@ require 'tmpdir'
 
 module Fedex
   describe Document do
-    let(:fedex) { Shipment.new(fedex_credentials) }
+    let(:fedex) { Shipment.new(fedex_development_credentials) }
     let(:shipper) do
       { :name => "Sender", :company => "Company", :phone_number => "555-555-5555", :address => "King Street", :city => "Ashbourne", :postal_code => "DE6 1EA", :country_code => "GB" }
     end
@@ -27,7 +27,7 @@ module Fedex
           :payment_type => 'SENDER',
           :payor => {
             :responsible_party => {
-              :account_number => fedex_credentials[:account_number],
+              :account_number => fedex_development_credentials[:account_number],
               :contact => {
                 :person_name => 'Mr. Test',
                 :phone_number => '12345678'

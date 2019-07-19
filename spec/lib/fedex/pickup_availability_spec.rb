@@ -3,7 +3,7 @@ require 'fedex/shipment'
 
 describe Fedex::Request::Pickup do
   describe "pickup availability service" do
-    let(:fedex) { Fedex::Shipment.new(fedex_credentials) }
+    let(:fedex) { Fedex::Shipment.new(fedex_development_credentials) }
     let(:dispatch_date) {(Date.today + 1).strftime('%Y-%m-%d')}
 
     let(:options) do

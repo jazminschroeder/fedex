@@ -2,11 +2,11 @@ require 'spec_helper'
 
 module Fedex
   describe TrackingInformation do
-    let(:fedex) { Shipment.new(fedex_credentials) }
+    let(:fedex) { Shipment.new(fedex_development_credentials) }
 
     context "shipments with tracking number", :vcr, :focus do
       let(:options) do
-        { :package_id             => "771513950417",
+        { :package_id             => "449044304137821",
           :package_type           => "TRACKING_NUMBER_OR_DOORTAG",
           :include_detailed_scans => true
         }
@@ -51,7 +51,7 @@ module Fedex
 
     context "duplicate shipments with same tracking number", :vcr, :focus do
       let(:options) do
-        { :package_id             => "771054010426",
+        { :package_id             => "713062653486",
           :package_type           => "TRACKING_NUMBER_OR_DOORTAG",
           :include_detailed_scans => true
         }

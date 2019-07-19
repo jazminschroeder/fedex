@@ -2,11 +2,12 @@ require 'spec_helper'
 
 module Fedex
   describe Shipment do
-    let (:fedex) { Shipment.new(fedex_credentials) }
+    let (:fedex) { Shipment.new(fedex_development_credentials) }
+
     context "#delete" do
       context "delete shipment with tracking number", :vcr do
         let(:options) do
-          { :tracking_number => '794608797150' }
+          { :tracking_number => '794627309251' }
         end
         it "deletes a shipment" do
           expect{ fedex.delete(options) }.to_not raise_error
