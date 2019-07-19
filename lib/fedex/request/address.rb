@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fedex/request/base'
 require 'fedex/address'
 require 'fileutils'
@@ -5,7 +7,7 @@ require 'fileutils'
 module Fedex
   module Request
     class Address < Base
-      def initialize(credentials, options={})
+      def initialize(credentials, options = {})
         requires!(options, :address)
         @credentials = credentials
         @address     = options[:address]
@@ -14,7 +16,7 @@ module Fedex
       end
 
       def process_request
-        api_response = self.class.post(api_url, :body => build_xml)
+        api_response = self.class.post(api_url, body: build_xml)
         puts api_response if @debug == true
         response = parse_response(api_response)
         if success?(response)
@@ -22,11 +24,15 @@ module Fedex
           options = options.first if options.is_a? Array
           Fedex::Address.new(options)
         else
-          error_message = if response[:address_validation_reply]
-            [response[:address_validation_reply][:notifications]].flatten.first[:message]
-          else
-            "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
-          end rescue $1
+          error_message = begin
+                            if response[:address_validation_reply]
+                              [response[:address_validation_reply][:notifications]].flatten.first[:message]
+                            else
+                              "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
+                            end
+                          rescue StandardError
+                            $1
+                          end
           raise RateError, error_message
         end
       end
@@ -36,14 +42,14 @@ module Fedex
       # Build xml Fedex Web Service request
       def build_xml
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml.AddressValidationRequest(:xmlns => "http://fedex.com/ws/addressvalidation/v#{service[:version]}"){
+          xml.AddressValidationRequest(xmlns: "http://fedex.com/ws/addressvalidation/v#{service[:version]}")  do
             add_web_authentication_detail(xml)
             add_client_detail(xml)
             add_version(xml)
             add_request_timestamp(xml)
             add_address_validation_options(xml)
             add_address_to_validate(xml)
-          }
+          end
         end
         builder.doc.root.to_xml
       end
@@ -54,23 +60,22 @@ module Fedex
         # Calculate current timezone offset manually.
         # Ruby <= 1.9.2 does not support this in Time#strftime
         #
-        utc_offest = "#{timestamp.gmt_offset < 0 ? "-" : "+"}%02d:%02d" %
-                     (timestamp.gmt_offset / 60).abs.divmod(60)
-        timestamp  = timestamp.strftime("%Y-%m-%dT%H:%M:%S") + utc_offest
+        utc_offest = "#{timestamp.gmt_offset < 0 ? "-" : "+"}%02d:%02d" % (timestamp.gmt_offset / 60).abs.divmod(60)
+        timestamp  = timestamp.strftime('%Y-%m-%dT%H:%M:%S') + utc_offest
 
         xml.RequestTimestamp timestamp
       end
 
       def add_address_validation_options(xml)
-        xml.Options{
+        xml.Options  do
           xml.CheckResidentialStatus true
-        }
+        end
       end
 
       def add_address_to_validate(xml)
-        xml.AddressesToValidate{
-          xml.CompanyName           @address[:company] unless @address[:company].nil? or @address[:company].empty?
-          xml.Address{
+        xml.AddressesToValidate  do
+          xml.CompanyName @address[:company] unless @address[:company].nil? || @address[:company].empty?
+          xml.Address  do
             Array(@address[:address]).take(2).each do |address_line|
               xml.StreetLines address_line
             end
@@ -78,12 +83,12 @@ module Fedex
             xml.StateOrProvinceCode @address[:state]
             xml.PostalCode          @address[:postal_code]
             xml.CountryCode         @address[:country]
-          }
-        }
+          end
+        end
       end
 
       def service
-        { :id => 'aval', :version => 2 }
+        { id: 'aval', version: 2 }
       end
 
       # Successful request
@@ -91,7 +96,6 @@ module Fedex
         response[:address_validation_reply] &&
           %w{SUCCESS WARNING NOTE}.include?(response[:address_validation_reply][:highest_severity])
       end
-
     end
   end
 end

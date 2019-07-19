@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'fedex/request/base'
 
 module Fedex
   module Request
     class Pickup < Base
-      def initialize(credentials, options={})
+      def initialize(credentials, options = {})
         requires!(options, :packages, :ready_timestamp, :close_time, :carrier_code, :country_relationship)
         @debug = ENV['DEBUG'] == 'true'
 
@@ -20,7 +22,7 @@ module Fedex
 
       # Sends post request to Fedex web service and parse the response, a Pickup object is created if the response is successful
       def process_request
-        api_response = self.class.post(api_url, :body => build_xml)
+        api_response = self.class.post(api_url, body: build_xml)
         puts api_response if @debug
         response = parse_response(api_response)
         if success?(response)
@@ -36,24 +38,24 @@ module Fedex
       def build_xml
         ns = "http://fedex.com/ws/pickup/v#{service[:version]}"
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml.CreatePickupRequest(:xmlns => ns) {
+          xml.CreatePickupRequest(xmlns: ns) do
             add_web_authentication_detail(xml)
             add_client_detail(xml)
             add_version(xml)
             add_origin_detail(xml)
             add_package_details(xml)
-          }
+          end
         end
         builder.doc.root.to_xml
       end
 
       def service
-        { :id => 'disp', :version => Fedex::PICKUP_API_VERSION }
+        { id: 'disp', version: Fedex::PICKUP_API_VERSION }
       end
 
       # Add shipper to xml request
       def add_origin_detail(xml)
-        xml.OriginDetail {
+        xml.OriginDetail do
           if @pickup_location
             xml.UseAccountAddress false
             add_pickup_location(xml)
@@ -61,16 +63,16 @@ module Fedex
             xml.UseAccountAddress true
           end
           xml.ReadyTimestamp @ready_timestamp
-          xml.CompanyCloseTime @close_time.strftime("%H:%M:%S")
-        }
+          xml.CompanyCloseTime @close_time.strftime('%H:%M:%S')
+        end
       end
 
       def add_package_details(xml)
         xml.PackageCount @packages[:count]
-        xml.TotalWeight {
+        xml.TotalWeight do
           xml.Units @packages[:weight][:units]
           xml.Value @packages[:weight][:value]
-        }
+        end
         xml.CarrierCode @carrier_code
         xml.Remarks @remarks if @remarks
         xml.CommodityDescription @commodity_description if @commodity_description
@@ -78,13 +80,13 @@ module Fedex
       end
 
       def add_pickup_location(xml)
-        xml.PickupLocation {
-          xml.Contact {
+        xml.PickupLocation do
+          xml.Contact do
             xml.PersonName @pickup_location[:name]
             xml.CompanyName @pickup_location[:company]
             xml.PhoneNumber @pickup_location[:phone_number]
-          }
-          xml.Address {
+          end
+          xml.Address do
             Array(@pickup_location[:address]).take(2).each do |address_line|
               xml.StreetLines address_line
             end
@@ -92,22 +94,26 @@ module Fedex
             xml.StateOrProvinceCode @pickup_location[:state]
             xml.PostalCode @pickup_location[:postal_code]
             xml.CountryCode @pickup_location[:country_code]
-          }
-        }
+          end
+        end
       end
 
       # Callback used after a failed pickup response.
       def failure_response(api_response, response)
-        error_message = if response[:create_pickup_reply]
-          [response[:create_pickup_reply][:notifications]].flatten.first[:message]
-        else
-          "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{Array(api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"]).join("\n--")}"
-        end rescue $1
+        error_message = begin
+                          if response[:create_pickup_reply]
+                            [response[:create_pickup_reply][:notifications]].flatten.first[:message]
+                          else
+                            "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{Array(api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"]).join("\n--")}"
+                          end
+                        rescue StandardError
+                          $1
+                        end
         raise RateError, error_message
       end
 
       # Callback used after a successful pickup response.
-      def success_response(api_response, response)
+      def success_response(_api_response, response)
         @response_details = response[:create_pickup_reply]
       end
 

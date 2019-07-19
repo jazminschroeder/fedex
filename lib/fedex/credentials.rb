@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fedex/helpers'
 
 module Fedex
@@ -14,7 +16,7 @@ module Fedex
     # @param [String] mode - [development/production]
     #
     # return a Fedex::Credentials object
-    def initialize(options={})
+    def initialize(options = {})
       requires!(options, :key, :password, :account_number, :meter, :mode)
       @key = options[:key]
       @password = options[:password]

@@ -1,63 +1,62 @@
+# frozen_string_literal: true
+
 require 'spec_helper'
 
 module Fedex
   describe TrackingInformation do
     let(:fedex) { Shipment.new(fedex_development_credentials) }
 
-    context "shipments with tracking number", :vcr, :focus do
+    context 'shipments with tracking number', :vcr, :focus do
       let(:options) do
-        { :package_id             => "449044304137821",
-          :package_type           => "TRACKING_NUMBER_OR_DOORTAG",
-          :include_detailed_scans => true
-        }
+        { package_id: '449044304137821',
+          package_type: 'TRACKING_NUMBER_OR_DOORTAG',
+          include_detailed_scans: true }
       end
 
       let(:uuid) { fedex.track(options).first.unique_tracking_number }
 
-      it "returns an array of tracking information results" do
+      it 'returns an array of tracking information results' do
         results = fedex.track(options)
         expect(results).not_to be_empty
       end
 
-      it "returns events with tracking information" do
-        tracking_info = fedex.track(options.merge(:uuid => uuid)).first
+      it 'returns events with tracking information' do
+        tracking_info = fedex.track(options.merge(uuid: uuid)).first
 
         expect(tracking_info.events).not_to be_empty
       end
 
-      it "fails if using an invalid package type" do
+      it 'fails if using an invalid package type' do
         fail_options = options
 
-        fail_options[:package_type] = "UNKNOWN_PACKAGE"
+        fail_options[:package_type] = 'UNKNOWN_PACKAGE'
 
         expect { fedex.track(options) }.to raise_error
       end
 
-      it "allows short hand tracking number queries" do
-        shorthand_options = { :tracking_number => options[:package_id] }
+      it 'allows short hand tracking number queries' do
+        shorthand_options = { tracking_number: options[:package_id] }
 
         tracking_info = fedex.track(shorthand_options).first
 
         expect(tracking_info.tracking_number).to eq(options[:package_id])
       end
 
-      it "reports the status of the package" do
-        tracking_info = fedex.track(options.merge(:uuid => uuid)).first
+      it 'reports the status of the package' do
+        tracking_info = fedex.track(options.merge(uuid: uuid)).first
 
         expect(tracking_info.status).not_to be_nil
       end
-
     end
 
-    context "duplicate shipments with same tracking number", :vcr, :focus do
+    context 'duplicate shipments with same tracking number', :vcr, :focus do
       let(:options) do
-        { :package_id             => "713062653486",
-          :package_type           => "TRACKING_NUMBER_OR_DOORTAG",
-          :include_detailed_scans => true
-        }
+        { package_id: '713062653486',
+          package_type: 'TRACKING_NUMBER_OR_DOORTAG',
+          include_detailed_scans: true }
       end
 
-      it "should return tracking information for all shipments associated with tracking number" do
+      it 'should return tracking information for all shipments associated with tracking number' do
         tracking_info = fedex.track(options)
 
         expect(tracking_info.length).to be > 1

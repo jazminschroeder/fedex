@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 def fedex_development_credentials
   @fedex_development_credentials ||= {
     key: ENV.fetch('FEDEX_TEST_KEY', 'TEST_KEY'),

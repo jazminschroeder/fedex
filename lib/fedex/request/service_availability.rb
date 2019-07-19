@@ -1,9 +1,11 @@
+# frozen_string_literal: true
+
 require 'fedex/request/base'
 
 module Fedex
   module Request
     class ServiceAvailability < Base
-      def initialize(credentials, options={})
+      def initialize(credentials, options = {})
         requires!(options, :origin, :destination, :ship_date, :carrier_code)
 
         @credentials  = credentials
@@ -14,7 +16,7 @@ module Fedex
       end
 
       def process_request
-        api_response = self.class.post api_url, :body => build_xml
+        api_response = self.class.post api_url, body: build_xml
         puts api_response if @debug
         response = parse_response(api_response)
         if success?(response)
@@ -22,34 +24,34 @@ module Fedex
         else
           failure_response(api_response, response)
         end
-      end      
+      end
 
       def build_xml
         builder = Nokogiri::XML::Builder.new do |xml|
-          xml.ServiceAvailabilityRequest(:xmlns => "http://fedex.com/ws/packagemovementinformationservice/v#{service[:version]}"){
+          xml.ServiceAvailabilityRequest(xmlns: "http://fedex.com/ws/packagemovementinformationservice/v#{service[:version]}")  do
             add_web_authentication_detail(xml)
             add_client_detail(xml)
             add_version(xml)
             add_origin(xml)
             add_destination(xml)
             add_other_details(xml)
-          }
+          end
         end
         builder.doc.root.to_xml
       end
 
       def add_origin(xml)
-        xml.Origin{
+        xml.Origin  do
           xml.PostalCode  @origin[:postal_code]
           xml.CountryCode @origin[:country_code]
-        }
+        end
       end
 
       def add_destination(xml)
-        xml.Destination{
+        xml.Destination  do
           xml.PostalCode  @destination[:postal_code]
           xml.CountryCode @destination[:country_code]
-        }
+        end
       end
 
       def add_other_details(xml)
@@ -59,21 +61,25 @@ module Fedex
 
       # Callback used after a failed shipment response.
       def failure_response(api_response, response)
-        error_message = if response[:service_availability_reply]
-          [response[:service_availability_reply][:notifications]].flatten.first[:message]
-        else
-          "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
-        end rescue $1
+        error_message = begin
+                          if response[:service_availability_reply]
+                            [response[:service_availability_reply][:notifications]].flatten.first[:message]
+                          else
+                            "#{api_response["Fault"]["detail"]["fault"]["reason"]}\n--#{api_response["Fault"]["detail"]["fault"]["details"]["ValidationFailureDetail"]["message"].join("\n--")}"
+                          end
+                        rescue StandardError
+                          $1
+                        end
         raise RateError, error_message
       end
 
       # Callback used after a successful shipment response.
-      def success_response(api_response, response)
+      def success_response(_api_response, response)
         @response_details = response[:service_availability_reply]
-      end      
+      end
 
       def service
-        { :id => 'pmis', :version => Fedex::SERVICE_AVAILABILITY_API_VERSION }
+        { id: 'pmis', version: Fedex::SERVICE_AVAILABILITY_API_VERSION }
       end
 
       # Successful request

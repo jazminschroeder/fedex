@@ -1,3 +1,5 @@
+# frozen_string_literal: true
+
 require 'fedex/shipment'
 
 # Get shipping rates trough Fedex Web Services
@@ -50,6 +52,6 @@ require 'fedex/shipment'
 #        @rate_zone="51">
 module Fedex
   require 'fedex/version'
-  #Exceptions: Fedex::RateError
+  # Exceptions: Fedex::RateError
   class RateError < StandardError; end
 end
