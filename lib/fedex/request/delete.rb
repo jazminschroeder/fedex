@@ -40,9 +40,8 @@ module Fedex
       def build_xml
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.DeleteShipmentRequest(xmlns: "http://fedex.com/ws/ship/v#{service[:version]}")  do
-            add_web_authentication_detail(xml)
-            add_client_detail(xml)
-            add_version(xml)
+            add_standard_request_details(xml)
+
             xml.TrackingId do
               xml.TrackingIdType 'FEDEX'
               xml.TrackingNumber @tracking_number

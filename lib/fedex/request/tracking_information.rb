@@ -63,9 +63,8 @@ module Fedex
       def build_xml
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.TrackRequest(xmlns: "http://fedex.com/ws/track/v#{service[:version]}")  do
-            add_web_authentication_detail(xml)
-            add_client_detail(xml)
-            add_version(xml)
+            add_standard_request_details(xml)
+
             add_package_identifier(xml)
             xml.TrackingNumberUniqueIdentifier @uuid         if @uuid
             xml.IncludeDetailedScans           @include_detailed_scans

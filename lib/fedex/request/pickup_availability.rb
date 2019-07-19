@@ -37,9 +37,8 @@ module Fedex
         ns = "http://fedex.com/ws/pickup/v#{service[:version]}"
         builder = Nokogiri::XML::Builder.new do |xml|
           xml.PickupAvailabilityRequest(xmlns: ns) do
-            add_web_authentication_detail(xml)
-            add_client_detail(xml)
-            add_version(xml)
+            add_standard_request_details(xml)
+
             add_pickup_address(xml)
             add_other_pickup_details(xml)
           end
