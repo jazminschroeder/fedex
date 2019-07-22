@@ -25,7 +25,7 @@ module Fedex
       def add_shipping_document(xml)
         xml.ShippingDocumentSpecification  do
           Array(@shipping_document[:shipping_document_types]).each do |type|
-            xml.ShippingDocumentTypes type
+            xml.ShippingDocumentType type
           end
           hash_to_xml(xml, @shipping_document.reject { |k| k == :shipping_document_types })
         end

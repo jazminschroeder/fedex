@@ -49,9 +49,10 @@ module Fedex
           add_origin(xml) if @origin
           add_recipient(xml)
           add_shipping_charges_payment(xml)
-          add_special_services(xml) if @shipping_options[:return_reason] || @shipping_options[:cod] || @shipping_options[:saturday_delivery]
+          add_special_services(xml) if special_services_requested?
           add_customs_clearance(xml) if @customs_clearance_detail
           add_custom_components(xml)
+
           xml.RateRequestTypes 'NONE'
           add_packages(xml)
         end
@@ -111,6 +112,7 @@ module Fedex
               end
             end
           end
+
           if @shipping_options[:cod]
             xml.SpecialServiceTypes 'COD'
             xml.CodDetail do
@@ -121,7 +123,18 @@ module Fedex
               xml.CollectionType @shipping_options[:cod][:collection_type] if @shipping_options[:cod][:collection_type]
             end
           end
+
           xml.SpecialServiceTypes 'SATURDAY_DELIVERY' if @shipping_options[:saturday_delivery]
+
+          if @shipping_options[:electronic_trade_documents]
+            xml.SpecialServiceTypes 'ELECTRONIC_TRADE_DOCUMENTS'
+
+            if @shipping_options[:electronic_trade_documents][:requested_document_copies]
+              xml.EtdDetail do
+                xml.RequestedDocumentCopies @shipping_options[:electronic_trade_documents][:requested_document_copies]
+              end
+            end
+          end
         end
       end
 
@@ -154,6 +167,13 @@ module Fedex
           end
         end
         builder.doc.root.to_xml
+      end
+
+      def special_services_requested?
+        @shipping_options[:return_reason] ||
+          @shipping_options[:cod] ||
+          @shipping_options[:saturday_delivery] ||
+          @shipping_options[:electronic_trade_documents]
       end
 
       def service
