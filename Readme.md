@@ -397,9 +397,9 @@ To upload images to use later in shipping documentation:
 ```ruby
 # Replace 'image_X.png' with the path the image that needs to be uploaded
 images = [
-  { id: 'IMAGE_1', File.new('image_1.png') },
-  { id: 'IMAGE_2', File.new('image_2.png') },
-  { id: 'IMAGE_3', File.new('image_3.png') }
+  { id: 'IMAGE_1', image: File.new('image_1.png') },
+  { id: 'IMAGE_2', image: File.new('image_2.png') },
+  { id: 'IMAGE_3', image: File.new('image_3.png') }
 ]
 images_upload = fedex.upload_images(images: images)
 
