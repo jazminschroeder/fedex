@@ -12,3 +12,4 @@ fedex_credentials.yml
 .DS_Store
 hacks
 .ruby-version
+spec/vcr
