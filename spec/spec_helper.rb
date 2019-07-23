@@ -7,7 +7,7 @@ require 'support/credentials'
 
 require 'dotenv'
 
-Dotenv.load!
+Dotenv.load
 
 RSpec.configure do |config|
   config.filter_run_excluding :production unless ENV['RUN_PRODUCTION_SPECS']
