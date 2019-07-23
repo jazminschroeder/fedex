@@ -13,3 +13,4 @@ fedex_credentials.yml
 hacks
 .ruby-version
 spec/vcr
+.env

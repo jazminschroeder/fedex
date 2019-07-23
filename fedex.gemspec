@@ -26,6 +26,7 @@ Gem::Specification.new do |s|
   s.add_development_dependency 'rspec',   '~> 3.8'
   s.add_development_dependency 'vcr',     '~> 5.0'
   s.add_development_dependency 'webmock', '~> 3.6'
+  s.add_development_dependency 'dotenv'
 
   s.files         = `git ls-files`.split("\n")
   s.test_files    = `git ls-files -- {test,spec,features}/*`.split("\n")

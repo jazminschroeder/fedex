@@ -5,6 +5,10 @@ require 'fedex'
 require 'support/vcr'
 require 'support/credentials'
 
+require 'dotenv'
+
+Dotenv.load!
+
 RSpec.configure do |config|
   config.filter_run_excluding :production unless ENV['RUN_PRODUCTION_SPECS']
 

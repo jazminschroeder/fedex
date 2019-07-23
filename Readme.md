@@ -415,6 +415,11 @@ Fedex::Request::Base::DROP_OFF_TYPES
 Fedex::Request::Base::CARRIER_CODES
 ````
 
+# Contributing
+Firstly set your FedEx test credentials in `.env.sample`, then `cp .env.sample .env` to set up the `.env` file.
+
+After that, use `bundle exec rspec spec/` to run tests.
+
 # Contributors:
 - [jazminschroeder](http://github.com/jazminschroeder) (Jazmin Schroeder)
 - [parndt](https://github.com/parndt) (Philip Arndt)
