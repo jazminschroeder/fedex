@@ -7,7 +7,20 @@ describe Fedex::Request::Shipment do
   describe 'ship service' do
     let(:fedex) { Fedex::Shipment.new(fedex_development_credentials) }
     let(:shipper) do
-      { name: 'Sender', company: 'Company', phone_number: '555-555-5555', address: 'Main Street', city: 'Harrison', state: 'AR', postal_code: '72601', country_code: 'US' }
+      {
+        name: 'Sender',
+        company: 'Company',
+        phone_number: '555-555-5555',
+        address: 'Main Street',
+        city: 'Harrison',
+        state: 'AR',
+        postal_code: '72601',
+        country_code: 'US',
+        tins: {
+          tin_type: 'BUSINESS_STATE',
+          number: '213456'
+        }
+      }
     end
     let(:recipient) do
       { name: 'Recipient', company: 'Company', phone_number: '555-555-5555', address: 'Main Street', city: 'Frankin Park', state: 'IL', postal_code: '60131', country_code: 'US', residential: true }

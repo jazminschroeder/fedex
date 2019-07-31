@@ -40,6 +40,9 @@ module Fedex
       # List of available Carrier Codes
       CARRIER_CODES = %w(FDXC FDXE FDXG FDCC FXFR FXSP).freeze
 
+      # List of available TIN (Tax Identification Number) types
+      TIN_TYPES = %(BUSINESS_NATIONAL BUSINESS_STATE BUSINESS_UNION PERSONAL_NATIONAL PERSONAL_STATE).freeze
+
       # In order to use Fedex rates API you must first apply for a developer(and later production keys),
       # Visit {http://www.fedex.com/us/developer/ Fedex Developer Center} for more information about how to obtain your keys.
       # @param [String] key - Fedex web service key
@@ -140,6 +143,12 @@ module Fedex
       # Add shipper to xml request
       def add_shipper(xml)
         xml.Shipper  do
+          if @shipper.key?(:tins)
+            xml.Tins do
+              xml.TinType @shipper[:tins][:tin_type]
+              xml.Number @shipper[:tins][:number]
+            end
+          end
           xml.Contact  do
             xml.PersonName @shipper[:name]
             xml.CompanyName @shipper[:company]

@@ -28,7 +28,12 @@ shipper = { :name => "Sender",
             :city => "Harrison",
             :state => "AR",
             :postal_code => "72601",
-            :country_code => "US" }
+            :country_code => "US",
+            tins: {
+              tin_type: 'BUSINESS_STATE',
+              number: '213456'
+            }
+          }
 ```
 
 Define the recipient:
@@ -413,6 +418,7 @@ Fedex::Request::Base::SERVICE_TYPES
 Fedex::Request::Base::PACKAGING_TYPES
 Fedex::Request::Base::DROP_OFF_TYPES
 Fedex::Request::Base::CARRIER_CODES
+Fedex::Request::Base::TIN_TYPES
 ````
 
 # Contributing
