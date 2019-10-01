@@ -18,6 +18,7 @@ module Fedex
             rate_details = [rate_reply[:rated_shipment_details]].flatten.first[:shipment_rate_detail]
             rate_details[:service_type] = rate_reply[:service_type]
             rate_details[:transit_time] = rate_reply[:transit_time]
+            rate_details[:special_rating_applied] = rate_details[:special_rating_applied]
             Fedex::Rate.new(rate_details)
           end
         else
@@ -45,6 +46,7 @@ module Fedex
           add_shipper(xml)
           add_recipient(xml)
           add_shipping_charges_payment(xml)
+          add_shipment_special_service_type(xml)
           add_customs_clearance(xml) if @customs_clearance_detail
           xml.RateRequestTypes 'NONE'
           add_packages(xml)

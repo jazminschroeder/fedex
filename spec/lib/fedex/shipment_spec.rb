@@ -70,6 +70,18 @@ describe Fedex::Request::Shipment do
         @shipment = fedex.ship(options)
         expect(@shipment[:completed_shipment_detail][:operational_detail][:transit_time]).to eql('TWO_DAYS')
       end
+
+      context 'with special rating applied', :vcr do
+        let(:shipping_options) do
+          { packaging_type: 'FEDEX_SMALL_BOX', drop_off_type: 'REGULAR_PICKUP', special_services_requested: { shipment_special_service_type: 'FEDEX_ONE_RATE' } }
+        end
+
+        it 'succeeds' do
+          expect do
+            @shipment = fedex.ship(options.merge(shipping_options: shipping_options, service_type: 'FIRST_OVERNIGHT'))
+          end.to_not raise_error
+        end
+      end
     end
 
     context 'without service_type specified', :vcr do

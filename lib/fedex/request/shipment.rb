@@ -49,6 +49,7 @@ module Fedex
           add_origin(xml) if @origin
           add_recipient(xml)
           add_shipping_charges_payment(xml)
+          add_shipment_special_service_type(xml)
           add_special_services(xml) if special_services_requested?
           add_customs_clearance(xml) if @customs_clearance_detail
           add_custom_components(xml)

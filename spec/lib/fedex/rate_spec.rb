@@ -202,6 +202,30 @@ module Fedex
           expect(rates).to eq []
         end
       end
+
+      context 'with special shipment type', :vcr do
+        let(:rates) do
+          fedex.rate(
+            shipper: shipper,
+            shipping_options: shipping_options.merge(packaging_type: 'FEDEX_SMALL_BOX', special_services_requested: {
+              shipment_special_service_type: 'FEDEX_ONE_RATE'
+            }),
+            recipient: recipient,
+            packages: packages
+          )
+        end
+
+        it 'returns multiple rates with correct special shipment rating' do
+          expect(rates.count).to be >= 1
+          expect(rates.map { |rate| rate.special_rating_applied }.uniq).to eq(['FEDEX_ONE_RATE'])
+        end
+
+        context 'each rate' do
+          it 'has service type attribute' do
+            expect(rates.first).to respond_to(:service_type)
+          end
+        end
+      end
     end
   end
 end
