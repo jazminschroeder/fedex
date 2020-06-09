@@ -60,7 +60,6 @@ module Fedex
         @packages = options[:packages]
         @service_type = options[:service_type]
         @customs_clearance_detail = options[:customs_clearance_detail]
-        @debug = options[:debug]
         @origin = options[:origin]
         @debug = ENV['DEBUG'] == 'true'
         @shipping_options = options[:shipping_options] ||= {}
