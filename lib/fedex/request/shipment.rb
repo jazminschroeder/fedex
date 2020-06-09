@@ -5,7 +5,7 @@ require 'fedex/request/base'
 module Fedex
   module Request
     class Shipment < Base
-      attr_reader :response_details
+      attr_reader :response_details, :request_xml, :response_xml
 
       def initialize(credentials, options = {})
         super
@@ -25,13 +25,14 @@ module Fedex
       # The parsed Fedex response is available in #response_details
       # e.g. response_details[:completed_shipment_detail][:completed_package_details][:tracking_ids][:tracking_number]
       def process_request
-        api_response = self.class.post api_url, body: build_xml
-        puts api_response if @debug
-        response = parse_response(api_response)
+        @request_xml = build_xml
+        @response_xml = self.class.post api_url, body: @request_xml
+        puts @response_xml if @debug
+        response = parse_response(@response_xml.dup)
         if success?(response)
-          success_response(api_response, response)
+          success_response(@response_xml, response)
         else
-          failure_response(api_response, response)
+          failure_response(@response_xml, response, @request_xml)
         end
       end
 
@@ -140,7 +141,7 @@ module Fedex
       end
 
       # Callback used after a failed shipment response.
-      def failure_response(api_response, response)
+      def failure_response(api_response, response, request)
         error_message = begin
                           if response[:process_shipment_reply]
                             [response[:process_shipment_reply][:notifications]].flatten.first[:message]
@@ -150,7 +151,7 @@ module Fedex
                         rescue StandardError
                           $1
                         end
-        raise RateError, error_message
+        raise RateError.new(error_message, api_response, request)
       end
 
       # Callback used after a successful shipment response.

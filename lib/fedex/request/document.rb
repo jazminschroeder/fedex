@@ -38,7 +38,7 @@ module Fedex
           filenames: @filenames
         )
 
-        Fedex::Document.new shipment_documents
+        Fedex::Document.new shipment_documents, request_xml: @request_xml, response_xml: @response_xml
       end
     end
   end

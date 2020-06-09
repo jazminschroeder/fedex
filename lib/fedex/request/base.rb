@@ -403,7 +403,7 @@ module Fedex
 
       # Parse response, convert keys to underscore symbols
       def parse_response(response)
-        response = sanitize_response_keys(response.parsed_response)
+        sanitize_response_keys(response.parsed_response)
       end
 
       # Recursively sanitizes the response object by cleaning up any hash keys.

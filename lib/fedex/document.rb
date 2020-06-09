@@ -2,13 +2,15 @@
 
 module Fedex
   class Document
-    attr_reader :tracking_number, :filenames, :response_details
+    attr_reader :tracking_number, :filenames, :response_details, :request_xml, :response_xml
 
     # Initialize Fedex::Document Object
     # @param [Hash] options
-    def initialize(shipment_details = {})
+    def initialize(shipment_details = {}, request_xml: '', response_xml: '')
       @response_details = shipment_details[:process_shipment_reply]
       @filenames = shipment_details[:filenames]
+      @request_xml = request_xml if request_xml.present?
+      @response_xml = response_xml if response_xml.present?
 
       # extract label and tracking number
       package_details = @response_details[:completed_shipment_detail][:completed_package_details]
