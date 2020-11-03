@@ -4,6 +4,7 @@ require 'httparty'
 require 'nokogiri'
 require 'fedex/helpers'
 require 'fedex/rate'
+require 'fedex/rates'
 
 module Fedex
   module Request
@@ -60,7 +61,6 @@ module Fedex
         @packages = options[:packages]
         @service_type = options[:service_type]
         @customs_clearance_detail = options[:customs_clearance_detail]
-        @debug = options[:debug]
         @origin = options[:origin]
         @debug = ENV['DEBUG'] == 'true'
         @shipping_options = options[:shipping_options] ||= {}
@@ -404,7 +404,7 @@ module Fedex
 
       # Parse response, convert keys to underscore symbols
       def parse_response(response)
-        response = sanitize_response_keys(response.parsed_response)
+        sanitize_response_keys(response.parsed_response)
       end
 
       # Recursively sanitizes the response object by cleaning up any hash keys.
