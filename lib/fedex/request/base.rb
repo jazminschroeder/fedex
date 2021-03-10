@@ -194,6 +194,7 @@ module Fedex
             xml.PersonName @recipient[:name]
             xml.CompanyName @recipient[:company]
             xml.PhoneNumber @recipient[:phone_number]
+            xml.EMailAddress @recipient[:email_address]
           end
           xml.Address do
             Array(@recipient[:address]).take(2).each do |address_line|
