@@ -82,6 +82,36 @@ describe Fedex::Request::Shipment do
           end.to_not raise_error
         end
       end
+
+      context 'when there is a recipient email address available' do
+        let(:recipient_email) { 'recipient@me.com' }
+        let(:recipient) do
+          {
+            name: 'Recipient',
+            company: 'Company',
+            phone_number: '555-555-5555',
+            email_address: recipient_email,
+            address: 'Main Street',
+            city: 'Frankin Park',
+            state: 'IL',
+            postal_code: '60131',
+            country_code: 'US',
+            residential: true
+          }
+        end
+
+        let(:options) do
+          { shipper: shipper, recipient: recipient, packages: packages, service_type: 'FEDEX_GROUND', filename: filename }
+        end
+
+        it 'succeeds processing the shipment' do
+          expect do
+            @shipment = fedex.ship(options)
+          end.to_not raise_error
+
+          expect(@shipment.class).not_to eq(Fedex::RateError)
+        end
+      end
     end
 
     context 'without service_type specified', :vcr do

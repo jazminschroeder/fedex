@@ -9,8 +9,8 @@ module Fedex
     def initialize(shipment_details = {}, request_xml: '', response_xml: '')
       @response_details = shipment_details[:process_shipment_reply]
       @filenames = shipment_details[:filenames]
-      @request_xml = request_xml if request_xml.present?
-      @response_xml = response_xml if response_xml.present?
+      @request_xml = request_xml unless request_xml.empty?
+      @response_xml = response_xml unless response_xml.empty?
 
       # extract label and tracking number
       package_details = @response_details[:completed_shipment_detail][:completed_package_details]
