@@ -230,9 +230,9 @@ module Fedex
       context 'update WSDL major service number', :vcr do
         it_behaves_like 'successful rate request'
 
-        it 'should return version number 26' do
-          expect(rates.request_xml).to include '<Major>26</Major>'
-          expect(rates.response_xml["RateReply"]["Version"]).to include "Major" => "26"
+        it 'should return version number 28' do
+          expect(rates.request_xml).to include '<Major>28</Major>'
+          expect(rates.response_xml["RateReply"]["Version"]).to include "Major" => "28"
         end
       end
     end
