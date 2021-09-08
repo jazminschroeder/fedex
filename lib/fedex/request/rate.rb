@@ -35,6 +35,7 @@ module Fedex
         xml.RequestedShipment{
           xml.DropoffType @shipping_options[:drop_off_type] ||= "REGULAR_PICKUP"
           xml.ServiceType service_type if service_type
+          xml.PreferredCurrency @shipping_options[:preferred_currency] ||= "USD"
           xml.PackagingType @shipping_options[:packaging_type] ||= "YOUR_PACKAGING"
           add_shipper(xml)
           add_recipient(xml)
