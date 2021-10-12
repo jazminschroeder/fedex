@@ -19,6 +19,7 @@ module Fedex
             rate_details = [rate_reply[:rated_shipment_details]].flatten.first[:shipment_rate_detail]
             rate_details[:service_type] = rate_reply[:service_type]
             rate_details[:transit_time] = rate_reply[:transit_time]
+            rate_details[:delivery_day_of_week] = rate_reply[:delivery_day_of_week]
             rate_details[:special_rating_applied] = rate_details[:special_rating_applied]
             Fedex::Rate.new(rate_details)
           end

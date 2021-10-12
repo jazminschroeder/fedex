@@ -1,7 +1,7 @@
 # frozen_string_literal: true
 
 module Fedex
-  VERSION = '3.20'
+  VERSION = '3.21'
   API_VERSION = '26'
   RATES_API_VERSION = '28'
   PICKUP_API_VERSION = '9'

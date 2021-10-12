@@ -63,8 +63,9 @@ module Fedex
       context 'domestic shipment', :vcr do
         it_behaves_like 'successful rate request'
 
-        it 'should return a transit time' do
+        it 'should return a transit time and delivery day' do
           expect(rates.first.transit_time).not_to be_nil
+          expect(rates.first.delivery_day_of_week).not_to be_nil
         end
       end
 

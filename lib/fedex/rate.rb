@@ -22,6 +22,7 @@ module Fedex
     #     @total_base_charge #The total base charge
     attr_accessor :service_type,
                   :transit_time, :rate_type,
+                  :delivery_day_of_week,
                   :rate_zone,
                   :total_billing_weight,
                   :total_freight_discounts,
@@ -35,6 +36,7 @@ module Fedex
     def initialize(options = {})
       @service_type = options[:service_type]
       @transit_time = options[:transit_time]
+      @delivery_day_of_week = options[:delivery_day_of_week]
       @rate_type = options[:rate_type]
       @rate_zone = options[:rate_zone]
       @total_billing_weight = "#{options[:total_billing_weight][:value]} #{options[:total_billing_weight][:units]}" if options[:total_billing_weight]
