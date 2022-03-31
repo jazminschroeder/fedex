@@ -6,7 +6,7 @@ module Fedex
 
     context "shipments with tracking number", :vcr, :focus do
       let(:options) do
-        { :package_id             => "771513950417",
+        { :package_id             => "122816215025810",
           :package_type           => "TRACKING_NUMBER_OR_DOORTAG",
           :include_detailed_scans => true
         }
@@ -51,7 +51,7 @@ module Fedex
 
     context "duplicate shipments with same tracking number", :vcr, :focus do
       let(:options) do
-        { :package_id             => "771054010426",
+        { :package_id             => "713062653486",
           :package_type           => "TRACKING_NUMBER_OR_DOORTAG",
           :include_detailed_scans => true
         }
